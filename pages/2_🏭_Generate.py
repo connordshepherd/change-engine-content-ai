@@ -27,9 +27,11 @@ def generate_prompts_array(image_prompt, layouts_array):
     
     for layout in layouts_array:
         for layout_key, layout_details in layout.items():
+            prompt_messages = []
             # Concatenate image_prompt and detail section
             full_prompt = f"{image_prompt}\n\n---------\n\n{layout_details}"
-            prompts_array.append({"prompt": full_prompt})
+            prompt_messages.append({"role": "user", "content": full_prompt})
+            prompts_array.append({"message": prompt_messages})
     
     return prompts_array
 
