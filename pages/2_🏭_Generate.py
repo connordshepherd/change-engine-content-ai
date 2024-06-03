@@ -46,7 +46,7 @@ def send_to_openai(messages):
             model=model,
             messages=messages
         )
-        return response
+        return response.choices[0].message.content
     except Exception as e:
         print(f"An error occurred: {e}")
         return None
