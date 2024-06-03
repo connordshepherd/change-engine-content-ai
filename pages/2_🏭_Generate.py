@@ -110,14 +110,15 @@ if selected_content_type != "Select a Content Type":
             st.write(prompts_array)
 
             # Go to OpenAI for each one
+            st.subheader("Generated Responses")
             for message_dict in prompts_array:
                 messages = message_dict['message']
                 response = send_to_openai(messages)
                 
                 if response:
-                    print(f"Response: {response}\n")
+                    st.write(f"Response: {response}\n")
                 else:
-                    print("Failed to get a response.\n")
+                    st.write("Failed to get a response.\n")
 
         # Display a JSON object for debugging
         st.subheader("Debug")
