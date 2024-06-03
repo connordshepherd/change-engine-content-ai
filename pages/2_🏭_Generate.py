@@ -3,7 +3,6 @@ import json
 import pandas as pd
 from helpers import get_content_types_data, get_table_data, process_table_data
 import openai
-import aiohttp
 
 # Define the OpenAI model
 model = "gpt-4o"
