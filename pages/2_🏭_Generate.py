@@ -48,7 +48,7 @@ document_title = st.text_input("Content", "Perks and Benefits FAQ")
 selected_content_type = st.selectbox("Choose a Content Type", options)
 
 # Text input for layouts (comma-separated integers)
-selected_layouts = st.text_input("Select Layouts", "1, 3, 5")
+selected_layouts = st.text_input("Select Layouts", "1, 3")
 
 if selected_content_type != "Select a Content Type":
     # Filter data to get the selected content type details
