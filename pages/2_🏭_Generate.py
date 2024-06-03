@@ -22,9 +22,13 @@ v1_true_content_types = [item["Content Type"] for item in content_types_data if 
 # Insert default option at the start of the list
 options = ["Select a Content Type"] + v1_true_content_types
 
+# Title for the resulting generation
+document_title = st.text_input("Content", "Perks and Benefits FAQ")
+
 # Add a selectbox to the Streamlit app
 selected_content_type = st.selectbox("Choose a Content Type", options)
 
+# Text input for layouts (comma-separated integers)
 selected_layouts = st.text_input("Select Layouts", "1, 3, 5")
 
 if selected_content_type != "Select a Content Type":
