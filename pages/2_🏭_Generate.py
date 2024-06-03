@@ -18,7 +18,7 @@ def get_selected_layouts_string(edited_json, selected_layouts):
                     if value is not None:
                         string_to_print += f"{key}: {value}\n\n"
             # Add the assembled string to the all_layouts_string
-            all_layouts_string += string_to_print + "\n"
+            all_layouts_string += string_to_print + "\n-------------\n"
     
     return all_layouts_string
 
