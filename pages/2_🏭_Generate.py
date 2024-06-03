@@ -25,6 +25,8 @@ options = ["Select a Content Type"] + v1_true_content_types
 # Add a selectbox to the Streamlit app
 selected_content_type = st.selectbox("Choose a Content Type", options)
 
+selected_layouts = st.text_input("Select Layouts", "1, 3, 5")
+
 if selected_content_type != "Select a Content Type":
     # Filter data to get the selected content type details
     selected_data = next((item for item in content_types_data if item["Content Type"] == selected_content_type), None)
