@@ -42,7 +42,7 @@ if selected_content_type != "Select a Content Type":
         df = process_table_data(table_data)
 
         # Display the DataFrame
-        edited_data = st.data_editor(df, hide_index=True)
+        edited_data = df
         oriented_json = edited_data.to_json(orient='records')
         edited_json = json.loads(oriented_json)
 
