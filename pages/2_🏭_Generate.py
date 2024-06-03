@@ -111,7 +111,7 @@ if selected_content_type != "Select a Content Type":
             # Go to OpenAI for each one
             for prompt in prompts_array:
                 n = 1
-                st.subheader(f"Generated Response "{n})
+                st.subheader(f"Generated Response {n}")
                 messages = prompt['message']
                 response = send_to_openai(messages)
                 
