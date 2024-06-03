@@ -2,6 +2,8 @@ import streamlit as st
 import json
 import pandas as pd
 from helpers import get_content_types_data, get_table_data, process_table_data
+import openai
+import aiohttp
 
 # Define the OpenAI model
 model = "gpt-4o"
@@ -37,6 +39,18 @@ def generate_prompts_array(image_prompt, layouts_array):
             prompts_array.append({"message": prompt_messages})
     
     return prompts_array
+
+# Function to send request to OpenAI API
+def send_to_openai(messages):
+    try:
+        response = openai.chat.completions.create(
+            model=model,
+            messages=messages
+        )
+        return response.choices[0].content
+    except Exception as e:
+        print(f"An error occurred: {e}")
+        return None
 
 # Streamlit Widescreen Mode
 st.set_page_config(layout="wide")
@@ -95,6 +109,16 @@ if selected_content_type != "Select a Content Type":
             # Generate prompts array
             prompts_array = generate_prompts_array(image_prompt, layouts_array)
             st.write(prompts_array)
+
+            # Go to OpenAI for each one
+            for message_dict in prompts_array:
+                messages = message_dict['message']
+                response = send_to_openai(messages)
+                
+                if response:
+                    print(f"Response: {response}\n")
+                else:
+                    print("Failed to get a response.\n")
 
         # Display a JSON object for debugging
         st.subheader("Debug")
