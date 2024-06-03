@@ -72,7 +72,7 @@ if selected_content_type != "Select a Content Type":
         edited_json = json.loads(oriented_json)
 
         # Assemble the layouts as plaintext
-        layouts_for_prumpt = get_selected_layouts_string(edited_json, selected_layouts)
+        layouts_for_prompt = get_selected_layouts_string(edited_json, selected_layouts)
         st.write(layouts_for_prompt)
 
         # Display a JSON object for debugging
