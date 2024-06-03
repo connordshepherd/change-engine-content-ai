@@ -3,6 +3,9 @@ import json
 import pandas as pd
 from helpers import get_content_types_data, get_table_data, process_table_data
 
+# Define the OpenAI model
+model = "gpt-4o"
+
 def get_selected_layouts_array(edited_json, selected_layouts):
     # Read and clean the selected_layouts
     cleaned_layouts = [int(x.strip()) for x in selected_layouts.split(',') if x.strip().isdigit()]
