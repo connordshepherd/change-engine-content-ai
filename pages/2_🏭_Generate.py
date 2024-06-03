@@ -16,7 +16,7 @@ def get_selected_layouts_string(edited_json, selected_layouts):
             for key, value in entry.items():
                 if key not in ["AI", "Layout Number", "DH Layout Description", "id", "createdTime"]:
                     if value is not None:
-                        string_to_print += f"{key}: {value}\n"
+                        string_to_print += f"{key}: {value}\n\n"
             # Add the assembled string to the all_layouts_string
             all_layouts_string += string_to_print + "\n"
     
