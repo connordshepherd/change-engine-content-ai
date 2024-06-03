@@ -119,12 +119,12 @@ if selected_content_type != "Select a Content Type":
                 else:
                     st.write("Failed to get a response.\n\n----\n\n")
 
-        # Display a JSON object for debugging
-        st.subheader("Debug")
-        st.write("Prompts Array")
-        st.write(prompts_array)
-        st.write("Airtable JSON")
-        st.write(edited_json)
+            # Display a JSON object for debugging
+            st.subheader("Debug")
+            st.write("Prompts Array")
+            st.write(prompts_array)
+            st.write("Airtable JSON")
+            st.write(edited_json)
         
     else:
         st.write("No details available for the selected content type.")
