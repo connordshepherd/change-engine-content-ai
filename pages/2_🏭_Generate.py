@@ -107,7 +107,6 @@ if selected_content_type != "Select a Content Type":
         if st.button("Generate"):
             # Generate prompts array
             prompts_array = generate_prompts_array(image_prompt, layouts_array)
-            st.write(prompts_array)
 
             # Go to OpenAI for each one
             st.subheader("Generated Responses")
@@ -122,6 +121,9 @@ if selected_content_type != "Select a Content Type":
 
         # Display a JSON object for debugging
         st.subheader("Debug")
+        st.write("Prompts Array")
+        st.write(prompts_array)
+        st.write("Airtable JSON")
         st.write(edited_json)
         
     else:
