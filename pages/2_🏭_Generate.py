@@ -3,21 +3,24 @@ import json
 import pandas as pd
 from helpers import get_content_types_data, get_table_data, process_table_data
 
-def display_selected_layouts(edited_json, selected_layouts):
+def get_selected_layouts_string(edited_json, selected_layouts):
     # Read and clean the selected_layouts
     cleaned_layouts = [int(x.strip()) for x in selected_layouts.split(',') if x.strip().isdigit()]
+    
+    all_layouts_string = ""
     
     # Loop through the response object
     for entry in edited_json:
         if entry["Layout Number"] in cleaned_layouts:
-            string_to_print = ""
+            string_to_print = f"**Details for Layout {entry['Layout Number']}**\n"
             for key, value in entry.items():
                 if key not in ["AI", "Layout Number", "DH Layout Description", "id", "createdTime"]:
                     if value is not None:
                         string_to_print += f"{key}: {value}\n"
-            # Print the assembled string using st.write
-            st.write(f"**Details for Layout {entry['Layout Number']}**")
-            st.write(string_to_print)
+            # Add the assembled string to the all_layouts_string
+            all_layouts_string += string_to_print + "\n"
+    
+    return all_layouts_string
 
 # Streamlit Widescreen Mode
 st.set_page_config(layout="wide")
@@ -69,7 +72,7 @@ if selected_content_type != "Select a Content Type":
         edited_json = json.loads(oriented_json)
 
         # Assemble the layouts as plaintext
-        layouts_for_prumpt = display_selected_layouts(edited_json, selected_layouts)
+        layouts_for_prumpt = get_selected_layouts_string(edited_json, selected_layouts)
         st.write(layouts_for_prompt)
 
         # Display a JSON object for debugging
