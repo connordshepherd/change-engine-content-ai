@@ -22,6 +22,17 @@ def get_selected_layouts_array(edited_json, selected_layouts):
     
     return layouts_array
 
+def generate_prompts_array(image_prompt, layouts_array):
+    prompts_array = []
+    
+    for layout in layouts_array:
+        for layout_key, layout_details in layout.items():
+            # Concatenate image_prompt and detail section
+            full_prompt = f"{image_prompt}\n{layout_details}"
+            prompts_array.append({"prompt": full_prompt})
+    
+    return prompts_array
+
 # Streamlit Widescreen Mode
 st.set_page_config(layout="wide")
 
@@ -73,7 +84,12 @@ if selected_content_type != "Select a Content Type":
 
         # Assemble the layouts as plaintext
         layouts_for_prompt = get_selected_layouts_array(edited_json, selected_layouts)
-        st.write(layouts_for_prompt)
+
+        # Put the Generate button on the screen and start the logic for generating prompts and posting them to OpenAI
+        if st.button("Generate"):
+            # Generate prompts array
+            prompts_array = generate_prompts_array(image_prompt, layouts_array)
+            st.write(prompts_array)
 
         # Display a JSON object for debugging
         st.subheader("Debug")
