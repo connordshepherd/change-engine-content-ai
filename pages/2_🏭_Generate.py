@@ -46,7 +46,7 @@ def send_to_openai(messages):
             model=model,
             messages=messages
         )
-        return response.choices[0].content
+        return response
     except Exception as e:
         print(f"An error occurred: {e}")
         return None
@@ -111,8 +111,8 @@ if selected_content_type != "Select a Content Type":
 
             # Go to OpenAI for each one
             st.subheader("Generated Responses")
-            for message_dict in prompts_array:
-                messages = message_dict['message']
+            for prompt in prompts_array:
+                messages = prompt['message']
                 response = send_to_openai(messages)
                 
                 if response:
