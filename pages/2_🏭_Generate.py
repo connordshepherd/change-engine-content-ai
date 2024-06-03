@@ -36,7 +36,7 @@ if selected_content_type != "Select a Content Type":
     selected_data = next((item for item in content_types_data if item["Content Type"] == selected_content_type), None)
     
     if selected_data:
-        st.subheader("Details for:", selected_content_type)
+        st.subheader("Details for: " f"{selected_content_type}")
 
         # Display the Image Prompt in a text area for editing
         image_prompt = st.text_area("Image Prompt", value=selected_data["Image Prompt"], height=400)
