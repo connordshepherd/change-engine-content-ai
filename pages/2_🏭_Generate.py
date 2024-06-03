@@ -12,7 +12,7 @@ def get_selected_layouts_string(edited_json, selected_layouts):
     # Loop through the response object
     for entry in edited_json:
         if entry["Layout Number"] in cleaned_layouts:
-            string_to_print = f"**Details for Layout {entry['Layout Number']}**\n"
+            string_to_print = f"**Details for Layout {entry['Layout Number']}**\n\n"
             for key, value in entry.items():
                 if key not in ["AI", "Layout Number", "DH Layout Description", "id", "createdTime"]:
                     if value is not None:
