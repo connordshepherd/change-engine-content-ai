@@ -116,9 +116,9 @@ if selected_content_type != "Select a Content Type":
                 response = send_to_openai(messages)
                 
                 if response:
-                    st.write(f"Response: {response}\n")
+                    st.write(f"{response}\n\n----\n\n")
                 else:
-                    st.write("Failed to get a response.\n")
+                    st.write("Failed to get a response.\n\n----\n\n")
 
         # Display a JSON object for debugging
         st.subheader("Debug")
