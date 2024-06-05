@@ -37,6 +37,8 @@ if selected_content_type != "Select a Content Type":
 
         # Load data from the table corresponding to the selected content type
         table_data = get_table_data(selected_content_type)
+        st.write("Debug Table Data")
+        st.write(table_data)
         
         # Process the table data into a DataFrame
         df = process_table_data(table_data)
