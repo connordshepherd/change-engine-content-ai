@@ -81,7 +81,7 @@ def process_table_data(table_data):
         'Layout',
         'AI',
         'Title',
-        'Subtitle,
+        'Subtitle',
         'Description (character count)',
         'Number of Questions and Answers',
         'Question (character count)',
