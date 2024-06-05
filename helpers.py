@@ -57,7 +57,7 @@ def get_table_data(table_name):
     else:
         return []
 
-# Function to process all the data from get_table_data into a nice dataframe
+# Function to process all the data from get_table_data into a nice DataFrame
 def process_table_data(table_data):
     """
     Process the table data into a DataFrame with the desired structure and sorting.
@@ -96,8 +96,15 @@ def process_table_data(table_data):
         'createdTime'
     ]
     
-    # Reorder the DataFrame columns, handling missing columns
-    df = df.reindex(columns=[col for col in desired_columns if col in df.columns])
+    # Compute the final columns list by selecting the desired columns present in the DataFrame
+    final_columns = [col for col in desired_columns if col in df.columns]
+    
+    # Add any remaining columns that were not in the desired_columns to the end of the final columns list
+    remaining_columns = [col for col in df.columns if col not in desired_columns]
+    final_columns.extend(remaining_columns)
+    
+    # Reorder the DataFrame columns according to the computed list
+    df = df[final_columns]
     
     # Sort by 'Layout Number'
     df = df.sort_values(by='Layout Number')
