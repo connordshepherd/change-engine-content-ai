@@ -18,7 +18,7 @@ def get_selected_layouts_array(edited_json, selected_layouts):
         if entry["Layout Number"] in cleaned_layouts:
             string_to_print = f"**Details for Layout {entry['Layout Number']}**\n"
             for key, value in entry.items():
-                if key not in ["AI", "Layout", "Layout Number", "DH Layout Description", "id", "createdTime"]:
+                if key not in ["AI", "Layout", "Preview Image", "Layout Number", "DH Layout Description", "id", "createdTime"]:
                     if value is not None:
                         string_to_print += f"{key}: {value}\n"
             # Add the assembled string to the layouts_array with the layout key
