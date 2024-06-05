@@ -57,6 +57,8 @@ def get_table_data(table_name):
     else:
         return []
 
+import pandas as pd
+
 # Function to process all the data from get_table_data into a nice DataFrame
 def process_table_data(table_data):
     """
@@ -96,12 +98,11 @@ def process_table_data(table_data):
         'createdTime'
     ]
     
-    # Compute the final columns list by selecting the desired columns present in the DataFrame
-    final_columns = [col for col in desired_columns if col in df.columns]
-    
-    # Add any remaining columns that were not in the desired_columns to the end of the final columns list
-    remaining_columns = [col for col in df.columns if col not in desired_columns]
-    final_columns.extend(remaining_columns)
+    # Compute the final columns list:
+    # - Include desired columns that are present in the DataFrame
+    # - Add any remaining columns that were not in the desired_columns to the end of the list
+    final_columns = [col for col in desired_columns if col in df.columns] + \
+                    [col for col in df.columns if col not in desired_columns]
     
     # Reorder the DataFrame columns according to the computed list
     df = df[final_columns]
