@@ -80,8 +80,8 @@ def process_table_data(table_data):
     desired_columns = [
         'Layout',
         'AI',
-        'Title (character count)',
-        'Subtitle (character count)',
+        'Title',
+        'Subtitle,
         'Description (character count)',
         'Number of Questions and Answers',
         'Question (character count)',
