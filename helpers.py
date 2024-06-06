@@ -5,6 +5,8 @@ import json
 import pandas as pd
 import openai
 
+model = "gpt-4o"
+
 # Function to get data from the "Content Types" table using field IDs
 def get_content_types_data():
     base_id = 'appbJ9Bt0YNuBafT4'
