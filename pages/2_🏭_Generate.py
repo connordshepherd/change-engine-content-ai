@@ -133,8 +133,6 @@ if selected_content_type != "Select a Content Type":
         if st.button("Generate"):
             # Generate prompts array
             prompts_array = generate_prompts_array(image_prompt, layouts_array)
-            st.write("Debug Prompt Array")
-            st.write(prompts_array)
 
             # Go to OpenAI for each one
             n = 1
