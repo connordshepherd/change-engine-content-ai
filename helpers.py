@@ -143,3 +143,49 @@ def add_specs(json_data):
         item.update(additions)
 
     return json_data
+
+# Grabs the user-selected layouts from the main array
+def get_selected_layouts_array(edited_json, selected_layouts):
+    # Read and clean the selected_layouts
+    cleaned_layouts = [int(x.strip()) for x in selected_layouts.split(',') if x.strip().isdigit()]
+    
+    layouts_array = []
+    
+    # Loop through the response object
+    for entry in edited_json:
+        if entry["Layout Number"] in cleaned_layouts:
+            string_to_print = f"**Details for Layout {entry['Layout Number']}**\n"
+            for key, value in entry.items():
+                if key not in ["AI", "Layout", "Preview Image", "Layout Number", "DH Layout Description", "id", "createdTime"]:
+                    if value is not None:
+                        string_to_print += f"{key}: {value}\n"
+            # Add the assembled string to the layouts_array with the layout key
+            layouts_array.append({f"Layout {entry['Layout Number']}": string_to_print})
+    
+    return layouts_array
+
+# Creates the array of prompts to send to OpenAI
+def generate_prompts_array(image_prompt, layouts_array):
+    prompts_array = []
+    
+    for layout in layouts_array:
+        for layout_key, layout_details in layout.items():
+            prompt_messages = []
+            # Concatenate image_prompt and detail section
+            full_prompt = f"{image_prompt}\n\n---------\n\n{layout_details}"
+            prompt_messages.append({"role": "user", "content": full_prompt})
+            prompts_array.append({"message": prompt_messages})
+    
+    return prompts_array
+
+# Function to send request to OpenAI API
+def send_to_openai(messages):
+    try:
+        response = openai.chat.completions.create(
+            model=model,
+            messages=messages
+        )
+        return response.choices[0].message.content
+    except Exception as e:
+        print(f"An error occurred: {e}")
+        return None
