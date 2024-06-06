@@ -144,10 +144,11 @@ if selected_content_type != "Select a Content Type":
                 response = send_to_openai(messages)
                 layouts = prompt['layout']
                 layout_response = send_to_openai_with_tools(layouts)
+                pairs_json = extract_key_value_pairs(layout_response)
                 
                 if response:
                     st.write(f"{response}\n\n----\n\n")
-                    st.write(f"{layout_response}\n\n----\n\n")
+                    st.write(pairs_json)
                 else:
                     st.write("Failed to get a response.\n\n----\n\n")
                 n = n + 1
