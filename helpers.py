@@ -3,6 +3,7 @@ import requests
 import re
 import json
 import pandas as pd
+import openai
 
 # Function to get data from the "Content Types" table using field IDs
 def get_content_types_data():
