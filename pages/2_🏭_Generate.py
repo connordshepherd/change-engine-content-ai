@@ -6,7 +6,7 @@ import openai
 from typing import List, Dict, Union
 
 # Define the OpenAI model
-model = "gpt-4o"
+model = "gpt-4-turbo"
 parsing_model = "gpt-4-turbo"
 
 # Define types for readability
