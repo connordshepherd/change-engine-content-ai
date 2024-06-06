@@ -192,3 +192,28 @@ def send_to_openai(messages):
     except Exception as e:
         print(f"An error occurred: {e}")
         return None
+
+# Tools object that breaks down a response into parts
+tools = [
+    {
+        "type": "function",
+        "function": {
+            "name": "fit_to_spec",
+            "description": "Fits components of messages to a spec.",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "key": {
+                        "type": "string",
+                        "description": "The name of the component, like TITLE or SUBTITLE. Match exactly with what you see, eg return HASHTAG_2 instead of HASHTAG if you see HASHTAG_2",
+                    },
+                    "value": {
+                        "type": "string",
+                        "description": "The value of the component. Make sure to preserve newlines as \n",
+                    },
+                },
+                "required": ["key", "value"],
+            },
+        }
+    }
+]
