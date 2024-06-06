@@ -1,7 +1,7 @@
 import streamlit as st
 import json
 import pandas as pd
-from helpers import get_content_types_data, get_table_data, process_table_data, get_selected_layouts_array, generate_prompts_array, send_to_openai, tools
+from helpers import get_content_types_data, get_table_data, process_table_data, get_selected_layouts_array, generate_prompts_array, send_to_openai
 import openai
 from typing import List, Dict, Union
 
@@ -12,6 +12,31 @@ parsing_model = "gpt-4-turbo"
 # Define types for readability
 ParsedArgument = Dict[str, str]
 ResponseArguments = Union[List[ParsedArgument], List[Dict[str, Union[str, List[ParsedArgument]]]]]
+
+# Tools object that breaks down a response into parts
+tools = [
+    {
+        "type": "function",
+        "function": {
+            "name": "fit_to_spec",
+            "description": "Fits components of messages to a spec.",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "key": {
+                        "type": "string",
+                        "description": "The name of the component, like TITLE or SUBTITLE. Match exactly with what you see, eg return HASHTAG_2 instead of HASHTAG if you see HASHTAG_2",
+                    },
+                    "value": {
+                        "type": "string",
+                        "description": "The value of the component. Make sure to preserve newlines as \n",
+                    },
+                },
+                "required": ["key", "value"],
+            },
+        }
+    }
+]
 
 # Extract the tool responses from OpenAI into key-value pairs
 def extract_key_value_pairs(response: dict) -> ResponseArguments:
@@ -40,7 +65,7 @@ def extract_key_value_pairs(response: dict) -> ResponseArguments:
     return key_value_pairs
 
 # Function to send request to OpenAI API
-def send_to_openai_with_tools(messages, tools):
+def send_to_openai_with_tools(messages):
     try:
         response = openai.chat.completions.create(
             model=parsing_model,
@@ -118,7 +143,7 @@ if selected_content_type != "Select a Content Type":
                 messages = prompt['message']
                 response = send_to_openai(messages)
                 layouts = prompt['layout']
-                layout_response = send_to_openai_with_tools(layouts, tools)
+                layout_response = send_to_openai_with_tools(layouts)
                 
                 if response:
                     st.write(f"{response}\n\n----\n\n")
