@@ -1,7 +1,7 @@
 import streamlit as st
 import json
 import pandas as pd
-from helpers import get_content_types_data, get_table_data, process_table_data
+from helpers import get_content_types_data, get_table_data, process_table_data, add_specs
 
 # Streamlit Widescreen Mode
 st.set_page_config(layout="wide")
@@ -62,7 +62,8 @@ if selected_content_type != "Select a Content Type":
 
         # Display a JSON object for debugging
         st.subheader("Debug")
-        st.write(edited_json)
+        json_with_specs = add_specs(edited_json)
+        st.write(json_with_specs)
         
     else:
         st.write("No details available for the selected content type.")
