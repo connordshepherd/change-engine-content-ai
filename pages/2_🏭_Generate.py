@@ -72,7 +72,7 @@ def send_to_openai_with_tools(messages):
             messages=messages,
             tools=tools
         )
-        return response.choices[0].message.content
+        return response
     except Exception as e:
         print(f"An error occurred: {e}")
         return None
