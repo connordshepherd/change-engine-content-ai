@@ -3,10 +3,54 @@ import json
 import pandas as pd
 from helpers import get_content_types_data, get_table_data, process_table_data, get_selected_layouts_array, generate_prompts_array, send_to_openai, tools
 import openai
+from typing import List, Dict, Union
 
 # Define the OpenAI model
 model = "gpt-4o"
 parsing_model = "gpt-4-turbo"
+
+# Define types for readability
+ParsedArgument = Dict[str, str]
+ResponseArguments = Union[List[ParsedArgument], List[Dict[str, Union[str, List[ParsedArgument]]]]]
+
+# Extract the tool responses from OpenAI into key-value pairs
+def extract_key_value_pairs(response: dict) -> ResponseArguments:
+    key_value_pairs = []
+
+    choices = response.choices
+    
+    for choice in choices:
+        tool_calls = choice.message.tool_calls
+        
+        for tool_call in tool_calls:
+            try:
+                arguments = json.loads(tool_call.function.arguments)
+                
+                # Check if the arguments contain a list of tool uses
+                if 'tool_uses' in arguments:
+                    for tool_use in arguments['tool_uses']:
+                        parameters = tool_use.get('parameters')
+                        if parameters:
+                            key_value_pairs.append(parameters)
+                else:
+                    key_value_pairs.append(arguments)
+            except json.JSONDecodeError:
+                continue
+
+    return key_value_pairs
+
+# Function to send request to OpenAI API
+def send_to_openai_with_tools(messages, tools):
+    try:
+        response = openai.chat.completions.create(
+            model=parsing_model,
+            messages=messages,
+            tools=tools
+        )
+        return response.choices[0].message.content
+    except Exception as e:
+        print(f"An error occurred: {e}")
+        return None
 
 # Streamlit Widescreen Mode
 st.set_page_config(layout="wide")
