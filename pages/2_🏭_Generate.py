@@ -117,9 +117,12 @@ if selected_content_type != "Select a Content Type":
                 st.subheader(f"Generated Response {n}")
                 messages = prompt['message']
                 response = send_to_openai(messages)
+                layouts = prompt['layout']
+                layout_response = send_to_openai_with_tools(layouts, tools)
                 
                 if response:
                     st.write(f"{response}\n\n----\n\n")
+                    st.write(f"{layout_response}\n\n----\n\n")
                 else:
                     st.write("Failed to get a response.\n\n----\n\n")
                 n = n + 1
