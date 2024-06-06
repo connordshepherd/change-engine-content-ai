@@ -116,25 +116,30 @@ def process_table_data(table_data):
 
 # Loops through the Airtable data looking for character counts, either 2 integers separated with a hypen, or integers separated by slashes in parentheses
 def add_specs(json_data):
-    pattern_hyphen = re.compile(r'\b\d{1,2}-\d{1,2}\b')
-    pattern_slash = re.compile(r'\(\d+(?:/\d+)*\)')
+    pattern_hyphen = re.compile(r'\b(\d{1,2})-(\d{1,2})\b')
+    pattern_slash = re.compile(r'\((\d+(?:/\d+)*)\)')
 
-    # Iterate over each dictionary in the list
     for item in json_data:
         additions = {}
-        # Iterate over key, value pairs
         for key, value in item.items():
             if isinstance(value, str):
                 specs = None
-                if pattern_hyphen.search(value):
-                    specs = pattern_hyphen.findall(value)
-                elif pattern_slash.search(value):
-                    specs = pattern_slash.findall(value)
+                if (match := pattern_hyphen.search(value)) is not None:
+                    lower, upper = match.groups()
+                    specs = {
+                        "LINES": 1,
+                        "LINE_1_LOWER_LIMIT": int(lower),
+                        "LINE_1_UPPER_LIMIT": int(upper)
+                    }
+                elif (match := pattern_slash.search(value)) is not None:
+                    numbers = list(map(int, match.group(1).split('/')))
+                    specs = {"LINES": len(numbers)}
+                    for i, num in enumerate(numbers, 1):
+                        specs[f"LINE_{i}_UPPER_LIMIT"] = num
 
                 if specs:
-                    additions[f"{key}_specs"] = specs[0]
+                    additions[f"{key}_specs"] = json.dumps(specs)  # Store as json
 
-        # Update the item with new specs
         item.update(additions)
 
     return json_data
