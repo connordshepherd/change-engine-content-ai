@@ -142,8 +142,7 @@ if selected_content_type != "Select a Content Type":
                 st.subheader(f"Generated Response {n}")
                 messages = prompt['message']
                 response = send_to_openai(messages)
-                layouts = prompt['layout']
-                layout_response = send_to_openai_with_tools(layouts)
+                layout_response = send_to_openai_with_tools(response)
                 pairs_json = extract_key_value_pairs(layout_response)
                 
                 if response:
