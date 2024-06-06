@@ -1,5 +1,6 @@
 import streamlit as st
 import json
+import re
 import pandas as pd
 from helpers import get_content_types_data, get_table_data, process_table_data, add_specs
 
