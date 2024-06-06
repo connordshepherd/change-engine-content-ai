@@ -111,3 +111,21 @@ def process_table_data(table_data):
     df = df.sort_values(by='Layout Number')
     
     return df
+
+def add_specs(json_data):
+    pattern_hyphen = re.compile(r'\b\d{1,2}-\d{1,2}\b')
+    pattern_slash = re.compile(r'\(\d+(?:/\d+)*\)')
+
+    for item in json_data:
+        for key, value in item.items():
+            if isinstance(value, str):
+                specs = None
+                if pattern_hyphen.search(value):
+                    specs = pattern_hyphen.findall(value)
+                elif pattern_slash.search(value):
+                    specs = pattern_slash.findall(value)
+                
+                if specs:
+                    item[f"{key}_specs"] = specs[0]
+
+    return json_data
