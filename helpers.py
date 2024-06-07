@@ -151,20 +151,31 @@ def add_specs(json_data):
 def get_selected_layouts_array(edited_json, selected_layouts):
     # Read and clean the selected_layouts
     cleaned_layouts = [int(x.strip()) for x in selected_layouts.split(',') if x.strip().isdigit()]
-    
+
     layouts_array = []
-    
+
     # Loop through the response object
     for entry in edited_json:
         if entry["Layout Number"] in cleaned_layouts:
-            string_to_print = f"**Details for Layout {entry['Layout Number']}**\n"
+            text_content = f"**Details for Layout {entry['Layout Number']}**\n"
+            specs_content = {}
+
             for key, value in entry.items():
                 if key not in ["AI", "Layout", "Preview Image", "Layout Number", "DH Layout Description", "id", "createdTime"]:
                     if value is not None:
-                        string_to_print += f"{key}: {value}\n"
-            # Add the assembled string to the layouts_array with the layout key
-            layouts_array.append({f"Layout {entry['Layout Number']}": string_to_print})
-    
+                        if "_specs" in key:
+                            specs_content[key] = value
+                        else:
+                            text_content += f"{key}: {value}\n"
+                            
+            # Add the assembled dictionary to the layouts_array with the layout key
+            layouts_array.append({
+                f"Layout {entry['Layout Number']}": {
+                    "Text": text_content,
+                    "Specs": specs_content
+                }
+            })
+
     return layouts_array
 
 # Creates the array of prompts to send to OpenAI
