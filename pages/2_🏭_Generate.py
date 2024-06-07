@@ -231,6 +231,8 @@ if selected_content_type != "Select a Content Type":
                 layout_messages = []
                 layout_messages.append({"role": "user", "content": response})
                 layout_response = send_to_openai_with_tools(layout_messages)
+                st.write("Raw Layout Response")
+                st.write(layout_response)
                 pairs_json = extract_key_value_pairs(layout_response)
                 
                 if response:
