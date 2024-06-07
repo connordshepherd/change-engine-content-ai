@@ -39,25 +39,42 @@ tools = [
 ]
 
 # Extract the tool responses from OpenAI into key-value pairs
-def extract_key_value_pairs(response) -> List[Dict[str, str]]:
+def extract_key_value_pairs(response: Any) -> List[Dict[str, str]]:
     key_value_pairs = []
 
-    # Assume 'choices' is an attribute of 'response'
+    # Check if 'choices' exists in response
+    if not hasattr(response, 'choices'):
+        raise ValueError("Response does not have 'choices' attribute")
+    
     choices = response.choices
 
     for choice in choices:
-        # Access the 'message' attribute of 'choice'
+        # Check if 'choice' has 'message' attribute
+        if not hasattr(choice, 'message'):
+            continue
         message = choice.message
-        # Assume 'tool_calls' is an attribute of 'message'
+
+        # Check if 'message' has 'tool_calls'
+        if not hasattr(message, 'tool_calls'):
+            continue
         tool_calls = message.tool_calls
 
         for call in tool_calls:
+            # Check if 'call' has 'function' attribute and if 'function' has 'arguments'
+            if not hasattr(call, 'function') or not hasattr(call.function, 'arguments'):
+                continue
+            
             # Parse the arguments from the 'function' attribute of 'call'
             function_arguments = call.function.arguments
-            arguments = json.loads(function_arguments)
 
-            # Extract 'key' and 'value' if available
-            if 'key' in arguments and 'value' in arguments:
+            # Ensure function_arguments is a valid JSON string
+            try:
+                arguments = json.loads(function_arguments)
+            except (json.JSONDecodeError, TypeError):
+                continue
+
+            # Check if arguments is a dictionary and contains both 'key' and 'value'
+            if isinstance(arguments, dict) and 'key' in arguments and 'value' in arguments:
                 key_value_pairs.append({
                     'key': arguments['key'],
                     'value': arguments['value']
