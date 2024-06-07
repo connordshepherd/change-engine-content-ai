@@ -129,10 +129,10 @@ if selected_content_type != "Select a Content Type":
 
         # Add specs to the layouts data
         edited_json_with_specs = add_specs(edited_json)
-        st.write(edited_json_with_specs)
 
         # Assemble the layouts as plaintext
         layouts_array = get_selected_layouts_array(edited_json_with_specs, selected_layouts)
+        st.write(layouts_array)
 
         # Put the Generate button on the screen and start the logic for generating prompts and posting them to OpenAI
         if st.button("Generate"):
