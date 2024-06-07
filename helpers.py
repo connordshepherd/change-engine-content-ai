@@ -186,12 +186,15 @@ def generate_prompts_array(topic, image_prompt, layouts_array):
         for layout_key, layout_details in layout.items():
             prompt_messages = []
             layout_messages = []
-            # Concatenate image_prompt and detail section
-            full_prompt = f"{image_prompt}\n\n---------\n\n{layout_details}\n\n---------\n\nHere's the topic:\n\n{topic}"
+            
+            # Combine image_prompt, layout 'Text' and 'Specs'
+            full_prompt = f"{image_prompt}\n\n---------\n\n{layout_details['Text']}\n\n---------\n\nHere's the topic:\n\n{topic}"
             prompt_messages.append({"role": "user", "content": full_prompt})
-            layout_messages.append({"role": "user", "content": layout_details})
-            specs_key = f"{layout_key}_specs"
-            specs = layout.get(specs_key, "")
+            
+            layout_messages.append({"role": "user", "content": layout_details['Text']})
+            
+            specs = layout_details.get('Specs', {})
+            
             prompts_array.append({"message": prompt_messages, "layout": layout_messages, "specs": specs})
     
     return prompts_array
