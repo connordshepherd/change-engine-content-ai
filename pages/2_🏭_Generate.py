@@ -132,7 +132,7 @@ if selected_content_type != "Select a Content Type":
         # Put the Generate button on the screen and start the logic for generating prompts and posting them to OpenAI
         if st.button("Generate"):
             # Generate prompts array
-            prompts_array = generate_prompts_array(image_prompt, layouts_array)
+            prompts_array = generate_prompts_array(topic, image_prompt, layouts_array)
 
             # Go to OpenAI for each one
             n = 1
