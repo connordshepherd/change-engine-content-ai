@@ -40,13 +40,14 @@ tools = [
 
 def evaluate_character_count_and_lines(pairs_json, specs):
     evaluation_result = []
-    
-    # Create a dictionary from pairs_json for easier lookup
-    pairs_dict = {pair['key']: pair['value'] for pair in pairs_json}
-    
+
+    # Create a dictionary from pairs_json for easier and case-insensitive lookup
+    pairs_dict = {pair['key'].lower(): pair['value'] for pair in pairs_json}
+
     for spec_key, spec_str in specs.items():
-        key = spec_key.replace('_specs', '').capitalize()
-        
+        key = spec_key.replace('_specs', '')
+        formatted_key = key.replace(' ', '').lower()
+
         try:
             spec = eval(spec_str)  # convert string to dictionary safely
         except Exception as e:
@@ -54,8 +55,8 @@ def evaluate_character_count_and_lines(pairs_json, specs):
             st.error(f"Error parsing spec: {e}")
 
         if spec:
-            value = pairs_dict.get(key, None)
-            
+            value = pairs_dict.get(formatted_key, None)
+
             if value:
                 value_lines = value.split('\n')
                 lines_criteria = spec["LINES"]
@@ -64,12 +65,12 @@ def evaluate_character_count_and_lines(pairs_json, specs):
                 meets_char_criteria = True
                 for i in range(lines_criteria):
                     upper_limit = spec[f"LINE_{i+1}_UPPER_LIMIT"]
-                    meets_char_criteria = meets_char_criteria and len(value_lines[i]) <= upper_limit
+                    meets_char_criteria &= len(value_lines[i]) <= upper_limit
 
                     # For Subtitle and Hashtag, also check lower limit
                     if f"LINE_{i+1}_LOWER_LIMIT" in spec:
                         lower_limit = spec[f"LINE_{i+1}_LOWER_LIMIT"]
-                        meets_char_criteria = meets_char_criteria and len(value_lines[i]) >= lower_limit
+                        meets_char_criteria &= len(value_lines[i]) >= lower_limit
 
                 evaluation_result.append({
                     "key": key,
@@ -85,7 +86,7 @@ def evaluate_character_count_and_lines(pairs_json, specs):
                     "meets_line_count": False,
                     "meets_character_criteria": False
                 })
-    
+
     return evaluation_result
 
 # Extract the tool responses from OpenAI into key-value pairs
