@@ -39,29 +39,23 @@ tools = [
 ]
 
 # Extract the tool responses from OpenAI into key-value pairs
-def extract_key_value_pairs(response: dict) -> ResponseArguments:
+def extract_key_value_pairs(response: Dict) -> List[Dict[str, str]]:
     key_value_pairs = []
-
-    choices = response.choices
     
-    for choice in choices:
-        tool_calls = choice.message.tool_calls
+    # Navigate to tool_calls in choices[0].message.tool_calls
+    tool_calls = response['choices'][0]['message']['tool_calls']
+    
+    for call in tool_calls:
+        # Parse the arguments JSON string
+        arguments = json.loads(call['function']['arguments'])
         
-        for tool_call in tool_calls:
-            try:
-                arguments = json.loads(tool_call.function.arguments)
-                
-                # Check if the arguments contain a list of tool uses
-                if 'tool_uses' in arguments:
-                    for tool_use in arguments['tool_uses']:
-                        parameters = tool_use.get('parameters')
-                        if parameters:
-                            key_value_pairs.append(parameters)
-                else:
-                    key_value_pairs.append(arguments)
-            except json.JSONDecodeError:
-                continue
-
+        # Extract 'key' and 'value' if available
+        if 'key' in arguments and 'value' in arguments:
+            key_value_pairs.append({
+                'key': arguments['key'],
+                'value': arguments['value']
+            })
+    
     return key_value_pairs
 
 # Function to send request to OpenAI API
