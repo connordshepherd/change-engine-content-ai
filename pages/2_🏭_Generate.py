@@ -41,22 +41,23 @@ tools = [
 def evaluate_character_count_and_lines(pairs_json, specs):
     evaluation_result = []
     
-    for pair in pairs_json:
-        key = pair['key']
-        value = pair['value']
-        value_lines = value.split('\n')
+    # Create a dictionary from pairs_json for easier lookup
+    pairs_dict = {pair['key']: pair['value'] for pair in pairs_json}
+    
+    for spec_key, spec_str in specs.items():
+        key = spec_key.replace('_specs', '').capitalize()
         
-        # Matching with the correct key format (case-sensitive handling)
-        key_spec_name = key.capitalize() + "_specs"
-        
-        if key_spec_name in specs:
-            try:
-                spec = eval(specs[key_spec_name])  # convert string to dictionary safely
-            except Exception as e:
-                spec = None
-                st.error(f"Error parsing spec: {e}")
+        try:
+            spec = eval(spec_str)  # convert string to dictionary safely
+        except Exception as e:
+            spec = None
+            st.error(f"Error parsing spec: {e}")
 
-            if spec:
+        if spec:
+            value = pairs_dict.get(key, None)
+            
+            if value:
+                value_lines = value.split('\n')
                 lines_criteria = spec["LINES"]
                 meets_lines_criteria = len(value_lines) == lines_criteria
 
@@ -76,13 +77,14 @@ def evaluate_character_count_and_lines(pairs_json, specs):
                     "meets_line_count": meets_lines_criteria,
                     "meets_character_criteria": meets_char_criteria
                 })
-        else:
-            evaluation_result.append({
-                "key": key,
-                "value": value,
-                "meets_line_count": "SPEC NOT FOUND",
-                "meets_character_criteria": "SPEC NOT FOUND"
-            })
+            else:
+                # If the key is missing in pairs_json, it's automatically false
+                evaluation_result.append({
+                    "key": key,
+                    "value": None,
+                    "meets_line_count": False,
+                    "meets_character_criteria": False
+                })
     
     return evaluation_result
 
