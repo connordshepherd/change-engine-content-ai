@@ -38,6 +38,45 @@ tools = [
     }
 ]
 
+def evaluate_character_count_and_lines(pairs_json, specs):
+    evaluation_result = []
+    
+    for pair in pairs_json:
+        key = pair['key']
+        value = pair['value']
+        value_lines = value.split('\n')
+        
+        if key.upper() + "_specs" in specs:
+            spec = eval(specs[key.upper() + "_specs"])  # convert string to dictionary
+            lines_criteria = spec["LINES"]
+            meets_lines_criteria = len(value_lines) == lines_criteria
+            
+            meets_char_criteria = True
+            for i in range(lines_criteria):
+                upper_limit = spec[f"LINE_{i+1}_UPPER_LIMIT"]
+                meets_char_criteria = meets_char_criteria and len(value_lines[i]) <= upper_limit
+                
+                # For Subtitle and Hashtag, also check lower limit
+                if f"LINE_{i+1}_LOWER_LIMIT" in spec:
+                    lower_limit = spec[f"LINE_{i+1}_LOWER_LIMIT"]
+                    meets_char_criteria = meets_char_criteria and len(value_lines[i]) >= lower_limit
+            
+            evaluation_result.append({
+                "key": key,
+                "value": value,
+                "meets_line_count": meets_lines_criteria,
+                "meets_character_criteria": meets_char_criteria
+            })
+        else:
+            evaluation_result.append({
+                "key": key,
+                "value": value,
+                "meets_line_count": "SPEC NOT FOUND",
+                "meets_character_criteria": "SPEC NOT FOUND"
+            })
+    
+    return evaluation_result
+
 # Extract the tool responses from OpenAI into key-value pairs
 def extract_key_value_pairs(response: Any) -> List[Dict[str, str]]:
     key_value_pairs = []
@@ -170,6 +209,9 @@ if selected_content_type != "Select a Content Type":
                 if response:
                     st.write(f"{response}\n\n----\n\n")
                     st.write(pairs_json)
+                    # Evaluate the character count and lines
+                    evaluation = evaluate_character_count_and_lines(pairs_json, specs)
+                    st.write(evaluation)
                 else:
                     st.write("Failed to get a response.\n\n----\n\n")
                 n = n + 1
