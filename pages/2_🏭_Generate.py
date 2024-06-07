@@ -200,6 +200,7 @@ if selected_content_type != "Select a Content Type":
             for prompt in prompts_array:
                 st.subheader(f"Generated Response {n}")
                 messages = prompt['message']
+                specs = prompt['specs']
                 response = send_to_openai(messages)
                 layout_messages = []
                 layout_messages.append({"role": "user", "content": response})
