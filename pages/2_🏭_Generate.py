@@ -56,22 +56,29 @@ def evaluate_character_count_and_lines(pairs_json, specs):
 
         if spec:
             value = pairs_dict.get(formatted_key, None)
+            result = {
+                "key": key,
+                "value": value,
+                "meets_line_count": False if value is None else True,
+                "meets_character_criteria": False if value is None else True,
+            }
 
             if value:
                 value_lines = value.split('\n')
                 lines_criteria = spec["LINES"]
                 meets_lines_criteria = len(value_lines) == lines_criteria
-                reason_code = ""
                 
                 if not meets_lines_criteria:
-                    reason_code = f"Wrong number of lines - please rewrite this text so it is on {lines_criteria} lines, but keep the meaning the same"
+                    result["meets_line_count"] = False
+                    result["reason_code"] = f"Wrong number of lines - please rewrite this text so it is on {lines_criteria} lines, but keep the meaning the same"
                 
                 meets_char_criteria = True
                 for i in range(lines_criteria):
                     upper_limit = spec[f"LINE_{i+1}_UPPER_LIMIT"]
                     line_length = len(value_lines[i])
                     if line_length > upper_limit:
-                        reason_code = f"Too many characters - please rewrite this text to have {line_length - upper_limit} fewer characters, but keep the meaning the same"
+                        result["meets_character_criteria"] = False
+                        result["reason_code"] = f"Too many characters - please rewrite this text to have {line_length - upper_limit} fewer characters, but keep the meaning the same"
                         meets_char_criteria = False
                         break
                         
@@ -79,27 +86,21 @@ def evaluate_character_count_and_lines(pairs_json, specs):
                     if f"LINE_{i+1}_LOWER_LIMIT" in spec:
                         lower_limit = spec[f"LINE_{i+1}_LOWER_LIMIT"]
                         if line_length < lower_limit:
-                            reason_code = f"Not enough characters - please rewrite this text to add {lower_limit - line_length} more characters, but keep the meaning the same"
+                            result["meets_character_criteria"] = False
+                            result["reason_code"] = f"Not enough characters - please rewrite this text to add {lower_limit - line_length} more characters, but keep the meaning the same"
                             meets_char_criteria = False
                             break
-                
-                evaluation_result.append({
-                    "key": key,
-                    "value": value,
-                    "meets_line_count": meets_lines_criteria,
-                    "meets_character_criteria": meets_char_criteria,
-                    "reason_code": reason_code
-                })
+
+                result["meets_line_count"] = meets_lines_criteria
+                result["meets_character_criteria"] = meets_char_criteria
+
             else:
-                # If the key is missing in pairs_json, it's automatically false
-                reason_code = "The specified key is missing from the generated content"
-                evaluation_result.append({
-                    "key": key,
-                    "value": None,
-                    "meets_line_count": False,
-                    "meets_character_criteria": False,
-                    "reason_code": reason_code
-                })
+                # If the key is missing in pairs_json, it's automatically false with a reason code
+                result["meets_line_count"] = False
+                result["meets_character_criteria"] = False
+                result["reason_code"] = "The specified key is missing from the generated content"
+                
+            evaluation_result.append(result)
 
     return evaluation_result
 
