@@ -168,7 +168,7 @@ def get_selected_layouts_array(edited_json, selected_layouts):
     return layouts_array
 
 # Creates the array of prompts to send to OpenAI
-def generate_prompts_array(image_prompt, layouts_array):
+def generate_prompts_array(topic, image_prompt, layouts_array):
     prompts_array = []
     
     for layout in layouts_array:
@@ -176,7 +176,7 @@ def generate_prompts_array(image_prompt, layouts_array):
             prompt_messages = []
             layout_messages = []
             # Concatenate image_prompt and detail section
-            full_prompt = f"{image_prompt}\n\n---------\n\n{layout_details}"
+            full_prompt = f"{image_prompt}\n\n---------\n\n{layout_details}\n\n---------\n\nHere's the topic:\n\n{topic}"
             prompt_messages.append({"role": "user", "content": full_prompt})
             layout_messages.append({"role": "user", "content": layout_details})
             prompts_array.append({"message": prompt_messages, "layout": layout_messages})
