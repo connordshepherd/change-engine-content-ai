@@ -25,7 +25,7 @@ tools = [
                 "properties": {
                     "key": {
                         "type": "string",
-                        "description": "The name of the component, like TITLE or SUBTITLE. Match exactly with what you see, eg return HASHTAG_2 instead of HASHTAG if you see HASHTAG_2",
+                        "description": "The name of the component, like TITLE or SUBTITLE. Match exactly with what you see, eg return HASHTAG 2 instead of HASHTAG if you see HASHTAG 2",
                     },
                     "value": {
                         "type": "string",
