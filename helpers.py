@@ -179,7 +179,9 @@ def generate_prompts_array(topic, image_prompt, layouts_array):
             full_prompt = f"{image_prompt}\n\n---------\n\n{layout_details}\n\n---------\n\nHere's the topic:\n\n{topic}"
             prompt_messages.append({"role": "user", "content": full_prompt})
             layout_messages.append({"role": "user", "content": layout_details})
-            prompts_array.append({"message": prompt_messages, "layout": layout_messages})
+            specs_key = f"{layout_key}_specs"
+            specs = layout.get(specs_key, "")
+            prompts_array.append({"message": prompt_messages, "layout": layout_messages, "specs": specs})
     
     return prompts_array
 
