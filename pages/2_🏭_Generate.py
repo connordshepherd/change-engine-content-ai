@@ -41,12 +41,12 @@ tools = [
 def evaluate_character_count_and_lines(pairs_json, specs):
     evaluation_result = []
 
-    # Create a dictionary from pairs_json for easier and case-insensitive lookup
-    pairs_dict = {pair['key'].lower(): pair['value'] for pair in pairs_json}
+    # Create a dictionary from pairs_json for easier and case-insensitive lookup with spaces removed
+    pairs_dict = {pair['key'].replace(' ', '').lower(): pair['value'] for pair in pairs_json}
 
     for spec_key, spec_str in specs.items():
-        key = spec_key.replace('_specs', '')
-        formatted_key = key.replace(' ', '').lower()
+        key = spec_key.replace('_specs', '').replace(' ', '')
+        formatted_key = key.lower()
 
         try:
             spec = eval(spec_str)  # convert string to dictionary safely
