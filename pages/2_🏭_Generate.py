@@ -97,7 +97,7 @@ v1_true_content_types = [item["Content Type"] for item in content_types_data if 
 options = ["Select a Content Type"] + v1_true_content_types
 
 # Title for the resulting generation
-document_title = st.text_input("Content", "Perks and Benefits FAQ")
+topic = st.text_input("Content", "Perks and Benefits FAQ")
 
 # Add a selectbox to the Streamlit app
 selected_content_type = st.selectbox("Choose a Content Type", options)
