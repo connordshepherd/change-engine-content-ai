@@ -97,7 +97,7 @@ v1_true_content_types = [item["Content Type"] for item in content_types_data if 
 options = ["Select a Content Type"] + v1_true_content_types
 
 # Title for the resulting generation
-topic = st.text_input("Content", "Perks and Benefits FAQ")
+topic = st.text_input("Content", "Zoom yoga session tomorrow Friday June 7")
 
 # Add a selectbox to the Streamlit app
 selected_content_type = st.selectbox("Choose a Content Type", options)
@@ -133,6 +133,7 @@ if selected_content_type != "Select a Content Type":
         if st.button("Generate"):
             # Generate prompts array
             prompts_array = generate_prompts_array(topic, image_prompt, layouts_array)
+            st.write(prompts_array)
 
             # Go to OpenAI for each one
             n = 1
