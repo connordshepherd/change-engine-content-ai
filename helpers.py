@@ -6,7 +6,9 @@ import pandas as pd
 import openai
 from typing import List, Dict, Union, Any
 
-model = "gpt-4o"
+# Define the OpenAI model
+model = "gpt-4-turbo"
+parsing_model = "gpt-4-turbo"
 
 # Function to get data from the "Content Types" table using field IDs
 def get_content_types_data():
