@@ -218,6 +218,20 @@ def send_to_openai(messages):
         print(f"An error occurred: {e}")
         return None
 
+# Function to send request to OpenAI API
+def send_plaintext_to_openai(plaintext):
+    messages = []
+    
+    try:
+        response = openai.chat.completions.create(
+            model=model,
+            messages=messages
+        )
+        return response.choices[0].message.content
+    except Exception as e:
+        print(f"An error occurred: {e}")
+        return None
+
 # Tools object that breaks down a response into parts
 tools = [
     {
