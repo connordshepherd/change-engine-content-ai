@@ -12,6 +12,16 @@ parsing_model = "gpt-4-turbo"
 # Streamlit Widescreen Mode
 st.set_page_config(layout="wide")
 
+# Define the fix_problems function
+def fix_problems(evaluation: List[Dict[str, Any]]) -> str:
+    result = []
+    for item in evaluation:
+        if "reason_code" in item:
+            text = item.get("value", "")
+            reason_code = item["reason_code"]
+            result.append(f"Please fix this text: {text}\n\n\n{reason_code}")
+    return "\n\n----\n\n".join(result) if result else "No fixes required."
+
 # Session State: Initialize the required session states
 if 'loaded_data' not in st.session_state:
     st.session_state.loaded_data = None
