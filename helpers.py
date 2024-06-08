@@ -10,6 +10,10 @@ from typing import List, Dict, Union, Any
 model = "gpt-4-turbo"
 parsing_model = "gpt-4-turbo"
 
+# Define types for readability
+ParsedArgument = Dict[str, str]
+ResponseArguments = Union[List[ParsedArgument], List[Dict[str, Union[str, List[ParsedArgument]]]]]
+
 # Function to get data from the "Content Types" table using field IDs
 def get_content_types_data():
     base_id = 'appbJ9Bt0YNuBafT4'
