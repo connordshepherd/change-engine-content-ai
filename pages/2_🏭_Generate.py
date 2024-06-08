@@ -106,6 +106,8 @@ if selected_content_type != "Select a Content Type":
                         fix_problems_output = fix_problems(evaluation)
                         st.subheader("Fix Problems")
                         st.write(fix_problems_output)
+                        fixed_response = send_plaintext_to_openai(fix_problems_output)
+                        st.write(fixed_response)
                 else:
                     st.write("Failed to get a response.\n\n----\n\n")
                 n = n + 1
