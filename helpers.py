@@ -4,6 +4,7 @@ import re
 import json
 import pandas as pd
 import openai
+from typing import List, Dict, Union, Any
 
 model = "gpt-4o"
 
