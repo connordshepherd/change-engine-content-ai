@@ -9,12 +9,6 @@ from typing import List, Dict, Union, Any
 model = "gpt-4-turbo"
 parsing_model = "gpt-4-turbo"
 
-# Define types for readability
-ParsedArgument = Dict[str, str]
-ResponseArguments = Union[List[ParsedArgument], List[Dict[str, Union[str, List[ParsedArgument]]]]]
-
-
-
 # Streamlit Widescreen Mode
 st.set_page_config(layout="wide")
 
