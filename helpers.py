@@ -210,3 +210,151 @@ def send_to_openai(messages):
     except Exception as e:
         print(f"An error occurred: {e}")
         return None
+
+# Tools object that breaks down a response into parts
+tools = [
+    {
+        "type": "function",
+        "function": {
+            "name": "fit_to_spec",
+            "description": "Fits components of messages to a spec.",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "key": {
+                        "type": "string",
+                        "description": "The name of the component, like TITLE or SUBTITLE. Match exactly with what you see, eg return HASHTAG 2 instead of HASHTAG if you see HASHTAG 2",
+                    },
+                    "value": {
+                        "type": "string",
+                        "description": "The value of the component. Make sure to preserve newlines as \n",
+                    },
+                },
+                "required": ["key", "value"],
+            },
+        }
+    }
+]
+
+def evaluate_character_count_and_lines(pairs_json, specs):
+    evaluation_result = []
+
+    # Create a dictionary from pairs_json for easier and case-insensitive lookup with spaces removed
+    pairs_dict = {pair['key'].replace(' ', '').lower(): pair['value'] for pair in pairs_json}
+
+    for spec_key, spec_str in specs.items():
+        key = spec_key.replace('_specs', '').replace(' ', '')
+        formatted_key = key.lower()
+
+        try:
+            spec = eval(spec_str)  # convert string to dictionary safely
+        except Exception as e:
+            spec = None
+            st.error(f"Error parsing spec: {e}")
+
+        if spec:
+            value = pairs_dict.get(formatted_key, None)
+            result = {
+                "key": key,
+                "value": value,
+                "meets_line_count": False if value is None else True,
+                "meets_character_criteria": False if value is None else True,
+            }
+
+            if value:
+                value_lines = value.split('\n')
+                lines_criteria = spec["LINES"]
+                meets_lines_criteria = len(value_lines) == lines_criteria
+                
+                if not meets_lines_criteria:
+                    result["meets_line_count"] = False
+                    result["reason_code"] = f"Wrong number of lines - please rewrite this text so it is on {lines_criteria} lines, but keep the meaning the same"
+                
+                meets_char_criteria = True
+                for i in range(lines_criteria):
+                    upper_limit = spec[f"LINE_{i+1}_UPPER_LIMIT"]
+                    line_length = len(value_lines[i])
+                    if line_length > upper_limit:
+                        result["meets_character_criteria"] = False
+                        result["reason_code"] = f"Too many characters - please rewrite this text to have {line_length - upper_limit} fewer characters, but keep the meaning the same. If there are line breaks, keep them"
+                        meets_char_criteria = False
+                        break
+                        
+                    # For Subtitle and Hashtag, also check lower limit
+                    if f"LINE_{i+1}_LOWER_LIMIT" in spec:
+                        lower_limit = spec[f"LINE_{i+1}_LOWER_LIMIT"]
+                        if line_length < lower_limit:
+                            result["meets_character_criteria"] = False
+                            result["reason_code"] = f"Not enough characters - please rewrite this text to add {lower_limit - line_length} more characters, but keep the meaning the same. If there are line breaks, keep them"
+                            meets_char_criteria = False
+                            break
+
+                result["meets_line_count"] = meets_lines_criteria
+                result["meets_character_criteria"] = meets_char_criteria
+
+            else:
+                # If the key is missing in pairs_json, it's automatically false with a reason code
+                result["meets_line_count"] = False
+                result["meets_character_criteria"] = False
+                result["reason_code"] = "The specified key is missing from the generated content"
+                
+            evaluation_result.append(result)
+
+    return evaluation_result
+
+# Extract the tool responses from OpenAI into key-value pairs
+def extract_key_value_pairs(response: Any) -> List[Dict[str, str]]:
+    key_value_pairs = []
+
+    # Check if 'choices' exists in response
+    if not hasattr(response, 'choices'):
+        raise ValueError("Response does not have 'choices' attribute")
+    
+    choices = response.choices
+
+    for choice in choices:
+        # Check if 'choice' has 'message' attribute
+        if not hasattr(choice, 'message'):
+            continue
+        message = choice.message
+
+        # Check if 'message' has 'tool_calls'
+        if not hasattr(message, 'tool_calls'):
+            continue
+        tool_calls = message.tool_calls
+
+        for call in tool_calls:
+            # Check if 'call' has 'function' attribute and if 'function' has 'arguments'
+            if not hasattr(call, 'function') or not hasattr(call.function, 'arguments'):
+                continue
+            
+            # Parse the arguments from the 'function' attribute of 'call'
+            function_arguments = call.function.arguments
+
+            # Ensure function_arguments is a valid JSON string
+            try:
+                arguments = json.loads(function_arguments)
+            except (json.JSONDecodeError, TypeError):
+                continue
+
+            # Check if arguments is a dictionary and contains both 'key' and 'value'
+            if isinstance(arguments, dict) and 'key' in arguments and 'value' in arguments:
+                key_value_pairs.append({
+                    'key': arguments['key'],
+                    'value': arguments['value']
+                })
+
+    return key_value_pairs
+
+# Function to send request to OpenAI API
+def send_to_openai_with_tools(messages):
+    try:
+        response = openai.chat.completions.create(
+            model=parsing_model,
+            messages=messages,
+            tools=tools
+        )
+        return response
+    except Exception as e:
+        print(f"An error occurred: {e}")
+        return None
