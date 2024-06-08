@@ -221,7 +221,7 @@ def send_to_openai(messages):
 # Function to send request to OpenAI API
 def send_plaintext_to_openai(plaintext):
     messages = []
-    
+    messages.append({"role": "user", "content": plaintext})
     try:
         response = openai.chat.completions.create(
             model=model,
