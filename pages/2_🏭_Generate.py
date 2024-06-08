@@ -20,7 +20,7 @@ def fix_problems(evaluation: List[Dict[str, Any]]) -> str:
             text = item.get("value", "")
             reason_code = item["reason_code"]
             result.append(f"Please fix this text: {text}\n\n\n{reason_code}")
-    return "\n\n----\n\n".join(result) if result else "No fixes required."
+    return "\n\n----\n\n".join(result)
 
 # Session State: Initialize the required session states
 if 'loaded_data' not in st.session_state:
@@ -99,6 +99,13 @@ if selected_content_type != "Select a Content Type":
                     # Evaluate the character count and lines
                     evaluation = evaluate_character_count_and_lines(pairs_json, specs)
                     st.write(evaluation)
+
+                    # Check if there are any entries containing 'reason_code'
+                    if any("reason_code" in item for item in evaluation):
+                        # Use fix_problems function to process the evaluation results
+                        fix_problems_output = fix_problems(evaluation)
+                        st.subheader("Fix Problems")
+                        st.write(fix_problems_output)
                 else:
                     st.write("Failed to get a response.\n\n----\n\n")
                 n = n + 1
