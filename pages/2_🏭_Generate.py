@@ -45,6 +45,9 @@ topic = st.text_input("Content", "Zoom yoga session tomorrow Friday June 7")
 # Add a selectbox to the Streamlit app
 selected_content_type = st.selectbox("Choose a Content Type", options)
 
+# Create an input box for company name
+company_name = st.text_input("Company Name", "NewCo")
+
 # Text input for layouts (comma-separated integers)
 selected_layouts = st.text_input("Select Layouts", "1, 3")
 
