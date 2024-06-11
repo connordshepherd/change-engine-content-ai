@@ -50,7 +50,7 @@ company_name = st.text_input("Company Name", "NewCo")
 
 # Create an input box for company name
 test_description = "Test company description goes here"
-company_tone_style = st.text_input("Company Tone and Style Guide", value=test_description, height=200)
+company_tone_style = st.text_area("Company Tone and Style Guide", value=test_description, height=200)
 
 # Text input for layouts (comma-separated integers)
 selected_layouts = st.text_input("Select Layouts", "1, 3")
