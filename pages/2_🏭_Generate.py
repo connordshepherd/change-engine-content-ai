@@ -49,7 +49,8 @@ selected_content_type = st.selectbox("Choose a Content Type", options)
 company_name = st.text_input("Company Name", "NewCo")
 
 # Create an input box for company name
-company_tone_style = st.text_input("Company Tone and Style Guide", "Tone Guide goes here", height=200)
+test_description = "Test company description goes here"
+company_tone_style = st.text_input("Company Tone and Style Guide", value=test_description, height=200)
 
 # Text input for layouts (comma-separated integers)
 selected_layouts = st.text_input("Select Layouts", "1, 3")
