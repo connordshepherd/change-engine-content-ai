@@ -139,7 +139,7 @@ if selected_content_type != "Select a Content Type":
                 if prompt_content:
                     st.subheader(f"Generated Response for {prompt_name}")
                     # Placeholder statement for the different logic
-                    other_prompt_messages = [],
+                    other_prompt_messages = []
                     other_prompt = company_tone_style + "\n\n--------------\n\n" + topic + "\n\n-----------\n\n" + prompt_content
                     other_prompt_messages.append({"role": "user", "content": other_prompt})
                     response = send_to_openai(other_prompt_messages)
