@@ -297,7 +297,7 @@ def evaluate_character_count_and_lines(pairs_json, specs):
                 
                 if not meets_lines_criteria:
                     result["meets_line_count"] = False
-                    result["reason_code"] = f"Wrong number of lines - please rewrite this text so it is on {lines_criteria} lines, but keep the meaning the same"
+                    result["reason_code"] = f"Wrong number of lines - please rewrite this text so it is on {lines_criteria} lines, but keep the general meaning the same:"
                 
                 meets_char_criteria = True
                 for i in range(lines_criteria):
@@ -305,7 +305,7 @@ def evaluate_character_count_and_lines(pairs_json, specs):
                     line_length = len(value_lines[i])
                     if line_length > upper_limit:
                         result["meets_character_criteria"] = False
-                        result["reason_code"] = f"Too many characters - please rewrite this text to have {line_length - upper_limit} fewer characters, but keep the meaning the same. If there are line breaks, keep them"
+                        result["reason_code"] = f"Too many characters - please rewrite this text to have {line_length - upper_limit} fewer characters, but keep the meaning the same. If there are line breaks, keep them:"
                         meets_char_criteria = False
                         break
                         
@@ -314,7 +314,7 @@ def evaluate_character_count_and_lines(pairs_json, specs):
                         lower_limit = spec[f"LINE_{i+1}_LOWER_LIMIT"]
                         if line_length < lower_limit:
                             result["meets_character_criteria"] = False
-                            result["reason_code"] = f"Not enough characters - please rewrite this text to add {lower_limit - line_length} more characters, but keep the meaning the same. If there are line breaks, keep them"
+                            result["reason_code"] = f"Not enough characters - please rewrite this text to add {lower_limit - line_length} more characters, but keep the meaning the same. If there are line breaks, keep them:"
                             meets_char_criteria = False
                             break
 
