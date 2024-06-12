@@ -96,6 +96,8 @@ if selected_content_type != "Select a Content Type":
                 messages = prompt['message']
                 specs = prompt['specs']
                 response = send_to_openai(messages)
+                st.write("This is what we're posting to openAI with a tool call")
+                st.write(response)
                 layout_messages = []
                 layout_messages.append({"role": "user", "content": response})
                 layout_response = send_to_openai_with_tools(layout_messages)
