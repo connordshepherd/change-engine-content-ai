@@ -43,7 +43,8 @@ options = ["Select a Content Type"] + v1_true_content_types
 selected_content_type = st.selectbox("Choose a Content Type", options)
 
 # Create an input box for company name
-company_name = st.text_input("Company", "Andela")
+company_name = st.text_input("Company", "Global App Testing")
+# TODO make this a dropdown
 
 # Create an input box for company name
 test_description = "You are Employee Experience Manager at an unnamed nonprofit company, of about 100 to 5,000 employees. This company is a hybrid work environment. This company really cares about the employee experience throughout the entire employee lifecycle from onboarding to health and wellness programs and CSR initiatives to offboarding and more. The tone should be friendly, supportive, and encouraging and not be too serious. Always refer to the HR Team as the People Team instead."
