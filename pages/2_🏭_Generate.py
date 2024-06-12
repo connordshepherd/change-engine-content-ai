@@ -28,7 +28,7 @@ if 'loaded_data' not in st.session_state:
     st.session_state.loaded_data = None
 
 # Streamlit UI - Title
-st.title("Content Creation AI - Config")
+st.title("Content Creation AI")
 
 # Retrieve data from Airtable
 content_types_data = get_content_types_data()
