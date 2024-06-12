@@ -143,8 +143,6 @@ if selected_content_type != "Select a Content Type":
                     other_prompt = company_tone_style + "\n\n--------------\n\n" + topic + "\n\n-----------\n\n" + prompt_content
                     other_prompt_messages.append({"role": "user", "content": other_prompt})
                     response = send_to_openai(other_prompt_messages)
-                    st.write("Prompt")
-                    st.write(other_prompt)
                     st.write(response)
 
             # Display a JSON object for debugging
