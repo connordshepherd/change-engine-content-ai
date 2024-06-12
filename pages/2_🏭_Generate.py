@@ -66,26 +66,24 @@ if selected_content_type != "Select a Content Type":
         content_casual = st.text_area("Content (Casual)", value=selected_data["Content Casual"], height=200)
         content_direct = st.text_area("Content (Direct)", value=selected_data["Content Direct"], height=200)
 
-        # Load data from the table corresponding to the selected content type
-        table_data = get_table_data(selected_content_type)
-        
-        # Process the table data into a DataFrame
-        df = process_table_data(table_data)
-
-        # Turn it into JSON
-        edited_data = df
-        oriented_json = edited_data.to_json(orient='records')
-        edited_json = json.loads(oriented_json)
-
-        # Add specs to the layouts data
-        edited_json_with_specs = add_specs(edited_json)
-
-        
-
         # Put the Generate button on the screen and start the logic for generating prompts and posting them to OpenAI
         if st.button("Generate"):
             # First check and process image_prompt if not null
             if image_prompt:
+
+                # Load data from the table corresponding to the selected content type
+                table_data = get_table_data(selected_content_type)
+                
+                # Process the table data into a DataFrame
+                df = process_table_data(table_data)
+        
+                # Turn it into JSON
+                edited_data = df
+                oriented_json = edited_data.to_json(orient='records')
+                edited_json = json.loads(oriented_json)
+        
+                # Add specs to the layouts data
+                edited_json_with_specs = add_specs(edited_json)
 
                 # Assemble the layouts as plaintext
                 layouts_array = get_selected_layouts_array(edited_json_with_specs, selected_layouts)
