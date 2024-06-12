@@ -39,9 +39,6 @@ v1_true_content_types = [item["Content Type"] for item in content_types_data if 
 # Insert default option at the start of the list
 options = ["Select a Content Type"] + v1_true_content_types
 
-# Title for the resulting generation
-topic = st.text_input("Content", "Zoom yoga session tomorrow Friday June 7")
-
 # Add a selectbox to the Streamlit app
 selected_content_type = st.selectbox("Choose a Content Type", options)
 
@@ -62,6 +59,9 @@ if selected_content_type != "Select a Content Type":
     if selected_data:
         st.subheader("Details for: " f"{selected_content_type}")
 
+        # Title for the resulting generation
+        topic = st.text_area("Prompt", value=selected_data["Example Prompt"], height=150)
+        
         # Display the Image Prompt in a text area for editing
         image_prompt = st.text_area("Image Prompt", value=selected_data["Image Prompt"], height=400)
 
