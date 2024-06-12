@@ -46,10 +46,10 @@ topic = st.text_input("Content", "Zoom yoga session tomorrow Friday June 7")
 selected_content_type = st.selectbox("Choose a Content Type", options)
 
 # Create an input box for company name
-company_name = st.text_input("Company Name", "Pull in Andela")
+company_name = st.text_input("Company", "Andela")
 
 # Create an input box for company name
-test_description = "You need to pull this in from the Airtable table Client AI + Automation"
+test_description = "You are Employee Experience Manager at an unnamed nonprofit company, of about 100 to 5,000 employees. This company is a hybrid work environment. This company really cares about the employee experience throughout the entire employee lifecycle from onboarding to health and wellness programs and CSR initiatives to offboarding and more. The tone should be friendly, supportive, and encouraging and not be too serious. Always refer to the HR Team as the People Team instead."
 company_tone_style = st.text_area("Company Tone and Style Guide", value=test_description, height=200)
 
 # Text input for layouts (comma-separated integers)
