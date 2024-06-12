@@ -86,44 +86,60 @@ if selected_content_type != "Select a Content Type":
 
         # Put the Generate button on the screen and start the logic for generating prompts and posting them to OpenAI
         if st.button("Generate"):
-            # Generate prompts array
-            prompts_array = generate_prompts_array(topic, image_prompt, layouts_array)
+            # First check and process image_prompt if not null
+            if image_prompt:
+                # Generate prompts array for image_prompt
+                prompts_array = generate_prompts_array(topic, image_prompt, layouts_array)
 
-            # Go to OpenAI for each one
-            n = 1
-            for prompt in prompts_array:
-                st.subheader(f"Generated Response {n}")
-                messages = prompt['message']
-                specs = prompt['specs']
-                response = send_to_openai(messages)
-                tool_call_prompt = "Please extract relevant entities (Title, Subtitle and any others) from the below text." + "\n\n---------------\n\n" + response
-                st.write("This is what we're posting to openAI with a tool call")
-                st.write(tool_call_prompt)
-                layout_messages = []
-                layout_messages.append({"role": "user", "content": response})
-                layout_response = send_to_openai_with_tools(layout_messages)
-                st.write("Raw Layout Response")
-                st.write(layout_response)
-                pairs_json = extract_key_value_pairs(layout_response)
-                
-                if response:
-                    st.write(f"{response}\n\n----\n\n")
-                    st.write(pairs_json)
-                    # Evaluate the character count and lines
-                    evaluation = evaluate_character_count_and_lines(pairs_json, specs)
-                    st.write(evaluation)
+                # Go to OpenAI for each one
+                n = 1
+                for prompt in prompts_array:
+                    st.subheader(f"Generated Response {n}")
+                    messages = prompt['message']
+                    specs = prompt['specs']
+                    response = send_to_openai(messages)
+                    tool_call_prompt = "Please extract relevant entities (Title, Subtitle and any others) from the below text." + "\n\n---------------\n\n" + response
+                    st.write("This is what we're posting to openAI with a tool call")
+                    st.write(tool_call_prompt)
+                    layout_messages = []
+                    layout_messages.append({"role": "user", "content": response})
+                    layout_response = send_to_openai_with_tools(layout_messages)
+                    st.write("Raw Layout Response")
+                    st.write(layout_response)
+                    pairs_json = extract_key_value_pairs(layout_response)
+                    
+                    if response:
+                        st.write(f"{response}\n\n----\n\n")
+                        st.write(pairs_json)
+                        # Evaluate the character count and lines
+                        evaluation = evaluate_character_count_and_lines(pairs_json, specs)
+                        st.write(evaluation)
 
-                    # Check if there are any entries containing 'reason_code'
-                    if any("reason_code" in item for item in evaluation):
-                        # Use fix_problems function to process the evaluation results
-                        fix_problems_output = fix_problems(evaluation)
-                        st.subheader("Fix Problems")
-                        st.write(fix_problems_output)
-                        fixed_response = send_plaintext_to_openai(fix_problems_output)
-                        st.write(fixed_response)
-                else:
-                    st.write("Failed to get a response.\n\n----\n\n")
-                n = n + 1
+                        # Check if there are any entries containing 'reason_code'
+                        if any("reason_code" in item for item in evaluation):
+                            # Use fix_problems function to process the evaluation results
+                            fix_problems_output = fix_problems(evaluation)
+                            st.subheader("Fix Problems")
+                            st.write(fix_problems_output)
+                            fixed_response = send_plaintext_to_openai(fix_problems_output)
+                            st.write(fixed_response)
+                    else:
+                        st.write("Failed to get a response.\n\n----\n\n")
+                    n = n + 1
+
+            # Now loop through other prompts (content_professional, content_casual, content_direct) and apply different logic
+            other_prompts = [
+                ("Content Professional", content_professional),
+                ("Content Casual", content_casual),
+                ("Content Direct", content_direct)
+            ]
+            
+            for prompt_name, prompt_content in other_prompts:
+                if prompt_content:
+                    st.subheader(f"Generated Response for {prompt_name}")
+                    # Placeholder statement for the different logic
+                    placeholder_logic_output = f"Placeholder for the different logic for {prompt_name} with content:\n{prompt_content}"
+                    st.write(placeholder_logic_output)
 
             # Display a JSON object for debugging
             st.subheader("Debug")
