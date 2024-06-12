@@ -49,9 +49,6 @@ company_name = st.text_input("Company", "Andela")
 test_description = "You are Employee Experience Manager at an unnamed nonprofit company, of about 100 to 5,000 employees. This company is a hybrid work environment. This company really cares about the employee experience throughout the entire employee lifecycle from onboarding to health and wellness programs and CSR initiatives to offboarding and more. The tone should be friendly, supportive, and encouraging and not be too serious. Always refer to the HR Team as the People Team instead."
 company_tone_style = st.text_area("Company Tone and Style Guide", value=test_description, height=100)
 
-# Text input for layouts (comma-separated integers)
-selected_layouts = st.text_input("Select Layouts", "1, 3")
-
 if selected_content_type != "Select a Content Type":
     # Filter data to get the selected content type details
     selected_data = next((item for item in content_types_data if item["Content Type"] == selected_content_type), None)
@@ -66,6 +63,10 @@ if selected_content_type != "Select a Content Type":
         content_casual = st.text_area("Content (Casual)", value=selected_data["Content Casual"], height=200)
         content_direct = st.text_area("Content (Direct)", value=selected_data["Content Direct"], height=200)
 
+        if image_prompt:
+            # Text input for layouts (comma-separated integers)
+            selected_layouts = st.text_input("Select Layouts", "1, 3")
+        
         # Put the Generate button on the screen and start the logic for generating prompts and posting them to OpenAI
         if st.button("Generate"):
             # First check and process image_prompt if not null
