@@ -62,7 +62,9 @@ if selected_content_type != "Select a Content Type":
         # Display all the prompts from Content Types
         topic = st.text_area("Prompt", value=selected_data["Example Prompt"], height=100)
         image_prompt = st.text_area("Image Prompt", value=selected_data["Image Prompt"], height=200)
-        content_professional = st.text_area("Content (Professional)", value=selected_data["Image Prompt"], height=200)
+        content_professional = st.text_area("Content (Professional)", value=selected_data["Content Professional"], height=200)
+        content_casual = st.text_area("Content (Casual)", value=selected_data["Content Casual"], height=200)
+        content_direct = st.text_area("Content (Direct)", value=selected_data["Content Direct"], height=200)
 
         # Load data from the table corresponding to the selected content type
         table_data = get_table_data(selected_content_type)
