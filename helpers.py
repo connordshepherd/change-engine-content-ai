@@ -366,12 +366,24 @@ def extract_key_value_pairs(response: Any) -> List[Dict[str, str]]:
             except (json.JSONDecodeError, TypeError):
                 continue
 
-            # Check if arguments is a dictionary and contains both 'key' and 'value'
-            if isinstance(arguments, dict) and 'key' in arguments and 'value' in arguments:
-                key_value_pairs.append({
-                    'key': arguments['key'],
-                    'value': arguments['value']
-                })
+            # Check if arguments contains 'tool_uses' or is directly map of key-value pairs
+            if 'tool_uses' in arguments:
+                tool_uses = arguments['tool_uses']
+                for tool_use in tool_uses:
+                    if 'parameters' in tool_use:
+                        params = tool_use['parameters']
+                        if 'key' in params and 'value' in params:
+                            key_value_pairs.append({
+                                'key': params['key'],
+                                'value': params['value']
+                            })
+            else:
+                # If no tool_uses, try to directly extract key-value pairs from arguments
+                if isinstance(arguments, dict) and 'key' in arguments and 'value' in arguments:
+                    key_value_pairs.append({
+                        'key': arguments['key'],
+                        'value': arguments['value']
+                    })
 
     return key_value_pairs
 
