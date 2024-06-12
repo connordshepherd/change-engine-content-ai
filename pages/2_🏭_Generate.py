@@ -59,11 +59,10 @@ if selected_content_type != "Select a Content Type":
     if selected_data:
         st.subheader("Details for: " f"{selected_content_type}")
 
-        # Title for the resulting generation
-        topic = st.text_area("Prompt", value=selected_data["Example Prompt"], height=150)
-        
-        # Display the Image Prompt in a text area for editing
-        image_prompt = st.text_area("Image Prompt", value=selected_data["Image Prompt"], height=400)
+        # Display all the prompts from Content Types
+        topic = st.text_area("Prompt", value=selected_data["Example Prompt"], height=100)
+        image_prompt = st.text_area("Image Prompt", value=selected_data["Image Prompt"], height=200)
+        content_professional = st.text_area("Content (Professional)", value=selected_data["Image Prompt"], height=200)
 
         # Load data from the table corresponding to the selected content type
         table_data = get_table_data(selected_content_type)
