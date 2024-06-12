@@ -42,6 +42,9 @@ options = ["Select a Content Type"] + v1_true_content_types
 # Add a selectbox to the Streamlit app
 selected_content_type = st.selectbox("Choose a Content Type", options)
 
+# Text input for layouts (comma-separated integers)
+selected_layouts = st.text_input("Select Layouts", "1, 3")
+
 # Create an input box for company name
 company_name = st.text_input("Company", "Global App Testing")
 # TODO make this a dropdown
@@ -64,10 +67,6 @@ if selected_content_type != "Select a Content Type":
         content_casual = st.text_area("Content (Casual)", value=selected_data["Content Casual"], height=200)
         content_direct = st.text_area("Content (Direct)", value=selected_data["Content Direct"], height=200)
 
-        if image_prompt:
-            # Text input for layouts (comma-separated integers)
-            selected_layouts = st.text_input("Select Layouts", "1, 3")
-        
         # Put the Generate button on the screen and start the logic for generating prompts and posting them to OpenAI
         if st.button("Generate"):
             # First check and process image_prompt if not null
