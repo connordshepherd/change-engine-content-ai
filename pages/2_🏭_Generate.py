@@ -88,7 +88,7 @@ if selected_content_type != "Select a Content Type":
 
                 # Assemble the layouts as plaintext
                 layouts_array = get_selected_layouts_array(edited_json_with_specs, selected_layouts)
-                st.write(layouts_array)
+                #st.write(layouts_array)
         
                 # Generate prompts array for image_prompt
                 prompts_array = generate_prompts_array(topic, image_prompt, layouts_array)
@@ -96,7 +96,7 @@ if selected_content_type != "Select a Content Type":
                 # Go to OpenAI for each one
                 n = 1
                 for prompt in prompts_array:
-                    st.subheader(f"Generated Response {n}")
+                    st.subheader(f"Images - Generated Response {n}")
                     messages = prompt['message']
                     specs = prompt['specs']
                     response = send_to_openai(messages)
