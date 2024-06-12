@@ -38,7 +38,7 @@ def get_content_types_data():
         fields = record.get('fields', {})
         content_type = fields.get('fldaCnCA1wmlTY1HR', 'N/A')  # Content Type
         type_ = fields.get('fldJg8ITzVFzf8sJx', 'N/A')  # Type
-        image_prompt = fields.get('fldn0VPsaEnostire', 'N/A')  # Image Prompt
+        image_prompt = fields.get('fldn0VPsaEnostire', Null)  # Image Prompt
         example_prompt = fields.get('fldwAUyVUHPY0pJRV', 'N/A')  # Example Prompt
         content_professional = fields.get('fldSC1pBRPq0YhVgd', 'N/A')  # Content Professional
         content_casual = fields.get('fld4YQ7TBqU4rgU2L', 'N/A')  # Content Casual
