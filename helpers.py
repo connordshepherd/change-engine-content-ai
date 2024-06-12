@@ -39,13 +39,21 @@ def get_content_types_data():
         content_type = fields.get('fldaCnCA1wmlTY1HR', 'N/A')  # Content Type
         type_ = fields.get('fldJg8ITzVFzf8sJx', 'N/A')  # Type
         image_prompt = fields.get('fldn0VPsaEnostire', 'N/A')  # Image Prompt
+        example_prompt = fields.get('fldwAUyVUHPY0pJRV', 'N/A')  # Example Prompt
+        content_professional = fields.get('fldSC1pBRPq0YhVgd', 'N/A')  # Content Professional
+        content_casual = fields.get('fld4YQ7TBqU4rgU2L', 'N/A')  # Content Casual
+        content_direct = fields.get('fldyhq9gi63C3qrTG', 'N/A')  # Content Direct
         v1 = fields.get('fld562mr7ro6jODUz', False)  # v1
         designhuddle_link = fields.get('fldhbUkT1QboXcsbG', 'N/A')  # DesignHuddle Link
         content = fields.get('fldbiEIqHlbrdCOhf', 'N/A')  # Content (synced table)
         data.append({
             "Content Type": content_type,
             "Type": type_,
+            "Example Prompt": example_prompt,
             "Image Prompt": image_prompt,
+            "Content Professional": content_professional,
+            "Content Casual": content_casual,
+            "Content Direct": content_direct,
             "v1": v1,
             "DesignHuddle Link": designhuddle_link,
             "Content": content
