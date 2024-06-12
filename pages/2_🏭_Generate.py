@@ -47,7 +47,7 @@ company_name = st.text_input("Company", "Andela")
 
 # Create an input box for company name
 test_description = "You are Employee Experience Manager at an unnamed nonprofit company, of about 100 to 5,000 employees. This company is a hybrid work environment. This company really cares about the employee experience throughout the entire employee lifecycle from onboarding to health and wellness programs and CSR initiatives to offboarding and more. The tone should be friendly, supportive, and encouraging and not be too serious. Always refer to the HR Team as the People Team instead."
-company_tone_style = st.text_area("Company Tone and Style Guide", value=test_description, height=200)
+company_tone_style = st.text_area("Company Tone and Style Guide", value=test_description, height=100)
 
 # Text input for layouts (comma-separated integers)
 selected_layouts = st.text_input("Select Layouts", "1, 3")
