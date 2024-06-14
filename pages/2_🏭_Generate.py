@@ -62,7 +62,8 @@ if selected_content_type != "Select a Content Type":
 
         # Display all the prompts from Content Types
         topic = st.text_area("Prompt", height=100)
-        st.write(f"Example Prompt: {value=selected_data["Example Prompt"]}")
+        example_value = selected_data["Example Prompt"]
+        st.write(f"Example Prompt: {example_value}")
         image_prompt = st.text_area("Image Prompt", value=selected_data["Image Prompt"], height=200)
         content_professional = st.text_area("Content (Professional)", value=selected_data["Content Professional"], height=200)
         content_casual = st.text_area("Content (Casual)", value=selected_data["Content Casual"], height=200)
