@@ -130,20 +130,14 @@ if selected_content_type != "Select a Content Type":
                             if not any("reason_code" in item for item in evaluation):
                                 break
                     
-                            # Adjust evaluation results to include line count
-                            problems = []
-                            keys_to_fix = []
-                            for item in evaluation:
-                                if "reason_code" in item:
-                                    line_count = item.get('lines_criteria', "N/A")
-                                    problem_with_lines = f"{item['reason_code']} Please return your new text, on {line_count} lines."
-                                    problems.append(problem_with_lines)
-                                    keys_to_fix.append(item["key"])
+                            # Use fix_problems function to process the evaluation results
+                            problems, keys_to_fix, line_counts = fix_problems(evaluation)
                     
                             st.subheader("Fix Problems")
-                            for problem, key in zip(problems, keys_to_fix):
+                            for problem, key, line_count in zip(problems, keys_to_fix, line_counts):
                                 st.write(f"Fixing problem for {key}: {problem}")
-                                fixed_response = send_plaintext_to_openai(problem)
+                                prompt_with_context = f"{problem}\n\nPlease return your new text, on {line_count} lines."
+                                fixed_response = send_plaintext_to_openai(prompt_with_context)
                                 st.write(fixed_response)
                     
                                 # Update pairs_json with the fixed response for the corresponding key
@@ -152,9 +146,8 @@ if selected_content_type != "Select a Content Type":
                                         pair["value"] = fixed_response
                     
                             iterations += 1
-                    
+                        
                         st.write(f"Completed in {iterations} iterations.")
-                    
                     else:
                         st.write("Failed to get a response.\n\n----\n\n")
                     n = n + 1
