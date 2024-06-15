@@ -14,7 +14,7 @@ parsing_model = "gpt-4-turbo"
 st.set_page_config(layout="wide")
 
 # Define the fix_problems function
-def fix_problems(evaluation: List<Dict[str, Any]]) -> str:
+def fix_problems(evaluation: List[Dict[str, Any]]) -> str:
     result = []
     for item in evaluation:
         if "reason_code" in item:
