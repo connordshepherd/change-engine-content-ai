@@ -102,56 +102,76 @@ if selected_content_type != "Select a Content Type":
 
                 # Go to OpenAI for each one
                 n = 1
-                for prompt in prompts_array:
-                    st.subheader(f"Images - Generated Response {n}")
-                    messages = prompt['message']
-                    specs = prompt['specs']
-                    response = send_to_openai(messages)
-                    tool_call_prompt = "Please extract relevant entities (Title, Subtitle and any others) from the below text." + "\n\n---------------\n\n" + response
-                    #st.write("This is what we're posting to openAI with a tool call")
-                    #st.write(tool_call_prompt)
-                    layout_messages = []
-                    layout_messages.append({"role": "user", "content": response})
-                    layout_response = send_to_openai_with_tools(layout_messages)
-                    #st.write("Raw Layout Response")
-                    #st.write(layout_response)
-                    pairs_json = extract_key_value_pairs(layout_response)
-                    
-                    if response:
-                        iterations = 0
-                        max_iterations = 5  # Max to avoid infinite loop
-                    
-                        while iterations < max_iterations:
-                            # Evaluate the character count and lines
-                            evaluation = evaluate_character_count_and_lines(pairs_json, specs)
-                            st.write(evaluation)
-                    
-                            # Check if there are any entries containing 'reason_code'
-                            if not any("reason_code" in item for item in evaluation):
-                                break
-                    
-                            # Use fix_problems function to process the evaluation results
-                            problems, keys_to_fix, line_counts = fix_problems(evaluation)
-                    
-                            st.subheader("Fix Problems")
-                            for problem, key, line_count in zip(problems, keys_to_fix, line_counts):
-                                st.write(f"Fixing problem for {key}: {problem}")
-                                prompt_with_context = f"{problem}\n\nPlease return your new text, on {line_count} lines."
-                                fixed_response = send_plaintext_to_openai(prompt_with_context)
-                                st.write(fixed_response)
-                    
-                                # Update pairs_json with the fixed response for the corresponding key
-                                for pair in pairs_json:
-                                    if pair["key"].upper() == key.upper():
-                                        pair["value"] = fixed_response
-                    
-                            iterations += 1
-                        
-                        st.write(f"Completed in {iterations} iterations.")
-                    else:
-                        st.write("Failed to get a response.\n\n----\n\n")
-                    n = n + 1
+                max_outer_iterations = 3  # Max to avoid infinite loop
+                outer_iterations = 0
 
+                while outer_iterations < max_outer_iterations:
+                    for prompt in prompts_array:
+                        st.subheader(f"Images - Generated Response {n}")
+                        messages = prompt['message']
+                        specs = prompt['specs']
+                        response = send_to_openai(messages)
+                        tool_call_prompt = "Please extract relevant entities (Title, Subtitle and any others) from the below text." + "\n\n---------------\n\n" + response
+                        #st.write("This is what we're posting to openAI with a tool call")
+                        #st.write(tool_call_prompt)
+                        layout_messages = []
+                        layout_messages.append({"role": "user", "content": response})
+                        layout_response = send_to_openai_with_tools(layout_messages)
+                        #st.write("Raw Layout Response")
+                        #st.write(layout_response)
+                        pairs_json = extract_key_value_pairs(layout_response)
+                    
+                        if response:
+                            iterations = 0
+                            max_iterations = 5  # Max to avoid infinite loop
+                            missing_key = False  # Flag to check for missing key
+                    
+                            while iterations < max_iterations:
+                                # Evaluate the character count and lines
+                                evaluation = evaluate_character_count_and_lines(pairs_json, specs)
+                                st.write(evaluation)
+                    
+                                # Check if there are any entries containing 'reason_code'
+                                if not any("reason_code" in item for item in evaluation):
+                                    break
+                                
+                                # Check for missing key error
+                                if any("reason_code" in item and "The specified key is missing" in item["reason_code"] for item in evaluation):
+                                    missing_key = True
+                                    break
+                    
+                                # Use fix_problems function to process the evaluation results
+                                problems, keys_to_fix, line_counts = fix_problems(evaluation)
+                    
+                                st.subheader("Fix Problems")
+                                for problem, key, line_count in zip(problems, keys_to_fix, line_counts):
+                                    st.write(f"Fixing problem for {key}: {problem}")
+                                    prompt_with_context = f"{problem}\n\nPlease return your new text, on {line_count} lines."
+                                    fixed_response = send_plaintext_to_openai(prompt_with_context)
+                                    st.write(fixed_response)
+                    
+                                    # Update pairs_json with the fixed response for the corresponding key
+                                    for pair in pairs_json:
+                                        if pair["key"].upper() == key.upper():
+                                            pair["value"] = fixed_response
+                    
+                                iterations += 1
+                            
+                            if not missing_key:
+                                st.write(f"Completed in {iterations} iterations.")
+                                break  # Break out of outer loop if successful
+                            else:
+                                st.write("Restarting due to missing key error.")
+                                outer_iterations += 1
+                                break  # Restart the outer loop
+                    
+                        else:
+                            st.write("Failed to get a response.\n\n----\n\n")
+                        n = n + 1
+                    else:
+                        # If the inner loop completes without missing key, break outer loop
+                        break
+            
             # Now loop through other prompts (content_professional, content_casual, content_direct) and apply different logic
             other_prompts = [
                 ("Content Professional", content_professional),
