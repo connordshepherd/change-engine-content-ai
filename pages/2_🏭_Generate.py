@@ -14,7 +14,7 @@ parsing_model = "gpt-4-turbo"
 st.set_page_config(layout="wide")
 
 # Define the fix_problems function
-def fix_problems(evaluation: List[Dict[str, Any]]) -> str:
+def fix_problems(evaluation: List<Dict[str, Any]]) -> str:
     result = []
     for item in evaluation:
         if "reason_code" in item:
@@ -114,19 +114,37 @@ if selected_content_type != "Select a Content Type":
                     
                     if response:
                         #st.write(f"{response}\n\n----\n\n")
-                        st.write(pairs_json)
-                        # Evaluate the character count and lines
-                        evaluation = evaluate_character_count_and_lines(pairs_json, specs)
-                        st.write(evaluation)
-
-                        # Check if there are any entries containing 'reason_code'
-                        if any("reason_code" in item for item in evaluation):
+                        #st.write(pairs_json)
+                        iterations = 0
+                        max_iterations = 5  # Max to avoid infinite loop
+                        
+                        while iterations < max_iterations:
+                            # Evaluate the character count and lines
+                            evaluation = evaluate_character_count_and_lines(pairs_json, specs)
+                            st.write(evaluation)
+                            
+                            # Check if there are any entries containing 'reason_code'
+                            if not any("reason_code" in item for item in evaluation):
+                                break
+                            
                             # Use fix_problems function to process the evaluation results
                             fix_problems_output = fix_problems(evaluation)
                             st.subheader("Fix Problems")
                             st.write(fix_problems_output)
                             fixed_response = send_plaintext_to_openai(fix_problems_output)
                             st.write(fixed_response)
+
+                            # Update pairs_json with the fixed response
+                            for item in evaluation:
+                                if "reason_code" in item:
+                                    for pair in pairs_json:
+                                        if pair["key"].upper() == item["key"].upper():
+                                            pair["value"] = fixed_response
+                                            
+                            iterations += 1
+
+                        st.write(f"Completed in {iterations} iterations.")
+
                     else:
                         st.write("Failed to get a response.\n\n----\n\n")
                     n = n + 1
