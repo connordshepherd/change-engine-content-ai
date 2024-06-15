@@ -109,7 +109,7 @@ if selected_content_type != "Select a Content Type":
                         specs = prompt['specs']
                         response = send_to_openai(messages)
                         if not response:
-                            st.write(f"Failed to get a response. Retrying {retry + 1}/3...")
+                            #st.write(f"Failed to get a response. Retrying {retry + 1}/3...")
                             continue  # Retry without incrementing n
 
                         tool_call_prompt = "Please extract relevant entities (Title, Subtitle and any others) from the below text." + "\n\n---------------\n\n" + response
@@ -123,10 +123,10 @@ if selected_content_type != "Select a Content Type":
                     
                         while iterations < 5:  # Attempt to fix and ensure criteria max 5 times
                             evaluation = evaluate_character_count_and_lines(pairs_json, specs)
-                            st.write(evaluation)
+                            #st.write(evaluation)
                     
                             if not any("reason_code" in item for item in evaluation):
-                                st.write(f"Completed in {iterations} iterations.")
+                                #st.write(f"Completed in {iterations} iterations.")
                                 break  # Break the fixing loop since all criteria are met
                     
                             if any("reason_code" in item and "The specified key is missing" in item["reason_code"] for item in evaluation):
@@ -136,14 +136,16 @@ if selected_content_type != "Select a Content Type":
                             problems, keys_to_fix, line_counts = fix_problems(evaluation)
                             st.subheader("Fix Problems")
                             for problem, key, line_count in zip(problems, keys_to_fix, line_counts):
-                                st.write(f"Fixing problem for {key}: {problem}")
+                                #st.write(f"Fixing problem for {key}: {problem}")
                                 prompt_with_context = f"{problem}\n\nPlease return your new text, on {line_count} lines."
                                 fixed_response = send_plaintext_to_openai(prompt_with_context)
-                                st.write(fixed_response)
+                                #st.write(fixed_response)
                     
                                 for pair in pairs_json:
                                     if pair["key"].upper() == key.upper():
                                         pair["value"] = fixed_response
+
+                                st.write(pairs_json)
                     
                             iterations += 1
                     
