@@ -14,14 +14,16 @@ parsing_model = "gpt-4-turbo"
 st.set_page_config(layout="wide")
 
 # Define the fix_problems function
-def fix_problems(evaluation: List[Dict[str, Any]]) -> str:
+def fix_problems(evaluation: List[Dict[str, Any]]) -> List[str]:
     result = []
+    reasons = []
     for item in evaluation:
         if "reason_code" in item:
             text = item.get("value", "")
             reason_code = item["reason_code"]
             result.append(f"Please fix this text: {text}\n\n\n{reason_code}")
-    return "\n\n----\n\n".join(result)
+            reasons.append(item["key"])  # Append the key to track which item we are fixing
+    return result, reasons
 
 # Session State: Initialize the required session states
 if 'loaded_data' not in st.session_state:
@@ -49,7 +51,7 @@ selected_layouts = st.text_input("Select Layouts", "1, 3")
 company_name = st.text_input("Company", "Global App Testing")
 # TODO make this a dropdown
 
-# Create an input box for company name
+# Create an input box for company description
 test_description = "You are Employee Experience Manager at an unnamed nonprofit company, of about 100 to 5,000 employees. This company is a hybrid work environment. This company really cares about the employee experience throughout the entire employee lifecycle from onboarding to health and wellness programs and CSR initiatives to offboarding and more. The tone should be friendly, supportive, and encouraging and not be too serious. Always refer to the HR Team as the People Team instead."
 company_tone_style = st.text_area("Company Tone and Style Guide", value=test_description, height=100)
 
@@ -128,19 +130,18 @@ if selected_content_type != "Select a Content Type":
                                 break
                             
                             # Use fix_problems function to process the evaluation results
-                            fix_problems_output = fix_problems(evaluation)
+                            problems, keys_to_fix = fix_problems(evaluation)
                             st.subheader("Fix Problems")
-                            st.write(fix_problems_output)
-                            fixed_response = send_plaintext_to_openai(fix_problems_output)
-                            st.write(fixed_response)
+                            for problem, key in zip(problems, keys_to_fix):
+                                st.write(f"Fixing problem for {key}: {problem}")
+                                fixed_response = send_plaintext_to_openai(problem)
+                                st.write(fixed_response)
+                                
+                                # Update pairs_json with the fixed response for the corresponding key
+                                for pair in pairs_json:
+                                    if pair["key"].upper() == key.upper():
+                                        pair["value"] = fixed_response
 
-                            # Update pairs_json with the fixed response
-                            for item in evaluation:
-                                if "reason_code" in item:
-                                    for pair in pairs_json:
-                                        if pair["key"].upper() == item["key"].upper():
-                                            pair["value"] = fixed_response
-                                            
                             iterations += 1
 
                         st.write(f"Completed in {iterations} iterations.")
