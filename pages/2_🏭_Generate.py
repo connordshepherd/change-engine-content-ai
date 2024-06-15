@@ -114,7 +114,7 @@ if selected_content_type != "Select a Content Type":
                     
                     if response:
                         #st.write(f"{response}\n\n----\n\n")
-                        #st.write(pairs_json)
+                        st.write(pairs_json)
                         # Evaluate the character count and lines
                         evaluation = evaluate_character_count_and_lines(pairs_json, specs)
                         st.write(evaluation)
