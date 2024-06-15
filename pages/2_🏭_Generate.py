@@ -21,7 +21,7 @@ def fix_problems(evaluation: List[Dict[str, Any]]) -> List[str]:
         if "reason_code" in item:
             text = item.get("value", "")
             reason_code = item["reason_code"]
-            result.append(f"Please fix this text: {text}\n\n\n{reason_code}")
+            result.append(f"{reason_code}\n\n---------\n\n{text}")
             reasons.append(item["key"])  # Append the key to track which item we are fixing
     return result, reasons
 
