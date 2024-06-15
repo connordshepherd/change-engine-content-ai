@@ -14,16 +14,19 @@ parsing_model = "gpt-4-turbo"
 st.set_page_config(layout="wide")
 
 # Define the fix_problems function
-def fix_problems(evaluation: List[Dict[str, Any]]) -> List[str]:
+def fix_problems(evaluation: List[Dict[str, Any]]) -> List[Tuple[str, str, int]]:
     result = []
     reasons = []
+    line_counts = []
     for item in evaluation:
         if "reason_code" in item:
             text = item.get("value", "")
             reason_code = item["reason_code"]
-            result.append(f"{reason_code}\n\n---------\n\n{text}")
+            formatted_problem = f"{reason_code}\n\n---------\n\n{text}"
+            result.append(formatted_problem)
             reasons.append(item["key"])  # Append the key to track which item we are fixing
-    return result, reasons
+            line_counts.append(item.get("lines_criteria", "N/A"))  # Append line count criteria
+    return result, reasons, line_counts
 
 # Session State: Initialize the required session states
 if 'loaded_data' not in st.session_state:
