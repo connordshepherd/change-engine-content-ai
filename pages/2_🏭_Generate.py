@@ -115,37 +115,43 @@ if selected_content_type != "Select a Content Type":
                     pairs_json = extract_key_value_pairs(layout_response)
                     
                     if response:
-                        #st.write(f"{response}\n\n----\n\n")
-                        #st.write(pairs_json)
                         iterations = 0
                         max_iterations = 5  # Max to avoid infinite loop
-                        
+                    
                         while iterations < max_iterations:
                             # Evaluate the character count and lines
                             evaluation = evaluate_character_count_and_lines(pairs_json, specs)
                             st.write(evaluation)
-                            
+                    
                             # Check if there are any entries containing 'reason_code'
                             if not any("reason_code" in item for item in evaluation):
                                 break
-                            
-                            # Use fix_problems function to process the evaluation results
-                            problems, keys_to_fix = fix_problems(evaluation)
+                    
+                            # Adjust evaluation results to include line count
+                            problems = []
+                            keys_to_fix = []
+                            for item in evaluation:
+                                if "reason_code" in item:
+                                    line_count = item.get('lines_criteria', "N/A")
+                                    problem_with_lines = f"{item['reason_code']} Please return your new text, on {line_count} lines."
+                                    problems.append(problem_with_lines)
+                                    keys_to_fix.append(item["key"])
+                    
                             st.subheader("Fix Problems")
                             for problem, key in zip(problems, keys_to_fix):
                                 st.write(f"Fixing problem for {key}: {problem}")
                                 fixed_response = send_plaintext_to_openai(problem)
                                 st.write(fixed_response)
-                                
+                    
                                 # Update pairs_json with the fixed response for the corresponding key
                                 for pair in pairs_json:
                                     if pair["key"].upper() == key.upper():
                                         pair["value"] = fixed_response
-
+                    
                             iterations += 1
-
+                    
                         st.write(f"Completed in {iterations} iterations.")
-
+                    
                     else:
                         st.write("Failed to get a response.\n\n----\n\n")
                     n = n + 1
