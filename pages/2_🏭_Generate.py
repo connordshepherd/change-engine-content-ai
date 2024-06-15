@@ -102,11 +102,10 @@ if selected_content_type != "Select a Content Type":
 
                 # Go to OpenAI for each one
                 n = 1
-                max_outer_iterations = 3  # Max to avoid infinite loop
-                outer_iterations = 0
-
-                while outer_iterations < max_outer_iterations:
-                    for prompt in prompts_array:
+                for prompt in prompts_array:
+                    retries = 0
+                    max_retries = 3  # Max to avoid infinite loop
+                    while retries < max_retries:
                         st.subheader(f"Images - Generated Response {n}")
                         messages = prompt['message']
                         specs = prompt['specs']
@@ -159,18 +158,19 @@ if selected_content_type != "Select a Content Type":
                             
                             if not missing_key:
                                 st.write(f"Completed in {iterations} iterations.")
-                                break  # Break out of outer loop if successful
+                                break  # Break out of inner loop if successful
                             else:
                                 st.write("Restarting due to missing key error.")
-                                outer_iterations += 1
-                                break  # Restart the outer loop
+                                retries += 1  # Increment retries and restart the inner loop
                     
                         else:
                             st.write("Failed to get a response.\n\n----\n\n")
                         n = n + 1
+                    
+                    if retries == max_retries:
+                        st.write(f"Failed to process prompt {n} after {max_retries} retries.")
                     else:
-                        # If the inner loop completes without missing key, break outer loop
-                        break
+                        break  # If no retries needed, break the outer 'for prompt in prompts_array' loop
             
             # Now loop through other prompts (content_professional, content_casual, content_direct) and apply different logic
             other_prompts = [
