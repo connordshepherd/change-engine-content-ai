@@ -103,74 +103,57 @@ if selected_content_type != "Select a Content Type":
                 # Go to OpenAI for each one
                 n = 1
                 for prompt in prompts_array:
-                    retries = 0
-                    max_retries = 3  # Max to avoid infinite loop
-                    while retries < max_retries:
+                    for retry in range(3):  # Retry up to 3 times
                         st.subheader(f"Images - Generated Response {n}")
                         messages = prompt['message']
                         specs = prompt['specs']
                         response = send_to_openai(messages)
+                        if not response:
+                            st.write(f"Failed to get a response. Retrying {retry + 1}/3...")
+                            continue  # Retry without incrementing n
+
                         tool_call_prompt = "Please extract relevant entities (Title, Subtitle and any others) from the below text." + "\n\n---------------\n\n" + response
-                        #st.write("This is what we're posting to openAI with a tool call")
-                        #st.write(tool_call_prompt)
-                        layout_messages = []
-                        layout_messages.append({"role": "user", "content": response})
+                        layout_messages = [{"role": "user", "content": response}]
                         layout_response = send_to_openai_with_tools(layout_messages)
-                        #st.write("Raw Layout Response")
-                        #st.write(layout_response)
                         pairs_json = extract_key_value_pairs(layout_response)
                     
-                        if response:
-                            iterations = 0
-                            max_iterations = 5  # Max to avoid infinite loop
-                            missing_key = False  # Flag to check for missing key
+                        # Process and evaluate the response
+                        iterations = 0
+                        missing_key = False  # Flag to indicate missing key
                     
-                            while iterations < max_iterations:
-                                # Evaluate the character count and lines
-                                evaluation = evaluate_character_count_and_lines(pairs_json, specs)
-                                st.write(evaluation)
+                        while iterations < 5:  # Attempt to fix and ensure criteria max 5 times
+                            evaluation = evaluate_character_count_and_lines(pairs_json, specs)
+                            st.write(evaluation)
                     
-                                # Check if there are any entries containing 'reason_code'
-                                if not any("reason_code" in item for item in evaluation):
-                                    break
-                                
-                                # Check for missing key error
-                                if any("reason_code" in item and "The specified key is missing" in item["reason_code"] for item in evaluation):
-                                    missing_key = True
-                                    break
-                    
-                                # Use fix_problems function to process the evaluation results
-                                problems, keys_to_fix, line_counts = fix_problems(evaluation)
-                    
-                                st.subheader("Fix Problems")
-                                for problem, key, line_count in zip(problems, keys_to_fix, line_counts):
-                                    st.write(f"Fixing problem for {key}: {problem}")
-                                    prompt_with_context = f"{problem}\n\nPlease return your new text, on {line_count} lines."
-                                    fixed_response = send_plaintext_to_openai(prompt_with_context)
-                                    st.write(fixed_response)
-                    
-                                    # Update pairs_json with the fixed response for the corresponding key
-                                    for pair in pairs_json:
-                                        if pair["key"].upper() == key.upper():
-                                            pair["value"] = fixed_response
-                    
-                                iterations += 1
-                            
-                            if not missing_key:
+                            if not any("reason_code" in item for item in evaluation):
                                 st.write(f"Completed in {iterations} iterations.")
-                                break  # Break out of inner loop if successful
-                            else:
-                                st.write("Restarting due to missing key error.")
-                                retries += 1  # Increment retries and restart the inner loop
+                                break  # Break the fixing loop since all criteria are met
                     
+                            if any("reason_code" in item and "The specified key is missing" in item["reason_code"] for item in evaluation):
+                                missing_key = True
+                                break  # Break the fixing loop to retry with a new generation
+
+                            problems, keys_to_fix, line_counts = fix_problems(evaluation)
+                            st.subheader("Fix Problems")
+                            for problem, key, line_count in zip(problems, keys_to_fix, line_counts):
+                                st.write(f"Fixing problem for {key}: {problem}")
+                                prompt_with_context = f"{problem}\n\nPlease return your new text, on {line_count} lines."
+                                fixed_response = send_plaintext_to_openai(prompt_with_context)
+                                st.write(fixed_response)
+                    
+                                for pair in pairs_json:
+                                    if pair["key"].upper() == key.upper():
+                                        pair["value"] = fixed_response
+                    
+                            iterations += 1
+                    
+                        if missing_key:
+                            st.write(f"Missing key detected. Retrying {retry + 1}/3...")
                         else:
-                            st.write("Failed to get a response.\n\n----\n\n")
-                        n = n + 1
-                    
-                    if retries == max_retries:
-                        st.write(f"Failed to process prompt {n} after {max_retries} retries.")
+                            break  # Successfully completed, no need to retry
                     else:
-                        break  # If no retries needed, break the outer 'for prompt in prompts_array' loop
+                        st.write(f"Failed to process prompt {n} after 3 retries.")
+                    n += 1
             
             # Now loop through other prompts (content_professional, content_casual, content_direct) and apply different logic
             other_prompts = [
