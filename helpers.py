@@ -305,7 +305,7 @@ def evaluate_character_count_and_lines(pairs_json, specs):
                     line_length = len(value_lines[i])
                     if line_length > upper_limit:
                         result["meets_character_criteria"] = False
-                        result["reason_code"] = f"Too many characters - please rewrite this text to have {line_length - upper_limit} fewer characters, but keep the meaning the same. Remove words if you need to. If there are line breaks, keep them:"
+                        result["reason_code"] = "There's a problem with this text. I want to use it in a visual design, but it is too long. Please rewrite the text to be shorter, but keep the same theme. Remove any punctuation. If the meaning changes a little bit, that is OK. If there are line breaks, keep them. Just return the adjusted text and nothing else. Here's the text:"
                         meets_char_criteria = False
                         break
                         
@@ -314,7 +314,7 @@ def evaluate_character_count_and_lines(pairs_json, specs):
                         lower_limit = spec[f"LINE_{i+1}_LOWER_LIMIT"]
                         if line_length < lower_limit:
                             result["meets_character_criteria"] = False
-                            result["reason_code"] = f"Not enough characters - please rewrite this text to add {lower_limit - line_length} more characters, but keep the meaning the same. Add words if you can. If there are line breaks, keep them:"
+                            result["reason_code"] = "There's a problem with this text. I want to use it in a visual design, but it is too short. Please rewrite the text to be longer, but keep the same theme. If the meaning changes a little bit, that is OK. If there are line breaks, keep them. Just return the adjusted text and nothing else. Here's the text:"
                             meets_char_criteria = False
                             break
 
