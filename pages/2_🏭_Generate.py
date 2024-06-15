@@ -7,7 +7,7 @@ import openai
 from typing import List, Dict, Union, Any, Tuple
 
 # Define the OpenAI model
-model = "gpt-4-turbo"
+model = "gpt-4o"
 parsing_model = "gpt-4-turbo"
 
 # Streamlit Widescreen Mode
