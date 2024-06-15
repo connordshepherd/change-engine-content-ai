@@ -306,7 +306,7 @@ def evaluate_character_count_and_lines(pairs_json, specs):
                     line_length = len(value_lines[i])
                     if line_length > upper_limit:
                         result["meets_character_criteria"] = False
-                        result["reason_code"] = f"If you had to make this text shorter, how would you do it? You can change the meaning if you need to. This is for a graphic design, so we're just trying to communicate the general theme. It doesn't need to be exact. Return your new text, on {lines_criteria} lines."
+                        result["reason_code"] = f"Say something like this, with only 2 words. You can change the meaning if you need to. If you want to remove a word, do it. This is for a graphic design, so we're just trying to communicate the general theme. It doesn't need to be exact. Return your new text, on {lines_criteria} lines."
                         meets_char_criteria = False
                         break
                         
