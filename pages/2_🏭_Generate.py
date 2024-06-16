@@ -183,7 +183,7 @@ if selected_content_type != "Select a Content Type":
                     st.write(response)
         
             # Display all accumulated results
-            st.subheader("All Generated Responses")
+            st.subheader("Images - All Generated Responses")
             for result in results:
                 st.text(result)
         
