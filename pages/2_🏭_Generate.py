@@ -62,6 +62,27 @@ if selected_content_type != "Select a Content Type":
         content_casual = st.text_area("Content (Casual)", value=selected_data["Content Casual"], height=200)
         content_direct = st.text_area("Content (Direct)", value=selected_data["Content Direct"], height=200)
 
+        # Load data from the table corresponding to the selected content type
+        table_data = get_table_data(selected_content_type)
+        
+        # Process the table data into a DataFrame
+        df = process_table_data(table_data)
+
+        # Turn it into JSON
+        edited_data = df
+        oriented_json = edited_data.to_json(orient='records')
+        edited_json = json.loads(oriented_json)
+
+        # Add specs to the layouts data
+        edited_json_with_specs = add_specs(edited_json)
+
+        # Assemble the layouts as plaintext
+        layouts_array = get_selected_layouts_array(edited_json_with_specs, selected_layouts)
+        #st.write(layouts_array)
+
+        # Generate prompts array for image_prompt
+        prompts_array = generate_prompts_array(topic, image_prompt, layouts_array)
+
         # This button starts the generation loop.
         if st.button("Generate"):
             results = []  # Initialize a list to hold the results
@@ -69,27 +90,6 @@ if selected_content_type != "Select a Content Type":
             # This starts the IMAGE SUBLOOP. Images are complicated because they have stringent character length requirements. 
             # Only FAQ images are exempt - they are actually too complex to map here.
             if image_prompt:
-        
-                # Load data from the table corresponding to the selected content type
-                table_data = get_table_data(selected_content_type)
-                
-                # Process the table data into a DataFrame
-                df = process_table_data(table_data)
-        
-                # Turn it into JSON
-                edited_data = df
-                oriented_json = edited_data.to_json(orient='records')
-                edited_json = json.loads(oriented_json)
-        
-                # Add specs to the layouts data
-                edited_json_with_specs = add_specs(edited_json)
-        
-                # Assemble the layouts as plaintext
-                layouts_array = get_selected_layouts_array(edited_json_with_specs, selected_layouts)
-                #st.write(layouts_array)
-        
-                # Generate prompts array for image_prompt
-                prompts_array = generate_prompts_array(topic, image_prompt, layouts_array)
         
                 # Go to OpenAI for each one
                 for prompt, layout in zip(prompts_array, layouts_array):
