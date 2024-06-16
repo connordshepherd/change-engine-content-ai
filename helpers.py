@@ -4,7 +4,7 @@ import re
 import json
 import pandas as pd
 import openai
-from typing import List, Dict, Union, Any
+from typing import List, Dict, Union, Any, Tuple
 
 # Define the OpenAI model
 model = "gpt-4-turbo"
