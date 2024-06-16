@@ -104,11 +104,10 @@ if selected_content_type != "Select a Content Type":
         
                 # Go to OpenAI for each one
                 for prompt, layout in zip(prompts_array, layouts_array):
-                    st.write(layouts_array)
-                    layout_number = layout.get("Layout Number", "Unknown Layout")  # Extract layout number or use placeholder
+                    layout_key = list(layout.keys())[0]  # Extract the layout key (e.g., "Layout 1")
                     
                     for retry in range(3):  # Retry up to 3 times
-                        st.subheader(f"Images - Generated Response for Layout {layout_number}")
+                        st.subheader(f"Images - Generated Response for {layout_key}")
                         messages = prompt['message']
                         specs = prompt['specs']
                         response = send_to_openai(messages)
@@ -158,10 +157,10 @@ if selected_content_type != "Select a Content Type":
                         else:
                             break  # Successfully completed, no need to retry
                     else:
-                        st.write(f"Failed to process prompt for Layout {layout_number} after 3 retries.")
+                        st.write(f"Failed to process prompt for {layout_key} after 3 retries.")
         
                     # Collect and format the final output
-                    result = f"Generated Response for Image Layout {layout_number}:\n"
+                    result = f"Generated Response for {layout_key}:\n"
                     for pair in pairs_json:
                         result += f"{pair['key']}: {pair['value']}\n"
                     result += "-" * 30 + "\n"
