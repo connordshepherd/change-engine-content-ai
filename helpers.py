@@ -61,7 +61,30 @@ def get_content_types_data():
 
     return data
 
-# Function to get all the table data from Airtable when the user selects a table
+# Function to get all client names and their associated tone prompts from Airtable
+def get_client_data():
+    """
+    Fetch client names and their associated tone prompts from Airtable.
+    """
+    url = "https://api.airtable.com/v0/appbJ9Bt0YNuBafT4/Client%20AI%20+%20Automation"
+    airtable_token = st.secrets.AIRTABLE_PERSONAL_TOKEN
+    headers = {
+        "Authorization": f"Bearer {airtable_token}"
+    }
+    response = requests.get(url, headers=headers)
+
+    if response.status_code == 200:
+        records = response.json()['records']
+        client_data = {}
+        for record in records:
+            fields = record['fields']
+            if 'Customer Name' in fields and 'AI Brand Tone Prompt' in fields:
+                client_data[fields['Customer Name']] = fields['AI Brand Tone Prompt']
+        return client_data
+    else:
+        return {}
+
+# Function to get all the Layout table data from Airtable when the user selects a table
 def get_table_data(table_name):
     """
     Fetch table data from Airtable based on the given table name.
