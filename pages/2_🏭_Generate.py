@@ -3,7 +3,7 @@ import json
 import pandas as pd
 from helpers import get_content_types_data, get_table_data, process_table_data, get_selected_layouts_array, generate_prompts_array, send_to_openai
 from helpers import add_specs, evaluate_character_count_and_lines, extract_key_value_pairs, send_to_openai_with_tools, tools
-from helpers import send_plaintext_to_openai, fix_problems
+from helpers import send_plaintext_to_openai, fix_problems, get_client_data
 import openai
 from typing import List, Dict, Union, Any, Tuple
 
@@ -32,13 +32,19 @@ selected_content_type = st.selectbox("Choose a Content Type", options)
 # Text input for layouts (comma-separated integers)
 selected_layouts = st.text_input("Select Layouts", "1, 3")
 
-# Create an input box for company name
-company_name = st.text_input("Company", "Global App Testing")
-# TODO make this a dropdown
+# Retrieve client data from Airtable
 
-# Create an input box for company description
-test_description = "You are Employee Experience Manager at an unnamed nonprofit company, of about 100 to 5,000 employees. This company is a hybrid work environment. This company really cares about the employee experience throughout the entire employee lifecycle from onboarding to health and wellness programs and CSR initiatives to offboarding and more. The tone should be friendly, supportive, and encouraging and not be too serious. Always refer to the HR Team as the People Team instead."
-company_tone_style = st.text_area("Company Tone and Style Guide", value=test_description, height=100)
+client_data = get_client_data()
+
+# Create a selectbox for company name
+company_name_list = sorted(client_data.keys())
+selected_company_name = st.selectbox("Company", options=["Select a Company"] + company_name_list)
+
+# Display the AI Brand Tone Prompt for the selected company
+if selected_company_name and selected_company_name != 'Select a Company':
+    company_tone_style = st.text_area("Company Tone and Style Guide", value=client_data[selected_company_name], height=100)
+else:
+    company_tone_style = st.text_area("Company Tone and Style Guide", value="", height=100)
 
 if selected_content_type != "Select a Content Type":
     # Filter data to get the selected content type details
