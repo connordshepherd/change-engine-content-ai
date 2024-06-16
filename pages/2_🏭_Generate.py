@@ -80,11 +80,11 @@ if selected_content_type != "Select a Content Type":
     
             # Assemble the layouts as plaintext
             layouts_array = get_selected_layouts_array(edited_json_with_specs, selected_layouts)
-            st.write(layouts_array)
+            # st.write(layouts_array)
     
             # Generate prompts array for image_prompt
             prompts_array = generate_prompts_array(topic, image_prompt, layouts_array)
-            st.write(prompts_array)
+            # st.write(prompts_array)
 
         # This button starts the generation loop.
         if st.button("Generate"):
