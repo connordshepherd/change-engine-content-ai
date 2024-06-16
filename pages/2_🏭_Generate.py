@@ -104,6 +104,7 @@ if selected_content_type != "Select a Content Type":
         
                 # Go to OpenAI for each one
                 for prompt, layout in zip(prompts_array, layouts_array):
+                    st.write(layouts_array)
                     layout_number = layout.get("Layout Number", "Unknown Layout")  # Extract layout number or use placeholder
                     
                     for retry in range(3):  # Retry up to 3 times
