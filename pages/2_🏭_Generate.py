@@ -6,10 +6,6 @@ from helpers import add_specs, evaluate_character_count_and_lines, extract_key_v
 import openai
 from typing import List, Dict, Union, Any, Tuple
 
-# Define the OpenAI model
-model = "gpt-4o"
-parsing_model = "gpt-4-turbo"
-
 # Streamlit Widescreen Mode
 st.set_page_config(layout="wide")
 
@@ -97,7 +93,7 @@ if selected_content_type != "Select a Content Type":
         
                 # Assemble the layouts as plaintext
                 layouts_array = get_selected_layouts_array(edited_json_with_specs, selected_layouts)
-                # st.write(layouts_array)
+                st.write(layouts_array)
         
                 # Generate prompts array for image_prompt
                 prompts_array = generate_prompts_array(topic, image_prompt, layouts_array)
