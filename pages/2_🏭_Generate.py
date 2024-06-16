@@ -103,10 +103,11 @@ if selected_content_type != "Select a Content Type":
                 prompts_array = generate_prompts_array(topic, image_prompt, layouts_array)
         
                 # Go to OpenAI for each one
-                n = 1
-                for prompt in prompts_array:
+                for prompt, layout in zip(prompts_array, layouts_array):
+                    layout_number = layout.get("Layout Number", "Unknown Layout")  # Extract layout number or use placeholder
+                    
                     for retry in range(3):  # Retry up to 3 times
-                        st.subheader(f"Images - Generated Response {n}")
+                        st.subheader(f"Images - Generated Response for Layout {layout_number}")
                         messages = prompt['message']
                         specs = prompt['specs']
                         response = send_to_openai(messages)
@@ -156,11 +157,10 @@ if selected_content_type != "Select a Content Type":
                         else:
                             break  # Successfully completed, no need to retry
                     else:
-                        st.write(f"Failed to process prompt {n} after 3 retries.")
-                    n += 1
+                        st.write(f"Failed to process prompt for Layout {layout_number} after 3 retries.")
         
                     # Collect and format the final output
-                    result = f"Generated Response for Image Layout {n}:\n"
+                    result = f"Generated Response for Image Layout {layout_number}:\n"
                     for pair in pairs_json:
                         result += f"{pair['key']}: {pair['value']}\n"
                     result += "-" * 30 + "\n"
@@ -176,7 +176,6 @@ if selected_content_type != "Select a Content Type":
             for prompt_name, prompt_content in other_prompts:
                 if prompt_content:
                     st.subheader(f"Generated Response for {prompt_name}")
-                    # Placeholder statement for the different logic
                     other_prompt_messages = []
                     other_prompt = company_tone_style + "\n\n--------------\n\n" + topic + "\n\n-----------\n\n" + prompt_content
                     other_prompt_messages.append({"role": "user", "content": other_prompt})
