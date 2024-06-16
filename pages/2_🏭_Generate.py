@@ -79,7 +79,7 @@ if selected_content_type != "Select a Content Type":
         
                 # Assemble the layouts as plaintext
                 layouts_array = get_selected_layouts_array(edited_json_with_specs, selected_layouts)
-                st.write(layouts_array)
+                #st.write(layouts_array)
         
                 # Generate prompts array for image_prompt
                 prompts_array = generate_prompts_array(topic, image_prompt, layouts_array)
@@ -93,7 +93,7 @@ if selected_content_type != "Select a Content Type":
                         messages = prompt['message']
                         specs = prompt['specs']
                         response = send_to_openai(messages)
-                        st.write(response)
+                        #st.write(response)
                         if not response:
                             # st.write(f"Failed to get a response. Retrying {retry + 1}/3...")
                             continue  # Retry without incrementing n
