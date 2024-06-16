@@ -107,7 +107,7 @@ if selected_content_type != "Select a Content Type":
                     layout_key = list(layout.keys())[0]  # Extract the layout key (e.g., "Layout 1")
                     
                     for retry in range(3):  # Retry up to 3 times
-                        st.subheader(f"Images - Generated Response for {layout_key}")
+                        #st.subheader(f"Images - Generated Response for {layout_key}")
                         messages = prompt['message']
                         specs = prompt['specs']
                         response = send_to_openai(messages)
@@ -137,7 +137,7 @@ if selected_content_type != "Select a Content Type":
                                 break  # Break the fixing loop to retry with a new generation
         
                             problems, keys_to_fix, line_counts = fix_problems(evaluation)
-                            st.subheader("Fix Problems")
+                            #st.subheader("Fix Problems")
                             for problem, key, line_count in zip(problems, keys_to_fix, line_counts):
                                 # st.write(f"Fixing problem for {key}: {problem}")
                                 prompt_with_context = f"{problem}\n\nPlease return your new text, on {line_count} lines."
@@ -148,7 +148,7 @@ if selected_content_type != "Select a Content Type":
                                     if pair["key"].upper() == key.upper():
                                         pair["value"] = fixed_response
         
-                                st.write(pairs_json)
+                                #st.write(pairs_json)
                     
                             iterations += 1
                     
