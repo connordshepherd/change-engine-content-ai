@@ -148,7 +148,12 @@ if selected_content_type != "Select a Content Type":
                         result += f"{pair['key']}: {pair['value']}\n"
                     result += "-" * 30 + "\n"
                     results.append(result)  # Append the formatted result to the list
-        
+
+            # Display all accumulated results
+            st.subheader("Images - All Generated Responses")
+            for result in results:
+                st.text(result)
+            
             # Now loop through other prompts (content_professional, content_casual, content_direct) and apply different logic
             other_prompts = [
                 ("Content Professional", content_professional),
@@ -164,11 +169,6 @@ if selected_content_type != "Select a Content Type":
                     other_prompt_messages.append({"role": "user", "content": other_prompt})
                     response = send_to_openai(other_prompt_messages)
                     st.write(response)
-        
-            # Display all accumulated results
-            st.subheader("Images - All Generated Responses")
-            for result in results:
-                st.text(result)
         
             # Display a JSON object for debugging
             st.subheader("Debug")
