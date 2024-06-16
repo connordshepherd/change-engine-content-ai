@@ -2,27 +2,13 @@ import streamlit as st
 import json
 import pandas as pd
 from helpers import get_content_types_data, get_table_data, process_table_data, get_selected_layouts_array, generate_prompts_array, send_to_openai
-from helpers import add_specs, evaluate_character_count_and_lines, extract_key_value_pairs, send_to_openai_with_tools, tools, send_plaintext_to_openai
+from helpers import add_specs, evaluate_character_count_and_lines, extract_key_value_pairs, send_to_openai_with_tools, tools
+from helpers import send_plaintext_to_openai, fix_problems
 import openai
 from typing import List, Dict, Union, Any, Tuple
 
 # Streamlit Widescreen Mode
 st.set_page_config(layout="wide")
-
-# Define the fix_problems function
-def fix_problems(evaluation: List[Dict[str, Any]]) -> List[Tuple[str, str, int]]:
-    result = []
-    reasons = []
-    line_counts = []
-    for item in evaluation:
-        if "reason_code" in item:
-            text = item.get("value", "")
-            reason_code = item["reason_code"]
-            formatted_problem = f"{reason_code}\n\n---------\n\n{text}"
-            result.append(formatted_problem)
-            reasons.append(item["key"])  # Append the key to track which item we are fixing
-            line_counts.append(item.get("lines_criteria", "N/A"))  # Append line count criteria
-    return result, reasons, line_counts
 
 # Session State: Initialize the required session states
 if 'loaded_data' not in st.session_state:
