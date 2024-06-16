@@ -76,9 +76,11 @@ if selected_content_type != "Select a Content Type":
 
         # Put the Generate button on the screen and start the logic for generating prompts and posting them to OpenAI
         if st.button("Generate"):
+            results = []  # Initialize a list to hold the results
+        
             # First check and process image_prompt if not null
             if image_prompt:
-
+        
                 # Load data from the table corresponding to the selected content type
                 table_data = get_table_data(selected_content_type)
                 
@@ -92,14 +94,14 @@ if selected_content_type != "Select a Content Type":
         
                 # Add specs to the layouts data
                 edited_json_with_specs = add_specs(edited_json)
-
+        
                 # Assemble the layouts as plaintext
                 layouts_array = get_selected_layouts_array(edited_json_with_specs, selected_layouts)
-                #st.write(layouts_array)
+                # st.write(layouts_array)
         
                 # Generate prompts array for image_prompt
                 prompts_array = generate_prompts_array(topic, image_prompt, layouts_array)
-
+        
                 # Go to OpenAI for each one
                 n = 1
                 for prompt in prompts_array:
@@ -109,9 +111,9 @@ if selected_content_type != "Select a Content Type":
                         specs = prompt['specs']
                         response = send_to_openai(messages)
                         if not response:
-                            #st.write(f"Failed to get a response. Retrying {retry + 1}/3...")
+                            # st.write(f"Failed to get a response. Retrying {retry + 1}/3...")
                             continue  # Retry without incrementing n
-
+        
                         tool_call_prompt = "Please extract relevant entities (Title, Subtitle and any others) from the below text." + "\n\n---------------\n\n" + response
                         layout_messages = [{"role": "user", "content": response}]
                         layout_response = send_to_openai_with_tools(layout_messages)
@@ -123,28 +125,28 @@ if selected_content_type != "Select a Content Type":
                     
                         while iterations < 5:  # Attempt to fix and ensure criteria max 5 times
                             evaluation = evaluate_character_count_and_lines(pairs_json, specs)
-                            #st.write(evaluation)
+                            # st.write(evaluation)
                     
                             if not any("reason_code" in item for item in evaluation):
-                                #st.write(f"Completed in {iterations} iterations.")
+                                # st.write(f"Completed in {iterations} iterations.")
                                 break  # Break the fixing loop since all criteria are met
                     
                             if any("reason_code" in item and "The specified key is missing" in item["reason_code"] for item in evaluation):
                                 missing_key = True
                                 break  # Break the fixing loop to retry with a new generation
-
+        
                             problems, keys_to_fix, line_counts = fix_problems(evaluation)
                             st.subheader("Fix Problems")
                             for problem, key, line_count in zip(problems, keys_to_fix, line_counts):
-                                #st.write(f"Fixing problem for {key}: {problem}")
+                                # st.write(f"Fixing problem for {key}: {problem}")
                                 prompt_with_context = f"{problem}\n\nPlease return your new text, on {line_count} lines."
                                 fixed_response = send_plaintext_to_openai(prompt_with_context)
-                                #st.write(fixed_response)
+                                # st.write(fixed_response)
                     
                                 for pair in pairs_json:
                                     if pair["key"].upper() == key.upper():
                                         pair["value"] = fixed_response
-
+        
                                 st.write(pairs_json)
                     
                             iterations += 1
@@ -156,7 +158,14 @@ if selected_content_type != "Select a Content Type":
                     else:
                         st.write(f"Failed to process prompt {n} after 3 retries.")
                     n += 1
-            
+        
+                    # Collect and format the final output
+                    result = f"Generated Response for Image Layout {n}:\n"
+                    for pair in pairs_json:
+                        result += f"{pair['key']}: {pair['value']}\n"
+                    result += "-" * 30 + "\n"
+                    results.append(result)  # Append the formatted result to the list
+        
             # Now loop through other prompts (content_professional, content_casual, content_direct) and apply different logic
             other_prompts = [
                 ("Content Professional", content_professional),
@@ -173,7 +182,12 @@ if selected_content_type != "Select a Content Type":
                     other_prompt_messages.append({"role": "user", "content": other_prompt})
                     response = send_to_openai(other_prompt_messages)
                     st.write(response)
-
+        
+            # Display all accumulated results
+            st.subheader("All Generated Responses")
+            for result in results:
+                st.text(result)
+        
             # Display a JSON object for debugging
             st.subheader("Debug")
         
