@@ -56,11 +56,12 @@ if selected_content_type != "Select a Content Type":
         content_casual = st.text_area("Content (Casual)", value=selected_data["Content Casual"], height=200)
         content_direct = st.text_area("Content (Direct)", value=selected_data["Content Direct"], height=200)
 
-        # Put the Generate button on the screen and start the logic for generating prompts and posting them to OpenAI
+        # This button starts the generation loop.
         if st.button("Generate"):
             results = []  # Initialize a list to hold the results
-        
-            # First check and process image_prompt if not null
+
+            # This starts the IMAGE SUBLOOP. Images are complicated because they have stringent character length requirements. 
+            # Only FAQ images are exempt - they are actually too complex to map here.
             if image_prompt:
         
                 # Load data from the table corresponding to the selected content type
@@ -153,8 +154,10 @@ if selected_content_type != "Select a Content Type":
             st.subheader("Images - All Generated Responses")
             for result in results:
                 st.text(result)
+
+            # ------ The above is the end of the IMAGE SUBLOOP.
             
-            # Now loop through other prompts (content_professional, content_casual, content_direct) and apply different logic
+            # Now we do the CONTENT SUBLOOP. We work through other prompts (content_professional, content_casual, content_direct) and apply different logic.
             other_prompts = [
                 ("Content Professional", content_professional),
                 ("Content Casual", content_casual),
@@ -172,6 +175,8 @@ if selected_content_type != "Select a Content Type":
         
             # Display a JSON object for debugging
             st.subheader("Debug")
+
+            # This ends the CONTENT SUBLOOP.
         
     else:
         st.write("No details available for the selected content type.")
