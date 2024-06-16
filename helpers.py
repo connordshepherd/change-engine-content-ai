@@ -403,3 +403,18 @@ def send_to_openai_with_tools(messages):
     except Exception as e:
         print(f"An error occurred: {e}")
         return None
+
+# Define the fix_problems function
+def fix_problems(evaluation: List[Dict[str, Any]]) -> List[Tuple[str, str, int]]:
+    result = []
+    reasons = []
+    line_counts = []
+    for item in evaluation:
+        if "reason_code" in item:
+            text = item.get("value", "")
+            reason_code = item["reason_code"]
+            formatted_problem = f"{reason_code}\n\n---------\n\n{text}"
+            result.append(formatted_problem)
+            reasons.append(item["key"])  # Append the key to track which item we are fixing
+            line_counts.append(item.get("lines_criteria", "N/A"))  # Append line count criteria
+    return result, reasons, line_counts
