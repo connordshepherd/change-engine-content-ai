@@ -77,8 +77,6 @@ def get_table_data(table_name):
     else:
         return []
 
-import pandas as pd
-
 # Function to process all the data from get_table_data into a nice DataFrame
 def process_table_data(table_data):
     """
