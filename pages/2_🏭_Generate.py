@@ -108,7 +108,7 @@ if selected_content_type != "Select a Content Type":
 
         # This button starts the generation loop.
         if st.button("Generate"):
-            all_results = ""  # Initialize a single string to hold all results
+            all_results = r"{\rtf1\ansi\n"
 
             for i in range(variations):
                 results = []  # Initialize a list to hold the results
@@ -183,12 +183,13 @@ if selected_content_type != "Select a Content Type":
                         result = f"{{\\b\\fs28 Generated Response for {layout_key}}}\n"
                         for pair in pairs_json:
                             result += f"{pair['key']}: {pair['value']}\n"
-                        result += "-" * 30 + "\n"
+                        result += "-" * 30 + "\\line\n"
                         results.append(result)  # Append the formatted result to the list
 
                 # Append all accumulated results to the main results string
                 for result in results:
                     all_results += result
+                    st.text(all_results)
 
                 # ------ The above is the end of the IMAGE SUBLOOP.
 
@@ -207,9 +208,12 @@ if selected_content_type != "Select a Content Type":
                         other_prompt_messages.append({"role": "user", "content": other_prompt})
                         response = send_to_openai(other_prompt_messages)
                         st.write(response)
-                        all_results += f"{{\\b\\fs28 Generated Response for {prompt_name}}}\n{response}\n\n"
+                        all_results += f"{{\\b\\fs28 Generated Response for {prompt_name}}}\n{response.replace('\n', ' \\line ')}\n\n"
 
-                all_results += "\\page\n"  # Add a page break after each variation
+                if i < variations - 1:
+                    all_results += "\\page\n"  # Add a page break after each variation
+
+            all_results += "}"
 
             # Display a JSON object for debugging
             st.subheader("Debug")
