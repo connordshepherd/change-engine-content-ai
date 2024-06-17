@@ -189,6 +189,7 @@ if selected_content_type != "Select a Content Type":
                 # Append all accumulated results to the main results string
                 for result in results:
                     all_results += result
+                    st.text(result)
 
                 # ------ The above is the end of the IMAGE SUBLOOP.
 
