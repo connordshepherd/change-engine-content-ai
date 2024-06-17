@@ -11,6 +11,26 @@ from helpers import send_plaintext_to_openai, fix_problems, get_client_data, pre
 import openai
 from typing import List, Dict, Union, Any, Tuple
 
+
+def rtf_escape(text: str) -> str:
+    """Escape text for RTF formatting."""
+    escapes = {
+        '\\': '\\\\',
+        '{': '\\{',
+        '}': '\\}',
+        '\n': '\\line ',
+        '\r': '',
+        '’': "\\'92",
+        '“': "\\'93",
+        '”': "\\'94",
+        '–': "\\'96",
+        '—': "\\'97",
+        '…': "\\'85",
+        '‘': "\\'91"
+    }
+    return ''.join(escapes.get(c, c) if ord(c) < 128 else "\\u{}?".format(ord(c)) for c in text)
+
+
 # Streamlit Widescreen Mode
 st.set_page_config(layout="wide")
 
@@ -110,9 +130,12 @@ if selected_content_type != "Select a Content Type":
         if st.button("Generate"):
             # Initial RTF header with some default font definitions
             all_results = (r"{\rtf1\ansi\ansicpg1252\deff0"
-                           r"{\fonttbl{\f0\fswiss\fcharset0 Arial;}"
-                           r"{\f1\fswiss\fcharset0 Segoe UI Emoji;}}"
-                           r"\f0\n")
+                           r"{\fonttbl{\f0\froman\fcharset0 Times New Roman;}"
+                           r"{\f1\fnil\fcharset0 Arial;}"
+                           r"{\f2\fnil\fcharset2 Symbol;}"
+                           r"{\f3\fnil\fcharset0 Segoe UI;}"
+                           r"{\f4\fnil\fcharset0 Segoe UI Emoji;}}"
+                           r"\f1\n")
 
             for i in range(variations):
                 results = []  # Initialize a list to hold the results
@@ -184,9 +207,9 @@ if selected_content_type != "Select a Content Type":
                             st.write(f"Failed to process prompt for {layout_key} after 3 retries.")
 
                         # Collect and format the final output
-                        result = f"{{\\b\\fs28 Generated Response for {layout_key}}}\\line\n"
+                        result = f"{{\\f3\\b\\fs28 Generated Response for {rtf_escape(layout_key)}}}\\line\n"
                         for pair in pairs_json:
-                            value_with_newlines = pair['value'].replace("\n", " \\line ")
+                            value_with_newlines = rtf_escape(pair['value'])
                             result += f"{pair['key']}: {value_with_newlines}\\line\n"
                         result += "-" * 30 + "\\line\n"
                         results.append(result)  # Append the formatted result to the list
@@ -212,8 +235,8 @@ if selected_content_type != "Select a Content Type":
                         other_prompt_messages.append({"role": "user", "content": other_prompt})
                         response = send_to_openai(other_prompt_messages)
                         st.write(response)
-                        formatted_response = response.replace("\n", " \\line ")
-                        header = f"{{\\b\\fs28 Generated Response for {prompt_name}}}\\line\n"
+                        formatted_response = rtf_escape(response)
+                        header = f"{{\\f3\\b\\fs28 Generated Response for {rtf_escape(prompt_name)}}}\\line\n"
                         all_results += header + formatted_response + "\\line\n\n"
 
                 if i < variations - 1:
@@ -227,7 +250,7 @@ if selected_content_type != "Select a Content Type":
             # This ends the CONTENT SUBLOOP.
 
             # Button to download the results as RTF
-            if st.download_button("Download Results as RTF", all_results, file_name="results.rtf", mime="application/rtf"):
+            if st.download_button("Download Results as RTF", all_results.encode('ansi'), file_name="results.rtf", mime="application/rtf"):
                 st.write("Download initiated.")
     else:
         st.write("No details available for the selected content type.")
