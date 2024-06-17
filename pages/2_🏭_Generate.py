@@ -1,6 +1,10 @@
 import streamlit as st
 import json
 import pandas as pd
+import requests
+
+from io import BytesIO
+from PIL import Image
 from helpers import get_content_types_data, get_table_data, process_table_data, get_selected_layouts_array, generate_prompts_array, send_to_openai
 from helpers import add_specs, evaluate_character_count_and_lines, extract_key_value_pairs, send_to_openai_with_tools, tools
 from helpers import send_plaintext_to_openai, fix_problems, get_client_data
@@ -29,11 +33,7 @@ options = ["Select a Content Type"] + v1_true_content_types
 # Add a selectbox to the Streamlit app
 selected_content_type = st.selectbox("Choose a Content Type", options)
 
-# Text input for layouts (comma-separated integers)
-selected_layouts = st.text_input("Select Layouts", "1, 3")
-
 # Retrieve client data from Airtable
-
 client_data = get_client_data()
 
 # Create a selectbox for company name
@@ -45,6 +45,10 @@ if selected_company_name and selected_company_name != 'Select a Company':
     company_tone_style = st.text_area("Company Tone and Style Guide", value=client_data[selected_company_name], height=100)
 else:
     company_tone_style = st.text_area("Company Tone and Style Guide", value="", height=100)
+
+def get_image_from_url(url):
+    response = requests.get(url)
+    return Image.open(BytesIO(response.content))
 
 if selected_content_type != "Select a Content Type":
     # Filter data to get the selected content type details
@@ -62,29 +66,41 @@ if selected_content_type != "Select a Content Type":
         content_casual = st.text_area("Content (Casual)", value=selected_data["Content Casual"], height=200)
         content_direct = st.text_area("Content (Direct)", value=selected_data["Content Direct"], height=200)
 
-        # If there are images, grab Layouts from the associated table. The table name must match the name of the Content Type
         if image_prompt:
             # Load data from the table corresponding to the selected content type
             table_data = get_table_data(selected_content_type)
+
+            # Prepare data for the st.data_editor
+            layout_data = []
+            for record in table_data:
+                layout = record["fields"]["Layout"]
+                image_url = record["fields"]["Preview Image"][0]["thumbnails"]["large"]["url"]
+                layout_data.append({"Layout": layout, "Image": image_url, "Enabled": False})
+
+            layout_df = pd.DataFrame(layout_data)
             
-            # Process the table data into a DataFrame
-            df = process_table_data(table_data)
-    
-            # Turn it into JSON
-            edited_data = df
-            oriented_json = edited_data.to_json(orient='records')
-            edited_json = json.loads(oriented_json)
-    
-            # Add specs to the layouts data
-            edited_json_with_specs = add_specs(edited_json)
-    
-            # Assemble the layouts as plaintext
-            layouts_array = get_selected_layouts_array(edited_json_with_specs, selected_layouts)
-            # st.write(layouts_array)
-    
-            # Generate prompts array for image_prompt
-            prompts_array = generate_prompts_array(topic, image_prompt, layouts_array)
-            # st.write(prompts_array)
+            # Define column configurations
+            column_config = {
+                "Layout": st.column_config.Column("Layout", disabled=True),
+                "Image": st.column_config.ImageColumn("Preview Image", help="Thumbnail previews from Airtable"),
+                "Enabled": st.column_config.CheckboxColumn("Enabled", help="Enable this layout?", default=False)
+            }
+            
+            selected_layouts_df = st.data_editor(data=layout_df, column_config=column_config, hide_index=True)
+            selected_layouts = selected_layouts_df[selected_layouts_df["Enabled"]]
+
+            # Ensure layouts_array is built using only enabled rows
+            layouts_array = get_selected_layouts_array(layout_df.to_dict('records'), selected_layouts_df.loc[selected_layouts_df['Enabled'], 'Layout'].tolist())
+
+            if st.button("Generate"):
+                # Process the checked layouts
+                oriented_json = selected_layouts_df.to_json(orient='records')
+                edited_json = json.loads(oriented_json)
+                edited_json_with_specs = add_specs(edited_json)
+                
+                # Generate prompts array for image_prompt
+                prompts_array = generate_prompts_array(topic, image_prompt, layouts_array)
+                st.write(prompts_array)
 
         # This button starts the generation loop.
         if st.button("Generate"):
