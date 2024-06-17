@@ -81,13 +81,13 @@ if selected_content_type != "Select a Content Type":
             
             # Define column configurations
             column_config = {
-                "Layout Number": st.column_config.Column("Layout", disabled=True),
+                "Layout": st.column_config.Column("Layout", disabled=True),
                 "Image": st.column_config.ImageColumn("Preview Image", help="Thumbnail previews from Airtable"),
                 "Enabled": st.column_config.CheckboxColumn("Enabled", help="Enable this layout?", default=False)
             }
             
             image_selector_df = st.data_editor(data=layout_selector_df, column_config=column_config, hide_index=True)
-            image_selector_df = image_selector_df.sort_values(by='Layout Number')
+            image_selector_df = image_selector_df.sort_values(by='Layout')
             selected_images = image_selector_df[image_selector_df["Enabled"]]
             selected_images_json_str = selected_images.to_json(orient='records')
             selected_images_json = json.loads(selected_images_json_str)
