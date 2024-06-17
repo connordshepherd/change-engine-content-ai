@@ -117,9 +117,6 @@ if selected_content_type != "Select a Content Type":
                 layouts_array = get_selected_layouts_array(edited_json_with_specs, selected_layouts)
                 # st.write(layouts_array)
                 
-                # Generate prompts array for image_prompt
-                prompts_array = generate_prompts_array(topic, image_prompt, layouts_array)
-                st.write(prompts_array)
 
         # This button starts the generation loop.
         if st.button("Generate"):
@@ -128,6 +125,10 @@ if selected_content_type != "Select a Content Type":
             # This starts the IMAGE SUBLOOP. Images are complicated because they have stringent character length requirements. 
             # Only FAQ images are exempt - they are actually too complex to map here.
             if image_prompt:
+
+                # Generate prompts array for image_prompt
+                prompts_array = generate_prompts_array(topic, image_prompt, layouts_array)
+                st.write(prompts_array)
         
                 # Go to OpenAI for each one
                 for prompt, layout in zip(prompts_array, layouts_array):
