@@ -1,33 +1,15 @@
 import streamlit as st
+import json
 import pandas as pd
 import requests
-import json
 
 from io import BytesIO
 from PIL import Image
 from helpers import get_content_types_data, get_table_data, process_table_data, get_selected_layouts_array, generate_prompts_array, send_to_openai
-from helpers import add_specs, evaluate_character_count_and_lines, extract_key_value_pairs, send_to_openai_with_tools
+from helpers import add_specs, evaluate_character_count_and_lines, extract_key_value_pairs, send_to_openai_with_tools, tools
 from helpers import send_plaintext_to_openai, fix_problems, get_client_data, prepare_layout_selector_data
-
-
-def rtf_escape(text: str) -> str:
-    """Escape text for RTF formatting."""
-    escapes = {
-        '\\': '\\\\',
-        '{': '\\{',
-        '}': '\\}',
-        '\n': '\\line ',
-        '\r': '',
-        '’': "\\'92",
-        '“': "\\'93",
-        '”': "\\'94",
-        '–': "\\'96",
-        '—': "\\'97",
-        '…': "\\'85",
-        '‘': "\\'91"
-    }
-    return ''.join(escapes.get(c, c) if ord(c) < 128 else f"\\u{ord(c)}?" for c in text)
-
+import openai
+from typing import List, Dict, Union, Any, Tuple
 
 # Streamlit Widescreen Mode
 st.set_page_config(layout="wide")
@@ -126,14 +108,9 @@ if selected_content_type != "Select a Content Type":
 
         # This button starts the generation loop.
         if st.button("Generate"):
-            # Initial RTF header with some default font definitions
-            all_results = (r"{\rtf1\ansi\ansicpg1252\deff0"
-                           r"{\fonttbl"
-                           r"{\f0 Arial;}"
-                           r"{\f1 Segoe UI Emoji;}}"
-                           r"\f0\n")
+            all_results = ""  # Initialize a single string to hold all results
 
-            for i in range(variations):
+            for _ in range(variations):
                 results = []  # Initialize a list to hold the results
 
                 # This starts the IMAGE SUBLOOP. Images are complicated because they have stringent character length requirements. 
@@ -203,11 +180,10 @@ if selected_content_type != "Select a Content Type":
                             st.write(f"Failed to process prompt for {layout_key} after 3 retries.")
 
                         # Collect and format the final output
-                        result = f"{{\\f0\\b\\fs28 {rtf_escape(layout_key)}}}\\line\n"
+                        result = f"Generated Response for {layout_key}:\n"
                         for pair in pairs_json:
-                            value_with_newlines = pair['value'].replace("\n", " \\line ")
-                            result += f"{pair['key']}: {{\\f1 {rtf_escape(value_with_newlines)}}}\\line\n"
-                        result += "-" * 30 + "\\line\n"
+                            result += f"{pair['key']}: {pair['value']}\n"
+                        result += "-" * 30 + "\n"
                         results.append(result)  # Append the formatted result to the list
 
                 # Append all accumulated results to the main results string
@@ -231,14 +207,12 @@ if selected_content_type != "Select a Content Type":
                         other_prompt_messages.append({"role": "user", "content": other_prompt})
                         response = send_to_openai(other_prompt_messages)
                         st.write(response)
-                        formatted_response = rtf_escape(response).replace("\n", " \\line ")
-                        header = f"{{\\f0\\b\\fs28 {rtf_escape(prompt_name)}}}\\line\n"
-                        all_results += header + formatted_response + "\\line\n\n"
+                        all_results += f"Generated Response for {prompt_name}:\n{response}\n\n"
 
-                if i < variations - 1:
-                    all_results += "\\page\n"  # Add a page break after each variation
+            # Display a JSON object for debugging
+            st.subheader("Debug")
 
-            all_results += "}"
+            # This ends the CONTENT SUBLOOP.
 
             # Button to download the results as RTF
             if st.download_button("Download Results as RTF", all_results, file_name="results.rtf", mime="application/rtf"):
