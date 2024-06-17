@@ -105,17 +105,14 @@ if selected_content_type != "Select a Content Type":
             }
             
             image_selector_df = st.data_editor(data=layout_selector_df, column_config=column_config, hide_index=True)
-            
-            # Button to set selected layouts
-            if st.button("Set"):
-                selected_images = image_selector_df[image_selector_df["Enabled"]]
-                selected_layouts_numbers = selected_images['Layout Number'].tolist()
-                selected_layouts = ", ".join(map(str, selected_layouts_numbers))
-                st.write(f"Selected Layouts: {selected_layouts}")
+            selected_images = image_selector_df[image_selector_df["Enabled"]]
+            selected_layouts_numbers = selected_images['Layout Number'].tolist()
+            selected_layouts = ", ".join(map(str, selected_layouts_numbers))
+            st.write(f"Selected Layouts: {selected_layouts}")
 
-                # Assemble the layouts as plaintext
-                layouts_array = get_selected_layouts_array(edited_json_with_specs, selected_layouts)
-                # st.write(layouts_array)
+            # Assemble the layouts as plaintext
+            layouts_array = get_selected_layouts_array(edited_json_with_specs, selected_layouts)
+            # st.write(layouts_array)
                 
 
         # This button starts the generation loop.
