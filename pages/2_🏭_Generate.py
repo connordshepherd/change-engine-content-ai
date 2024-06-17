@@ -110,7 +110,7 @@ if selected_content_type != "Select a Content Type":
         if st.button("Generate"):
             all_results = ""  # Initialize a single string to hold all results
 
-            for _ in range(variations):
+            for i in range(variations):
                 results = []  # Initialize a list to hold the results
 
                 # This starts the IMAGE SUBLOOP. Images are complicated because they have stringent character length requirements. 
@@ -180,7 +180,7 @@ if selected_content_type != "Select a Content Type":
                             st.write(f"Failed to process prompt for {layout_key} after 3 retries.")
 
                         # Collect and format the final output
-                        result = f"Generated Response for {layout_key}:\n"
+                        result = f"{{\\b\\fs28 Generated Response for {layout_key}}}\n"
                         for pair in pairs_json:
                             result += f"{pair['key']}: {pair['value']}\n"
                         result += "-" * 30 + "\n"
@@ -189,7 +189,6 @@ if selected_content_type != "Select a Content Type":
                 # Append all accumulated results to the main results string
                 for result in results:
                     all_results += result
-                    st.text(result)
 
                 # ------ The above is the end of the IMAGE SUBLOOP.
 
@@ -208,7 +207,9 @@ if selected_content_type != "Select a Content Type":
                         other_prompt_messages.append({"role": "user", "content": other_prompt})
                         response = send_to_openai(other_prompt_messages)
                         st.write(response)
-                        all_results += f"Generated Response for {prompt_name}:\n{response}\n\n"
+                        all_results += f"{{\\b\\fs28 Generated Response for {prompt_name}}}\n{response}\n\n"
+
+                all_results += "\\page\n"  # Add a page break after each variation
 
             # Display a JSON object for debugging
             st.subheader("Debug")
