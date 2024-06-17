@@ -69,6 +69,17 @@ if selected_content_type != "Select a Content Type":
         if image_prompt:
             # Load data from the table corresponding to the selected content type
             table_data = get_table_data(selected_content_type)
+            
+            # Process the table data into a DataFrame
+            df = process_table_data(table_data)
+            
+            # Turn it into JSON
+            edited_data = df
+            oriented_json = edited_data.to_json(orient='records')
+            edited_json = json.loads(oriented_json)
+            
+            # Add specs to the layouts data
+            edited_json_with_specs = add_specs(edited_json)
 
             # Prepare data for the st.data_editor
             layout_selector_data = []
@@ -99,14 +110,12 @@ if selected_content_type != "Select a Content Type":
             if st.button("Set"):
                 selected_images = image_selector_df[image_selector_df["Enabled"]]
                 selected_layouts_numbers = selected_images['Layout Number'].tolist()
-                st.session_state.selected_layouts = ", ".join(map(str, selected_layouts_numbers))
-                st.write(f"Selected Layouts: {st.session_state.selected_layouts}")
+                selected_layouts = ", ".join(map(str, selected_layouts_numbers))
+                st.write(f"Selected Layouts: {selected_layouts}")
 
-            if st.button("Generate"):
-                # Process the checked layouts
-                oriented_json = selected_layouts_df.to_json(orient='records')
-                edited_json = json.loads(oriented_json)
-                edited_json_with_specs = add_specs(edited_json)
+                # Assemble the layouts as plaintext
+                layouts_array = get_selected_layouts_array(edited_json_with_specs, selected_layouts)
+                # st.write(layouts_array)
                 
                 # Generate prompts array for image_prompt
                 prompts_array = generate_prompts_array(topic, image_prompt, layouts_array)
