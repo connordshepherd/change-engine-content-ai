@@ -108,7 +108,11 @@ if selected_content_type != "Select a Content Type":
 
         # This button starts the generation loop.
         if st.button("Generate"):
-            all_results = r"{\rtf1\ansi\n"
+            # Initial RTF header with some default font definitions
+            all_results = (r"{\rtf1\ansi\ansicpg1252\deff0"
+                           r"{\fonttbl{\f0\fswiss\fcharset0 Arial;}"
+                           r"{\f1\fswiss\fcharset0 Segoe UI Emoji;}}"
+                           r"\f0\n")
 
             for i in range(variations):
                 results = []  # Initialize a list to hold the results
@@ -182,14 +186,14 @@ if selected_content_type != "Select a Content Type":
                         # Collect and format the final output
                         result = f"{{\\b\\fs28 Generated Response for {layout_key}}}\\line\n"
                         for pair in pairs_json:
-                            result += f"{pair['key']}: {pair['value']}\\line\n"
+                            value_with_newlines = pair['value'].replace("\n", " \\line ")
+                            result += f"{pair['key']}: {value_with_newlines}\\line\n"
                         result += "-" * 30 + "\\line\n"
                         results.append(result)  # Append the formatted result to the list
 
                 # Append all accumulated results to the main results string
                 for result in results:
                     all_results += result
-                    st.text(all_results)
 
                 # ------ The above is the end of the IMAGE SUBLOOP.
 
