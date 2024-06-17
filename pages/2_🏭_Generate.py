@@ -250,7 +250,7 @@ if selected_content_type != "Select a Content Type":
             # This ends the CONTENT SUBLOOP.
 
             # Button to download the results as RTF
-            if st.download_button("Download Results as RTF", all_results.encode('ansi'), file_name="results.rtf", mime="application/rtf"):
+            if st.download_button("Download Results as RTF", file_name="results.rtf", mime="application/rtf"):
                 st.write("Download initiated.")
     else:
         st.write("No details available for the selected content type.")
