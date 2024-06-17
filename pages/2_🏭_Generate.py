@@ -71,13 +71,13 @@ if selected_content_type != "Select a Content Type":
             table_data = get_table_data(selected_content_type)
 
             # Prepare data for the st.data_editor
-            layout_data = []
+            layout_selector_data = []
             for record in table_data:
                 layout = record["fields"]["Layout"]
                 image_url = record["fields"]["Preview Image"][0]["thumbnails"]["large"]["url"]
-                layout_data.append({"Layout": layout, "Image": image_url, "Enabled": False})
+                layout_selector_data.append({"Layout": layout, "Image": image_url, "Enabled": False})
 
-            layout_df = pd.DataFrame(layout_data)
+            layout_selector_df = pd.DataFrame(layout_selector_data)
             
             # Define column configurations
             column_config = {
@@ -86,11 +86,11 @@ if selected_content_type != "Select a Content Type":
                 "Enabled": st.column_config.CheckboxColumn("Enabled", help="Enable this layout?", default=False)
             }
             
-            selected_layouts_df = st.data_editor(data=layout_df, column_config=column_config, hide_index=True)
-            selected_layouts = selected_layouts_df[selected_layouts_df["Enabled"]]
-            selected_layouts_json_str = selected_layouts.to_json(orient='records')
-            selected_layouts_json = json.loads(selected_layouts_json_str)
-            st.write(selected_layouts_json)
+            image_selector_df = st.data_editor(data=layout_selector_df, column_config=column_config, hide_index=True)
+            selected_images = image_selector_df[image_selector_df["Enabled"]]
+            selected_images_json_str = selected_images.to_json(orient='records')
+            selected_images_json = json.loads(selected_images_json_str)
+            st.write(selected_images_json)
 
             # Ensure layouts_array is built using only enabled rows
             layouts_array = get_selected_layouts_array(layout_df.to_dict('records'), selected_layouts_df.loc[selected_layouts_df['Enabled'], 'Layout'].tolist())
