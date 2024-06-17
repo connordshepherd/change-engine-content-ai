@@ -79,22 +79,29 @@ if selected_content_type != "Select a Content Type":
 
             layout_selector_df = pd.DataFrame(layout_selector_data)
             
+            # Extract numbers from "Layout" and add as a new column
+            layout_selector_df['Layout Number'] = layout_selector_df['Layout'].str.extract('(\d+)').astype(int)
+            
+            # Sort the DataFrame based on the new column
+            layout_selector_df = layout_selector_df.sort_values(by='Layout Number')
+            
             # Define column configurations
             column_config = {
                 "Layout": st.column_config.Column("Layout", disabled=True),
                 "Image": st.column_config.ImageColumn("Preview Image", help="Thumbnail previews from Airtable"),
-                "Enabled": st.column_config.CheckboxColumn("Enabled", help="Enable this layout?", default=False)
+                "Enabled": st.column_config.CheckboxColumn("Enabled", help="Enable this layout?", default=False),
+                "Layout Number": st.column_config.Column("Layout Number", disabled=True)
             }
             
             image_selector_df = st.data_editor(data=layout_selector_df, column_config=column_config, hide_index=True)
-            image_selector_df = image_selector_df.sort_values(by='Layout')
             selected_images = image_selector_df[image_selector_df["Enabled"]]
-            selected_images_json_str = selected_images.to_json(orient='records')
-            selected_images_json = json.loads(selected_images_json_str)
-            st.write(selected_images_json)
-
-            # Ensure layouts_array is built using only enabled rows
-            layouts_array = get_selected_layouts_array(layout_df.to_dict('records'), selected_layouts_df.loc[selected_layouts_df['Enabled'], 'Layout'].tolist())
+            st.write(selected_images)
+            
+            # Button to set selected layouts
+            if st.button("Set"):
+                selected_layouts_numbers = selected_images['Layout Number'].tolist()
+                st.session_state.selected_layouts = ", ".join(map(str, selected_layouts_numbers))
+                st.write(f"Selected Layouts: {st.session_state.selected_layouts}")
 
             if st.button("Generate"):
                 # Process the checked layouts
