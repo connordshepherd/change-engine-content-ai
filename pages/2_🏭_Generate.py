@@ -88,7 +88,8 @@ if selected_content_type != "Select a Content Type":
             
             selected_layouts_df = st.data_editor(data=layout_df, column_config=column_config, hide_index=True)
             selected_layouts = selected_layouts_df[selected_layouts_df["Enabled"]]
-            selected_layouts_json = selected_layouts.to_json(orient='records')
+            selected_layouts_json_str = selected_layouts.to_json(orient='records')
+            selected_layouts_json = json.loads(selected_layouts_json_str)
             st.write(selected_layouts_json)
 
             # Ensure layouts_array is built using only enabled rows
