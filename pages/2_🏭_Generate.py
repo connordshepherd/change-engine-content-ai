@@ -7,7 +7,7 @@ from io import BytesIO
 from PIL import Image
 from helpers import get_content_types_data, get_table_data, process_table_data, get_selected_layouts_array, generate_prompts_array, send_to_openai
 from helpers import add_specs, evaluate_character_count_and_lines, extract_key_value_pairs, send_to_openai_with_tools, tools
-from helpers import send_plaintext_to_openai, fix_problems, get_client_data
+from helpers import send_plaintext_to_openai, fix_problems, get_client_data, prepare_layout_selector_data
 import openai
 from typing import List, Dict, Union, Any, Tuple
 
@@ -81,20 +81,8 @@ if selected_content_type != "Select a Content Type":
             # Add specs to the layouts data
             edited_json_with_specs = add_specs(edited_json)
 
-            # Prepare data for the st.data_editor
-            layout_selector_data = []
-            for record in table_data:
-                layout = record["fields"]["Layout"]
-                image_url = record["fields"]["Preview Image"][0]["thumbnails"]["large"]["url"]
-                layout_selector_data.append({"Layout": layout, "Image": image_url, "Enabled": False})
-
-            layout_selector_df = pd.DataFrame(layout_selector_data)
-            
-            # Extract numbers from "Layout" and add as a new column
-            layout_selector_df['Layout Number'] = layout_selector_df['Layout'].str.extract('(\d+)').astype(int)
-            
-            # Sort the DataFrame based on the new column
-            layout_selector_df = layout_selector_df.sort_values(by='Layout Number')
+            # Prepare layout selector data using the helper function
+            layout_selector_data = prepare_layout_selector_data(table_data)
             
             # Define column configurations
             column_config = {
@@ -104,7 +92,7 @@ if selected_content_type != "Select a Content Type":
                 "Layout Number": st.column_config.Column("Layout Number", disabled=True)
             }
             
-            image_selector_df = st.data_editor(data=layout_selector_df, column_config=column_config, hide_index=True)
+            image_selector_df = st.data_editor(data=layout_selector_data, column_config=column_config, hide_index=True)
             selected_images = image_selector_df[image_selector_df["Enabled"]]
             selected_layouts_numbers = selected_images['Layout Number'].tolist()
             selected_layouts = ", ".join(map(str, selected_layouts_numbers))
