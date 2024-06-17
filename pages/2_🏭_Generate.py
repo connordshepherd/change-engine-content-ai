@@ -88,6 +88,7 @@ if selected_content_type != "Select a Content Type":
             
             selected_layouts_df = st.data_editor(data=layout_df, column_config=column_config, hide_index=True)
             selected_layouts = selected_layouts_df[selected_layouts_df["Enabled"]]
+            st.write(selected_layouts)
 
             # Ensure layouts_array is built using only enabled rows
             layouts_array = get_selected_layouts_array(layout_df.to_dict('records'), selected_layouts_df.loc[selected_layouts_df['Enabled'], 'Layout'].tolist())
