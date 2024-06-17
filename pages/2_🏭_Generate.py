@@ -131,6 +131,7 @@ if selected_content_type != "Select a Content Type":
                             messages = prompt['message']
                             response = send_to_openai(messages)
                             all_results += f"Generated Response for {layout_key}:\n{response}\n\n"
+                            st.text(all_results)
                             continue  # Skip rest of the iteration
                         
                         for retry in range(3):  # Retry up to 3 times
@@ -197,6 +198,7 @@ if selected_content_type != "Select a Content Type":
                 # Append all accumulated results to the main results string
                 for result in results:
                     all_results += result
+                    st.text(all_results)
 
                 # ------ The above is the end of the IMAGE SUBLOOP.
 
