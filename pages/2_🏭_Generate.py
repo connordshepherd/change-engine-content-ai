@@ -128,7 +128,8 @@ if selected_content_type != "Select a Content Type":
         if st.button("Generate"):
             # Initial RTF header with some default font definitions
             all_results = (r"{\rtf1\ansi\ansicpg1252\deff0"
-                           r"{\fonttbl{\f0 Arial;}"
+                           r"{\fonttbl"
+                           r"{\f0 Arial;}"
                            r"{\f1 Segoe UI Emoji;}}"
                            r"\f0\n")
 
@@ -202,10 +203,10 @@ if selected_content_type != "Select a Content Type":
                             st.write(f"Failed to process prompt for {layout_key} after 3 retries.")
 
                         # Collect and format the final output
-                        result = f"{{\\f0\\b\\fs28{rtf_escape(layout_key)}}}\\line\n"
+                        result = f"{{\\f0\\b\\fs28 {rtf_escape(layout_key)}}}\\line\n"
                         for pair in pairs_json:
-                            value_with_newlines = rtf_escape(pair['value'])
-                            result += f"{{\\f0 {pair['key']}: }}{{\\f1 {value_with_newlines}}}\\line\n"
+                            value_with_newlines = pair['value'].replace("\n", " \\line ")
+                            result += f"{pair['key']}: {{\\f1 {rtf_escape(value_with_newlines)}}}\\line\n"
                         result += "-" * 30 + "\\line\n"
                         results.append(result)  # Append the formatted result to the list
 
@@ -230,7 +231,7 @@ if selected_content_type != "Select a Content Type":
                         other_prompt_messages.append({"role": "user", "content": other_prompt})
                         response = send_to_openai(other_prompt_messages)
                         st.write(response)
-                        formatted_response = rtf_escape(response)
+                        formatted_response = rtf_escape(response).replace("\n", " \\line ")
                         header = f"{{\\f0\\b\\fs28 {rtf_escape(prompt_name)}}}\\line\n"
                         all_results += header + formatted_response + "\\line\n\n"
 
@@ -240,7 +241,7 @@ if selected_content_type != "Select a Content Type":
             all_results += "}"
 
             # Button to download the results as RTF
-            if st.download_button("Download Results as RTF", all_results.encode('utf-8'), file_name="results.rtf", mime="application/rtf"):
+            if st.download_button("Download Results as RTF", all_results, file_name="results.rtf", mime="application/rtf"):
                 st.write("Download initiated.")
     else:
         st.write("No details available for the selected content type.")
