@@ -180,9 +180,9 @@ if selected_content_type != "Select a Content Type":
                             st.write(f"Failed to process prompt for {layout_key} after 3 retries.")
 
                         # Collect and format the final output
-                        result = f"{{\\b\\fs28 Generated Response for {layout_key}}}\n"
+                        result = f"{{\\b\\fs28 Generated Response for {layout_key}}}\\line\n"
                         for pair in pairs_json:
-                            result += f"{pair['key']}: {pair['value']}\n"
+                            result += f"{pair['key']}: {pair['value']}\\line\n"
                         result += "-" * 30 + "\\line\n"
                         results.append(result)  # Append the formatted result to the list
 
@@ -208,7 +208,9 @@ if selected_content_type != "Select a Content Type":
                         other_prompt_messages.append({"role": "user", "content": other_prompt})
                         response = send_to_openai(other_prompt_messages)
                         st.write(response)
-                        all_results += f"{{\\b\\fs28 Generated Response for {prompt_name}}}\n{response.replace('\n', ' \\line ')}\n\n"
+                        formatted_response = response.replace("\n", " \\line ")
+                        header = f"{{\\b\\fs28 Generated Response for {prompt_name}}}\\line\n"
+                        all_results += header + formatted_response + "\\line\n\n"
 
                 if i < variations - 1:
                     all_results += "\\page\n"  # Add a page break after each variation
