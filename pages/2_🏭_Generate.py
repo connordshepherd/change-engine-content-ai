@@ -125,6 +125,14 @@ if selected_content_type != "Select a Content Type":
                     for prompt, layout in zip(prompts_array, layouts_array):
                         layout_key = list(layout.keys())[0]  # Extract the layout key (e.g., "Layout 1")
 
+                        # Check if content type is 'FAQ'
+                        if selected_content_type == "FAQ":
+                            # Generate response and add directly to results
+                            messages = prompt['message']
+                            response = send_to_openai(messages)
+                            all_results += f"Generated Response for {layout_key}:\n{response}\n\n"
+                            continue  # Skip rest of the iteration
+                        
                         for retry in range(3):  # Retry up to 3 times
                             # st.subheader(f"Images - Generated Response for {layout_key}")
                             messages = prompt['message']
