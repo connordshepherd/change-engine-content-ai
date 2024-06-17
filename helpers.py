@@ -100,6 +100,20 @@ def get_table_data(table_name):
     else:
         return []
 
+# Function to make the little image selection table on the page
+def prepare_layout_selector_data(table_data):
+    layout_selector_data = []
+    for record in table_data:
+        layout = record["fields"]["Layout"]
+        image_url = record["fields"]["Preview Image"][0]["thumbnails"]["large"]["url"]
+        layout_selector_data.append({"Layout": layout, "Image": image_url, "Enabled": False})
+
+    layout_selector_df = pd.DataFrame(layout_selector_data)
+    layout_selector_df['Layout Number'] = layout_selector_df['Layout'].str.extract('(\d+)').astype(int)
+    layout_selector_df = layout_selector_df.sort_values(by='Layout Number')
+
+    return layout_selector_df
+
 # Function to process all the data from get_table_data into a nice DataFrame
 def process_table_data(table_data):
     """
