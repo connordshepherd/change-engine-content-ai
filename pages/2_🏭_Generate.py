@@ -46,6 +46,9 @@ if selected_company_name and selected_company_name != 'Select a Company':
 else:
     company_tone_style = st.text_area("Company Tone and Style Guide", value="", height=100)
 
+# Set a number of variations, ie a number of times to run the content loop
+variations = st.number_input("Number of Variations", 0, 10)
+
 def get_image_from_url(url):
     response = requests.get(url)
     return Image.open(BytesIO(response.content))
