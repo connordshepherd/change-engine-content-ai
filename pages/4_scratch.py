@@ -138,3 +138,40 @@ if st.button("Generate"):
     #layout_response = send_to_openai_with_tools(layout_messages)
     #pairs_json = extract_key_value_pairs(layout_response)
     #st.write(pairs_json)
+
+    # Process and evaluate the response
+    iterations = 0
+    missing_key = False  # Flag to indicate missing key
+
+    while iterations < 5:  # Attempt to fix and ensure criteria max 5 times
+        evaluation = evaluate_character_count_and_lines(pairs_json, specs)
+        st.write(evaluation)
+
+        if not any("reason_code" in item for item in evaluation):
+            st.write(f"Completed in {iterations} iterations.")
+            break  # Break the fixing loop since all criteria are met
+
+        if any("reason_code" in item and "The specified key is missing" in item["reason_code"] for item in evaluation):
+            missing_key = True
+            break  # Break the fixing loop to retry with a new generation
+
+        problems, keys_to_fix, line_counts = fix_problems(evaluation)
+        st.subheader("Fix Problems")
+        for problem, key, line_count in zip(problems, keys_to_fix, line_counts):
+            st.write(f"Fixing problem for {key}: {problem}")
+            prompt_with_context = f"{problem}\n\nPlease return your new text, on {line_count} lines."
+            fixed_response = send_plaintext_to_openai(prompt_with_context)
+            st.write(fixed_response)
+
+            for pair in pairs_json:
+                if pair["key"].upper() == key.upper():
+                    pair["value"] = fixed_response
+
+            st.write(pairs_json)
+
+        iterations += 1
+
+    if missing_key:
+        st.write(f"Missing key detected. Retrying {retry + 1}/3...")
+    else:
+        break  # Successfully completed, no need to retry
