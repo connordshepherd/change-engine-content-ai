@@ -5,12 +5,10 @@ from helpers import evaluate_character_count_and_lines, fix_problems, send_plain
 # Updates into the grouped object
 def update_grouped(grouped, key, old_value, new_value):
     if key in grouped:
-        try:
-            index = grouped[key].index(old_value)
-            grouped[key][index] = new_value
-            return True
-        except ValueError:
-            pass
+        for i, value in enumerate(grouped[key]):
+            if value == old_value:
+                grouped[key][i] = new_value
+                return True
     return False
 
 # Run the character count evaluation on an object with multiple entries
@@ -264,6 +262,7 @@ if st.button("Generate"):
 
             problems, keys_to_fix, line_counts = fix_problems(evaluation)
             st.subheader("Fix Problems")
+
             for problem, key, line_count, eval_item in zip(problems, keys_to_fix, line_counts, evaluation):
                 st.write(f"Fixing problem for {key}: {problem}")
                 prompt_with_context = f"{problem}\n\nPlease return your new text, on {line_count} lines."
