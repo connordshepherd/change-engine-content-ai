@@ -7,7 +7,7 @@ from io import BytesIO
 from PIL import Image
 from helpers import get_content_types_data, get_table_data, process_table_data, get_selected_layouts_array, generate_prompts_array, send_to_openai
 from helpers import add_specs, evaluate_character_count_and_lines, extract_key_value_pairs, send_to_openai_with_tools, tools
-from helpers import send_plaintext_to_openai, get_client_data, prepare_layout_selector_data
+from helpers import send_plaintext_to_openai, get_client_data, prepare_layout_selector_data, group_values
 import openai
 from typing import List, Dict, Union, Any, Tuple
 
