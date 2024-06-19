@@ -16,6 +16,40 @@ parsing_model = "gpt-4o"
 ParsedArgument = Dict[str, str]
 ResponseArguments = Union[List[ParsedArgument], List[Dict[str, Union[str, List[ParsedArgument]]]]]
 
+fewshot_prompt = """The layout will have keys: return the keys in your response, separated from the values by a colon.
+
+You will likely make a few versions: here's how I'd like you to return a response.
+
+For example, let's say you were asked to write some text welcoming Connor as CFO, and asked to create 3 variations, and given this example layout:
+
+**Details for Layout 2** # EXAMPLE layout
+Title: 3 lines to put on the zoom background, every line is maximum 10 characters each (10/10/10) Hashtag 1: A hashtag of between 15-21 characters 
+Hashtag 2: A hashtag of between 15-21 characters
+
+In that case, you'd return something like:
+
+Title: Welcome 
+New CFO
+Connor!
+Title: Our 
+New 
+CFO
+Title: New 
+CFO 
+Connor
+
+Hashtag 1: #WelcomeToTheTeam
+Hashtag 1: #FinanceWizard
+Hashtag 1: #NewWorldofFinance
+
+Hashtag 2: #StrongerTogether
+Hashtag 2: #FinanceTeam
+Hashtag 2: #MoneyMoves
+
+As you can see, we return the response with keys separated from values by a colon. The keys are grouped together. No values are shared.
+
+Now that we've finished the example, let's move on to the actual request. Here's the actual layout I'd like you to use:"""
+
 # Function to get data from the "Content Types" table using field IDs
 def get_content_types_data():
     base_id = 'appbJ9Bt0YNuBafT4'
