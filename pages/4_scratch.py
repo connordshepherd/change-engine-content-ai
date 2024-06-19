@@ -283,6 +283,9 @@ if st.button("Generate"):
             # Fix identified problems systematically
             problems, keys_to_fix, line_counts = fix_problems(evaluation)
             st.subheader("Fix Problems")
+            st.write(problems)
+            st.write(keys_to_fix)
+            st.write(line_counts)
             for problem, key, line_count, eval_item in zip(problems, keys_to_fix, line_counts, [value for item in evaluation for value in item["values"].values()]):
                 st.write(f"Fixing problem for {key}: {problem}")
                 prompt_with_context = f"{problem}\n\nPlease return your new text, on {line_count} lines."
