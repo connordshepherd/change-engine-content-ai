@@ -265,7 +265,7 @@ if selected_content_type != "Select a Content Type":
                             messages = prompt['message']
                             specs = prompt['specs']
                             response = send_to_openai(messages)
-                            # st.write(response)
+                            st.write("OpenAI response", response)
                             if not response:
                                 # st.write(f"Failed to get a response. Retrying {retry + 1}/3...")
                                 continue  # Retry without incrementing n
