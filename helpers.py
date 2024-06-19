@@ -510,3 +510,129 @@ def fix_problems(evaluation: List[Dict[str, Any]]) -> List[Tuple[str, str, int]]
             reasons.append(item["key"])  # Append the key to track which item we are fixing
             line_counts.append(item.get("lines_criteria", "N/A"))  # Append line count criteria
     return result, reasons, line_counts
+
+def group_values(pairs_json):
+    grouped = {}
+    
+    for pair in pairs_json:
+        key = pair['key']
+        value = pair['value']
+        
+        if key not in grouped:
+            grouped[key] = {'key': key, 'values': {}}
+        
+        current_index = len(grouped[key]['values'])
+        grouped[key]['values'][current_index] = value
+    
+    return list(grouped.values())
+
+# Define the fix_problems function
+def fix_problems(evaluation: List[Dict[str, Any]]) -> Tuple[List[str], List[str], List[str], List[int]]:
+    result = []
+    reasons = []
+    keys = []
+    line_counts = []
+    
+    for item in evaluation:
+        key = item["key"]
+        for idx, value in item["values"].items():
+            if "reason_code" in value:
+                text = value.get("value", "")
+                reason_code = value["reason_code"]
+                formatted_problem = f"{reason_code}\n\n---------\n\n{text}"
+                result.append(formatted_problem)
+                reasons.append(key)  # Append the key to track which item we are fixing
+                keys.append(idx)  # Append the index within the values dictionary
+                line_counts.append(value.get("lines_criteria", "N/A"))  # Append line count criteria
+    
+    return result, reasons, keys, line_counts
+
+# Updates into the grouped object
+def update_grouped(grouped: List[Dict[str, Any]], key: str, index: str, new_value: str) -> bool:
+    for item in grouped:
+        if item["key"] == key:
+            if index in item["values"]:
+                item["values"][index] = new_value
+                return True
+    return False
+
+# Run the character count evaluation on an object with multiple entries
+# Run the character count evaluation on an object with multiple entries
+def evaluate_character_count_and_lines_of_group(grouped, specs):
+    def evaluate_single_pair(value, spec):
+        result = {
+            "value": value,
+            "meets_line_count": False if value is None else True,
+            "meets_character_criteria": False if value is None else True,
+        }
+    
+        if value:
+            value_lines = value.split('\n')
+            lines_criteria = spec["LINES"]
+            meets_lines_criteria = len(value_lines) == lines_criteria
+            result.update({"lines_criteria": lines_criteria})
+    
+            if not meets_lines_criteria:
+                result["meets_line_count"] = False
+                result["reason_code"] = f"Wrong number of lines - please rewrite this text so it is on {lines_criteria} lines, but keep the general meaning the same:"
+            
+            meets_char_criteria = True
+            for i in range(lines_criteria):
+                if i < len(value_lines):
+                    upper_limit = spec[f"LINE_{i + 1}_UPPER_LIMIT"]
+                    line_length = len(value_lines[i])
+                    if line_length > upper_limit:
+                        result["meets_character_criteria"] = False
+                        result["reason_code"] = f"Say something like this, with only 2 words. You can change the meaning if you need to. If you want to remove a word, do it. This is for a graphic design, so we're just trying to communicate the general theme. It doesn't need to be exact. Return your new text, on {lines_criteria} lines."
+                        meets_char_criteria = False
+                        break
+                        
+                    if f"LINE_{i + 1}_LOWER_LIMIT" in spec:
+                        lower_limit = spec[f"LINE_{i + 1}_LOWER_LIMIT"]
+                        if line_length < lower_limit:
+                            result["meets_character_criteria"] = False
+                            result["reason_code"] = f"Add 1 word to this text. If there are line breaks, keep them. Return only the adjusted text, on {lines_criteria} lines."
+                            meets_char_criteria = False
+                            break
+                else:
+                    # Handle the case where there are fewer lines than required
+                    result["meets_character_criteria"] = False
+                    result["reason_code"] = f"Insufficient number of lines. The required number of lines is {lines_criteria}, but the value only has {len(value_lines)} lines."
+                    meets_char_criteria = False
+                    break
+    
+            result["meets_line_count"] = meets_lines_criteria
+            result["meets_character_criteria"] = meets_char_criteria
+    
+        else:
+            result["meets_line_count"] = False
+            result["meets_character_criteria"] = False
+            result["reason_code"] = f"The specified key is missing from the generated content, which should be formatted with the required number of lines."
+            
+        return result
+
+    overall_result = []
+
+    for item in grouped:
+        key = item["key"]
+        formatted_key = key.replace(' ', '').lower()
+        spec_key = f"{formatted_key}_specs"
+
+        spec = None
+        for spec_key, spec_str in specs.items():
+            if formatted_key in spec_key.replace(' ', '').lower():
+                try:
+                    spec = eval(spec_str)  # Convert string to dictionary safely
+                    break
+                except Exception as e:
+                    print(f"Error parsing spec for key {key}: {e}")
+
+        if spec:
+            evaluated_values = {}
+            for idx, value in item["values"].items():
+                evaluated_values[idx] = evaluate_single_pair(value, spec)
+            overall_result.append({"key": key, "values": evaluated_values})
+        else:
+            print(f"No spec found for key {key}")
+
+    return overall_result
