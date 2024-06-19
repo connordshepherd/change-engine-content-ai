@@ -235,6 +235,33 @@ pairs_json = [
   }
 ]
 
+grouped = [
+  {
+    "key": "TITLE",
+    "values": {
+      "0": "Honor\nAndy",
+      "1": "1 Year \nWith Andy",
+      "2": "Cheers to \nAndy!"
+    }
+  },
+  {
+    "key": "SUBTITLE",
+    "values": {
+      "0": "Excellence Achieved\nAndy",
+      "1": "Cheers\nAndy!",
+      "2": "Success with Andy!"
+    }
+  },
+  {
+    "key": "ILLUSTRATION",
+    "values": {
+      "0": "A festive office celebration with balloons and confetti",
+      "1": "A team congratulating a colleague with a \"1 Year\" cake",
+      "2": "An office party with a \"Happy Work Anniversary\" banner"
+    }
+  }
+]
+
 def group_values(pairs_json):
     grouped = {}
     
@@ -260,7 +287,6 @@ if st.button("Generate"):
     retry = 0
     missing_key = False  # Flag to indicate missing key
     max_retries = 3
-    grouped = group_values(pairs_json)
     st.write("Grouped", grouped)
 
     while retry < max_retries:
