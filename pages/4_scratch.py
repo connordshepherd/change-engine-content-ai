@@ -24,15 +24,6 @@ def fix_problems(evaluation: List[Dict[str, Any]]) -> Tuple[List[str], List[str]
     
     return result, reasons, keys, line_counts
 
-# Define the function to update the grouped structure with fixed response
-def update_grouped(grouped: List[Dict[str, Any]], key: str, index: str, old_value: str, new_value: str) -> bool:
-    for item in grouped:
-        if item["key"] == key:
-            if index in item["values"] and item["values"][index] == old_value:
-                item["values"][index] = new_value
-                return True
-    return False
-
 # Updates into the grouped object
 def update_grouped(grouped: List[Dict[str, Any]], key: str, index: str, new_value: str) -> bool:
     for item in grouped:
