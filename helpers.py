@@ -10,7 +10,7 @@ from PIL import Image
 
 # Define the OpenAI model
 model = "gpt-4-turbo"
-parsing_model = "gpt-4-turbo"
+parsing_model = "gpt-4o"
 
 # Define types for readability
 ParsedArgument = Dict[str, str]
