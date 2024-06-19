@@ -1,6 +1,26 @@
 import streamlit as st
 from helpers import send_to_openai_with_tools, tools, extract_key_value_pairs
-from helpers import evaluate_character_count_and_lines, fix_problems, send_plaintext_to_openai
+from helpers import evaluate_character_count_and_lines, send_plaintext_to_openai
+from typing import List, Dict, Any, Tuple
+
+# Define the fix_problems function
+def fix_problems(evaluation: List[Dict[str, Any]]) -> Tuple[List[str], List[str], List[int]]:
+    result = []
+    reasons = []
+    line_counts = []
+    
+    for item in evaluation:
+        key = item["key"]
+        for idx, value in item["values"].items():
+            if "reason_code" in value:
+                text = value.get("value", "")
+                reason_code = value["reason_code"]
+                formatted_problem = f"{reason_code}\n\n---------\n\n{text}"
+                result.append(formatted_problem)
+                reasons.append(key)  # Append the key to track which item we are fixing
+                line_counts.append(value.get("lines_criteria", "N/A"))  # Append line count criteria
+    
+    return result, reasons, line_counts
 
 # Updates into the grouped object
 def update_grouped(grouped, key, old_value, new_value):
