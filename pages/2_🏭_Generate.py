@@ -119,7 +119,7 @@ if selected_content_type != "Select a Content Type":
 
                     # Generate prompts array for image_prompt
                     prompts_array = generate_prompts_array(topic, image_prompt, layouts_array)
-                    # st.write(prompts_array)
+                    st.write(prompts_array)
 
                     # Go to OpenAI for each one
                     for prompt, layout in zip(prompts_array, layouts_array):
