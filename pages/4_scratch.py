@@ -220,16 +220,18 @@ pairs_json = [
 
 def group_values(pairs_json):
     grouped = {}
-    for pair in pairsjson:
+    
+    for pair in pairs_json:
         key = pair['key']
         value = pair['value']
+        
         if key not in grouped:
-            grouped[key] = {0: value}
-        else:
-ult(item)tain the next index based on how many items are already in the dictionary for that key
-            next_index = len(grouped[key])
-            grouped[key][next_index] = value
-    return grouped
+            grouped[key] = {'key': key, 'values': {}}
+        
+        current_index = len(grouped[key]['values'])
+        grouped[key]['values'][current_index] = value
+    
+    return list(grouped.values())
 
 response = st.text_area("Response", value=draft_response, height=200)
 st.write("pairs_json", pairs_json)
