@@ -145,8 +145,6 @@ response = st.text_area("Response", value=draft_response, height=200)
 st.write("pairs_json", pairs_json)
 st.write("Specs", specs)
 
-st.write("Grouped values", grouped)
-
 if st.button("Generate"):
     # Assemble pairs_json unless you already have it
     # tool_call_prompt = "Please extract relevant entities (Title, Subtitle and any others) from the below text." + "\n\n---------------\n\n" + response
