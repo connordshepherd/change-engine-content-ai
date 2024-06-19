@@ -245,6 +245,7 @@ if selected_content_type != "Select a Content Type":
 
                     # Generate prompts array for image_prompt
                     prompts_array = generate_prompts_array(topic, image_prompt, layouts_array)
+                    st.write("Prompts array", prompts_array)
                 
                     # Go to OpenAI for each one
                     for prompt, layout in zip(prompts_array, layouts_array):
@@ -273,6 +274,7 @@ if selected_content_type != "Select a Content Type":
                             layout_messages = [{"role": "user", "content": response}]
                             layout_response = send_to_openai_with_tools(layout_messages)
                             pairs_json = extract_key_value_pairs(layout_response)
+                            st.write("Pairs JSON initial", pairs_json)
                 
                             iterations = 0
                             missing_key = False  # Flag to indicate missing key
