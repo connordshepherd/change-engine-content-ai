@@ -4,9 +4,10 @@ from helpers import evaluate_character_count_and_lines, send_plaintext_to_openai
 from typing import List, Dict, Any, Tuple
 
 # Define the fix_problems function
-def fix_problems(evaluation: List[Dict[str, Any]]) -> Tuple[List[str], List[str], List[int]]:
+def fix_problems(evaluation: List[Dict[str, Any]]) -> Tuple[List[str], List[str], List[str], List[int]]:
     result = []
     reasons = []
+    keys = []
     line_counts = []
     
     for item in evaluation:
@@ -18,9 +19,10 @@ def fix_problems(evaluation: List[Dict[str, Any]]) -> Tuple[List[str], List[str]
                 formatted_problem = f"{reason_code}\n\n---------\n\n{text}"
                 result.append(formatted_problem)
                 reasons.append(key)  # Append the key to track which item we are fixing
+                keys.append(idx)  # Append the index within the values dictionary
                 line_counts.append(value.get("lines_criteria", "N/A"))  # Append line count criteria
     
-    return result, reasons, line_counts
+    return result, reasons, keys, line_counts
 
 # Updates into the grouped object
 def update_grouped(grouped, key, old_value, new_value):
@@ -282,11 +284,12 @@ if st.button("Generate"):
                 break  # Break the fixing loop to retry with a new generation
 
             # Fix identified problems systematically
-            problems, keys_to_fix, line_counts = fix_problems(evaluation)
+            result, reasons, keys, line_counts = fix_problems(evaluation)
             st.subheader("Fix Problems")
-            st.write(problems)
-            st.write(keys_to_fix)
-            st.write(line_counts)
+            st.write("Result", result)
+            st.write("Reasons", reasons)
+            st.write("Keys", keys)
+            st.write("Line Counts", line_counts)
             for problem, key, line_count, eval_item in zip(problems, keys_to_fix, line_counts, [value for item in evaluation for value in item["values"].values()]):
                 st.write(f"Fixing problem for {key}: {problem}")
                 prompt_with_context = f"{problem}\n\nPlease return your new text, on {line_count} lines."
