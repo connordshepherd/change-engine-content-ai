@@ -120,7 +120,7 @@ if selected_content_type != "Select a Content Type":
 
                 # Generate prompts array for image_prompt
                 prompts_array = generate_prompts_array_with_variations(topic, image_prompt, layouts_array, variations)
-                st.write("Prompts array", prompts_array)
+                #st.write("Prompts array", prompts_array)
             
                 # Go to OpenAI for each one
                 for prompt, layout in zip(prompts_array, layouts_array):
@@ -140,7 +140,7 @@ if selected_content_type != "Select a Content Type":
                         messages = prompt['message']
                         specs = prompt['specs']
                         response = send_to_openai(messages)
-                        st.write("OpenAI response", response)
+                        #st.write("OpenAI response", response)
                         if not response:
                             # st.write(f"Failed to get a response. Retrying {retry + 1}/3...")
                             continue  # Retry without incrementing n
@@ -149,19 +149,19 @@ if selected_content_type != "Select a Content Type":
                         layout_messages = [{"role": "user", "content": response}]
                         layout_response = send_to_openai_with_tools(layout_messages)
                         pairs_json = extract_key_value_pairs(layout_response)
-                        st.write("Pairs JSON initial", pairs_json)
+                        #st.write("Pairs JSON initial", pairs_json)
             
                         iterations = 0
                         missing_key = False  # Flag to indicate missing key
                         max_retries = 3
                         grouped = group_values(pairs_json)
-                        st.write("Grouped", grouped)
-                        st.write("Specs", specs)
+                        #st.write("Grouped", grouped)
+                        #st.write("Specs", specs)
                         
                         while iterations < 5:
                             # Evaluate the grouped values based on specifications
                             evaluation = evaluate_character_count_and_lines_of_group(grouped, specs)
-                            st.write("Evaluation", evaluation)
+                            #st.write("Evaluation", evaluation)
             
                             # Break if all criteria are met and no reason_code is present in the evaluation
                             if not any("reason_code" in value for item in evaluation for value in item['values'].values()):
@@ -185,8 +185,8 @@ if selected_content_type != "Select a Content Type":
             
                                 # Update the grouped structure with fixed_response
                                 updated = update_grouped(grouped, key, index, fixed_response)
-                                st.write("Updated", updated)
-                                st.write("Updated Grouped", grouped)
+                                #st.write("Updated", updated)
+                                #st.write("Updated Grouped", grouped)
             
                                 if not updated:
                                     st.write(f"Could not update value for {key} at index {index} with content {fixed_response}")
@@ -201,7 +201,7 @@ if selected_content_type != "Select a Content Type":
                         if retry == max_retries - 1:  # If we've exhausted retries
                             st.write("Max retries exhausted. Moving on to the next layout.")
                         
-                        st.write("Final grouped", grouped)
+                        #st.write("Final grouped", grouped)
             
                     # Collect and format the final output
                     result = f"Generated Response for {layout_key}:\n"
