@@ -67,7 +67,8 @@ def evaluate_character_count_and_lines_of_group(grouped, specs):
 
     overall_result = []
 
-    for key, values in grouped.items():
+    for item in grouped:
+        key = item["key"]
         formatted_key = key.replace(' ', '').lower()
         spec_key = f"{formatted_key}_specs"
 
@@ -81,7 +82,7 @@ def evaluate_character_count_and_lines_of_group(grouped, specs):
                     print(f"Error parsing spec for key {key}: {e}")
 
         if spec:
-            for value in values:
+            for idx, value in item["values"].items():
                 result = evaluate_single_pair(key, value, spec)
                 overall_result.extend(result)
         else:
