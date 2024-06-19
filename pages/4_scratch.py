@@ -144,7 +144,7 @@ def group_values(pairs_json):
 response = st.text_area("Response", value=draft_response, height=200)
 st.write("pairs_json", pairs_json)
 st.write("Specs", specs)
-grouped = group_values(pairs_json)
+
 st.write("Grouped values", grouped)
 
 if st.button("Generate"):
@@ -160,7 +160,8 @@ if st.button("Generate"):
     missing_key = False  # Flag to indicate missing key
 
     while iterations < 5:  # Attempt to fix and ensure criteria max 5 times
-        evaluation = evaluate_character_count_and_lines(pairs_json, specs)
+        grouped = group_values(pairs_json)
+        evaluation = evaluate_character_count_and_lines_of_group(grouped, specs)
         st.write(evaluation)
 
         if not any("reason_code" in item for item in evaluation):
