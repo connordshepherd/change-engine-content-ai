@@ -15,17 +15,19 @@ def apply_fixes(grouped, evaluation):
     st.subheader("Fix Problems")
     for eval_item in evaluation:
         if "reason_code" in eval_item:
-            problem = eval_name["reason_code"]
+            problem = eval_item["reason_code"]  # Correct this line
             key = eval_item["key"]
             old_value = eval_item["value"]
             line_count = eval_item["lines_criteria"]
             st.write(f"Fixing problem for {key}: {problem}")
+            
             prompt_with_context = f"{problem}\n\nPlease return your new text, on {line_count} lines."
             fixed_response = send_plaintext_to_openai(prompt_with_context)
             st.write(f"Fixed response for {key}: {fixed_response}")
 
-            updated = update_grouped(grouped, key, old_value, fixed_response)
-            if not updated:
+            if update_grouped(grouped, key, old_value, fixed_response):
+                st.write(f"Successfully updated {key} from \"{old_value}\" to \"{fixed_response}\"")
+            else:
                 st.write(f"Could not update value for {key} with content {old_value}")
 
 # Run the character count evaluation on an object with multiple entries
@@ -261,19 +263,24 @@ if st.button("Generate"):
             evaluation = evaluate_character_count_and_lines_of_group(grouped, specs)
             st.write("Evaluation", evaluation)
 
-            if not any("reason_code" in item for item in evaluation):
+            if not any(item.get("reason_code") for item in evaluation):
                 st.write(f"Completed in {iterations} iterations.")
                 break
 
             apply_fixes(grouped, evaluation)
 
             iterations += 1
+            # Check here if fixes resolved all problems or if new generation is required
+            if all(not item.get("reason_code") for item in evaluation):
+                break  # Finish fixing if no more problems
 
-        if any("The specified key is missing" in item.get("reason_code", "") for item in evaluation):
+        if missing_key or any(item.get("reason_code") for item in evaluation):
             retry += 1
-            st.write(f"Missing key detected. Retrying {retry}/{max_retries}...")
+            st.write(f"Missing key detected or issues unresolved. Retrying {retry}/{max_retries}...")
             iterations = 0  # Reset iterations for a new start
         else:
             break
+
+    st.write(grouped)
 
     st.write(grouped)
