@@ -130,9 +130,22 @@ pairs_json = [
   }
 ]
 
+def group_values(pairs_json):
+    grouped = {}
+    for pair in pairs_json:
+        key = pair['key']
+        value = pair['value']
+        if key in grouped:
+            grouped[key].append(value)
+        else:
+            grouped[key] = [value]
+    return grouped
+
 response = st.text_area("Response", value=draft_response, height=200)
 st.write("pairs_json", pairs_json)
 st.write("Specs", specs)
+grouped = group_values(pairs_json)
+st.write("Grouped values", grouped)
 
 if st.button("Generate"):
     # Assemble pairs_json unless you already have it
