@@ -300,6 +300,7 @@ if st.button("Generate"):
 
                 # Update the grouped structure with fixed_response
                 updated = update_grouped(grouped, key, index, fixed_response)
+                st.write("Updated", updated)
 
                 if not updated:
                     st.write(f"Could not update value for {key} at index {index} with content {fixed_response}")
