@@ -159,8 +159,9 @@ if st.button("Generate"):
 
     while iterations < 5:  # Attempt to fix and ensure criteria max 5 times
         grouped = group_values(pairs_json)
+        st.write("Grouped", grouped)  
         evaluation = evaluate_character_count_and_lines_of_group(grouped, specs)
-        st.write(evaluation)
+        st.write("Evaluation", evaluation)
 
         if not any("reason_code" in item for item in evaluation):
             st.write(f"Completed in {iterations} iterations.")
