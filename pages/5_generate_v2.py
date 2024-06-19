@@ -311,7 +311,7 @@ if selected_content_type != "Select a Content Type":
                                     break
                             
                             # Final output after processing
-                            st.write("Final grouped," grouped)
+                            st.write("Final grouped", grouped)
 
                         # Collect and format the final output
                         result = f"Generated Response for {layout_key}:\n"
