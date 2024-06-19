@@ -280,6 +280,7 @@ if selected_content_type != "Select a Content Type":
                             max_retries = 3
                             grouped = group_values(pairs_json)
                             st.write("Grouped", grouped)
+                            st.write("Specs", specs)
                             
                             while retry < max_retries:
                                 while iterations < 5:  # Attempt to fix and ensure criteria max 5 times
