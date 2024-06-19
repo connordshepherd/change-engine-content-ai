@@ -15,21 +15,18 @@ def update_grouped(grouped, key, old_value, new_value):
 
 # Run the character count evaluation on an object with multiple entries
 def evaluate_character_count_and_lines_of_group(grouped, specs):
-    def evaluate_single_pair(key, value, spec):
-        evaluation_result = []
-
-        lines_criteria = spec["LINES"]
+    def evaluate_single_pair(value, spec):
         result = {
-            "key": key,
             "value": value,
             "meets_line_count": False if value is None else True,
             "meets_character_criteria": False if value is None else True,
-            "lines_criteria": lines_criteria  # add this information to the result
         }
 
         if value:
             value_lines = value.split('\n')
+            lines_criteria = spec["LINES"]
             meets_lines_criteria = len(value_lines) == lines_criteria
+            result.update({"lines_criteria": lines_criteria})
 
             if not meets_lines_criteria:
                 result["meets_line_count"] = False
@@ -59,11 +56,9 @@ def evaluate_character_count_and_lines_of_group(grouped, specs):
         else:
             result["meets_line_count"] = False
             result["meets_character_criteria"] = False
-            result["reason_code"] = f"The specified key is missing from the generated content, which should be formatted with {lines_criteria} lines."
+            result["reason_code"] = f"The specified key is missing from the generated content, which should be formatted with the required number of lines."
             
-        evaluation_result.append(result)
-
-        return evaluation_result
+        return result
 
     overall_result = []
 
@@ -82,9 +77,10 @@ def evaluate_character_count_and_lines_of_group(grouped, specs):
                     print(f"Error parsing spec for key {key}: {e}")
 
         if spec:
+            evaluated_values = {}
             for idx, value in item["values"].items():
-                result = evaluate_single_pair(key, value, spec)
-                overall_result.extend(result)
+                evaluated_values[idx] = evaluate_single_pair(value, spec)
+            overall_result.append({"key": key, "values": evaluated_values})
         else:
             print(f"No spec found for key {key}")
 
