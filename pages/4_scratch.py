@@ -1,6 +1,12 @@
 import streamlit as st
 from helpers import send_to_openai_with_tools, tools, extract_key_value_pairs
 
+specs = {
+  "Title_specs": "{\"LINES\": 3, \"LINE_1_UPPER_LIMIT\": 10, \"LINE_2_UPPER_LIMIT\": 10, \"LINE_3_UPPER_LIMIT\": 10}",
+  "Hashtag 1_specs": "{\"LINES\": 1, \"LINE_1_LOWER_LIMIT\": 15, \"LINE_1_UPPER_LIMIT\": 21}",
+  "Hashtag 2_specs": "{\"LINES\": 1, \"LINE_1_LOWER_LIMIT\": 15, \"LINE_1_UPPER_LIMIT\": 21}"
+}
+
 draft_response = """Sure, here are the five different variant drafts for the LinkedIn banner:
 
 -------
