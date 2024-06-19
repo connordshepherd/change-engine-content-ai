@@ -260,11 +260,11 @@ if st.button("Generate"):
     retry = 0
     missing_key = False  # Flag to indicate missing key
     max_retries = 3
+    grouped = group_values(pairs_json)
+    st.write("Grouped", grouped)
 
     while retry < max_retries:
         while iterations < 5:  # Attempt to fix and ensure criteria max 5 times
-            grouped = group_values(pairs_json)
-            st.write("Grouped", grouped)
             # Evaluate the grouped values based on specifications
             evaluation = evaluate_character_count_and_lines_of_group(grouped, specs)
             st.write("Evaluation", evaluation)
