@@ -3,75 +3,78 @@ from helpers import send_to_openai_with_tools, tools, extract_key_value_pairs
 from helpers import evaluate_character_count_and_lines, fix_problems, send_plaintext_to_openai
 
 # Run the character count evaluation on an object with multiple entries
-def evaluate_character_count_and_lines_of_group(pairs_json, specs):
-    def evaluate_single_pair(key, value, specs):
+def evaluate_character_count_and_lines_of_group(grouped, specs):
+    def evaluate_single_pair(key, value, spec):
         evaluation_result = []
 
-        # Remove spaces and case-insensitive formatting for dictionary keys
-        formatted_key = key.replace(' ', '').lower()
+        lines_criteria = spec["LINES"]
+        result = {
+            "key": key,
+            "value": value,
+            "meets_line_count": False if value is None else True,
+            "meets_character_criteria": False if value is None else True,
+            "lines_criteria": lines_criteria  # add this information to the result
+        }
 
-        try:
-            spec_str = specs[f"{key.replace(' ', '_').upper()}_specs"]
-            spec = eval(spec_str)  # convert string to dictionary safely
-        except Exception as e:
-            spec = None
-            print(f"Error parsing spec: {e}")  # using print for error handling
-            return []
+        if value:
+            value_lines = value.split('\n')
+            meets_lines_criteria = len(value_lines) == lines_criteria
 
-        if spec:
-            lines_criteria = spec["LINES"]
-            result = {
-                "key": key,
-                "value": value,
-                "meets_line_count": False if value is None else True,
-                "meets_character_criteria": False if value is None else True,
-                "lines_criteria": lines_criteria  # add this information to the result
-            }
-
-            if value:
-                value_lines = value.split('\n')
-                meets_lines_criteria = len(value_lines) == lines_criteria
-
-                if not meets_lines_criteria:
-                    result["meets_line_count"] = False
-                    result["reason_code"] = f"Wrong number of lines - please rewrite this text so it is on {lines_criteria} lines, but keep the general meaning the same:"
-                
-                meets_char_criteria = True
-                for i in range(lines_criteria):
-                    upper_limit = spec[f"LINE_{i+1}_UPPER_LIMIT"]
-                    line_length = len(value_lines[i])
-                    if line_length > upper_limit:
+            if not meets_lines_criteria:
+                result["meets_line_count"] = False
+                result["reason_code"] = f"Wrong number of lines - please rewrite this text so it is on {lines_criteria} lines, but keep the general meaning the same:"
+            
+            meets_char_criteria = True
+            for i in range(lines_criteria):
+                upper_limit = spec[f"LINE_{i + 1}_UPPER_LIMIT"]
+                line_length = len(value_lines[i])
+                if line_length > upper_limit:
+                    result["meets_character_criteria"] = False
+                    result["reason_code"] = f"Say something like this, with only 2 words. You can change the meaning if you need to. If you want to remove a word, do it. This is for a graphic design, so we're just trying to communicate the general theme. It doesn't need to be exact. Return your new text, on {lines_criteria} lines."
+                    meets_char_criteria = False
+                    break
+                    
+                if f"LINE_{i + 1}_LOWER_LIMIT" in spec:
+                    lower_limit = spec[f"LINE_{i + 1}_LOWER_LIMIT"]
+                    if line_length < lower_limit:
                         result["meets_character_criteria"] = False
-                        result["reason_code"] = f"Say something like this, with only 2 words. You can change the meaning if you need to. If you want to remove a word, do it. This is for a graphic design, so we're just trying to communicate the general theme. It doesn't need to be exact. Return your new text, on {lines_criteria} lines."
+                        result["reason_code"] = f"Add 1 word to this text. If there are line breaks, keep them. Return only the adjusted text, on {lines_criteria} lines."
                         meets_char_criteria = False
                         break
-                        
-                    if f"LINE_{i+1}_LOWER_LIMIT" in spec:
-                        lower_limit = spec[f"LINE_{i+1}_LOWER_LIMIT"]
-                        if line_length < lower_limit:
-                            result["meets_character_criteria"] = False
-                            result["reason_code"] = f"Add 1 word to this text. If there are line breaks, keep them. Return only the adjusted text, on {lines_criteria} lines."
-                            meets_char_criteria = False
-                            break
 
-                result["meets_line_count"] = meets_lines_criteria
-                result["meets_character_criteria"] = meets_char_criteria
+            result["meets_line_count"] = meets_lines_criteria
+            result["meets_character_criteria"] = meets_char_criteria
 
-            else:
-                result["meets_line_count"] = False
-                result["meets_character_criteria"] = False
-                result["reason_code"] = f"The specified key is missing from the generated content, which should be formatted with {lines_criteria} lines."
-                
-            evaluation_result.append(result)
+        else:
+            result["meets_line_count"] = False
+            result["meets_character_criteria"] = False
+            result["reason_code"] = f"The specified key is missing from the generated content, which should be formatted with {lines_criteria} lines."
+            
+        evaluation_result.append(result)
 
         return evaluation_result
 
     overall_result = []
 
-    for key, values in pairs_json.items():
-        for value in values:
-            result = evaluate_single_pair(key, value, specs)
-            overall_result.extend(result)
+    for key, values in grouped.items():
+        formatted_key = key.replace(' ', '').lower()
+        spec_key = f"{formatted_key}_specs"
+
+        spec = None
+        for spec_key, spec_str in specs.items():
+            if formatted_key in spec_key.replace(' ', '').lower():
+                try:
+                    spec = eval(spec_str)  # Convert string to dictionary safely
+                    break
+                except Exception as e:
+                    print(f"Error parsing spec for key {key}: {e}")
+
+        if spec:
+            for value in values:
+                result = evaluate_single_pair(key, value, spec)
+                overall_result.extend(result)
+        else:
+            print(f"No spec found for key {key}")
 
     return overall_result
 
