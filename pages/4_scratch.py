@@ -131,6 +131,7 @@ pairs_json = [
 ]
 
 response = st.text_area("Response", value=draft_response, height=200)
+st.write("pairs_json", pairs_json)
 st.write("Specs", specs)
 
 if st.button("Generate"):
