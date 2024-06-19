@@ -41,38 +41,45 @@ def evaluate_character_count_and_lines_of_group(grouped, specs):
             "meets_line_count": False if value is None else True,
             "meets_character_criteria": False if value is None else True,
         }
-
+    
         if value:
             value_lines = value.split('\n')
             lines_criteria = spec["LINES"]
             meets_lines_criteria = len(value_lines) == lines_criteria
             result.update({"lines_criteria": lines_criteria})
-
+    
             if not meets_lines_criteria:
                 result["meets_line_count"] = False
                 result["reason_code"] = f"Wrong number of lines - please rewrite this text so it is on {lines_criteria} lines, but keep the general meaning the same:"
             
             meets_char_criteria = True
             for i in range(lines_criteria):
-                upper_limit = spec[f"LINE_{i + 1}_UPPER_LIMIT"]
-                line_length = len(value_lines[i])
-                if line_length > upper_limit:
-                    result["meets_character_criteria"] = False
-                    result["reason_code"] = f"Say something like this, with only 2 words. You can change the meaning if you need to. If you want to remove a word, do it. This is for a graphic design, so we're just trying to communicate the general theme. It doesn't need to be exact. Return your new text, on {lines_criteria} lines."
-                    meets_char_criteria = False
-                    break
-                    
-                if f"LINE_{i + 1}_LOWER_LIMIT" in spec:
-                    lower_limit = spec[f"LINE_{i + 1}_LOWER_LIMIT"]
-                    if line_length < lower_limit:
+                if i < len(value_lines):
+                    upper_limit = spec[f"LINE_{i + 1}_UPPER_LIMIT"]
+                    line_length = len(value_lines[i])
+                    if line_length > upper_limit:
                         result["meets_character_criteria"] = False
-                        result["reason_code"] = f"Add 1 word to this text. If there are line breaks, keep them. Return only the adjusted text, on {lines_criteria} lines."
+                        result["reason_code"] = f"Say something like this, with only 2 words. You can change the meaning if you need to. If you want to remove a word, do it. This is for a graphic design, so we're just trying to communicate the general theme. It doesn't need to be exact. Return your new text, on {lines_criteria} lines."
                         meets_char_criteria = False
                         break
-
+                        
+                    if f"LINE_{i + 1}_LOWER_LIMIT" in spec:
+                        lower_limit = spec[f"LINE_{i + 1}_LOWER_LIMIT"]
+                        if line_length < lower_limit:
+                            result["meets_character_criteria"] = False
+                            result["reason_code"] = f"Add 1 word to this text. If there are line breaks, keep them. Return only the adjusted text, on {lines_criteria} lines."
+                            meets_char_criteria = False
+                            break
+                else:
+                    # Handle the case where there are fewer lines than required
+                    result["meets_character_criteria"] = False
+                    result["reason_code"] = f"Insufficient number of lines. The required number of lines is {lines_criteria}, but the value only has {len(value_lines)} lines."
+                    meets_char_criteria = False
+                    break
+    
             result["meets_line_count"] = meets_lines_criteria
             result["meets_character_criteria"] = meets_char_criteria
-
+    
         else:
             result["meets_line_count"] = False
             result["meets_character_criteria"] = False
