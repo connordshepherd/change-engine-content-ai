@@ -331,8 +331,14 @@ if selected_content_type != "Select a Content Type":
 
                         # Collect and format the final output
                         result = f"Generated Response for {layout_key}:\n"
-                        for pair in pairs_json:
-                            result += f"{pair['key']}: {pair['value']}\n"
+
+                        # Iterate over each group and format the key-value pairs correctly
+                        for group in grouped:
+                            key = group['key']
+                            values = group['values']
+                            for index, value in values.items():
+                                result += f"{key} {index}: {value}\n"
+                        
                         result += "-" * 30 + "\n"
                         results.append(result)  # Append the formatted result to the list
 
