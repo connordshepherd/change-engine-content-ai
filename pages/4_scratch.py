@@ -258,8 +258,6 @@ st.write("Specs", specs)
 st.info("You need to adjust the fix_problems function to return the mapping of where in the grouped object you have an issue to fix.")
 
 if st.button("Generate"):
-    # Assume pairs_json is already available or obtained earlier in the script
-    # Initialize required variables and flags
     iterations = 0
     retry = 0
     missing_key = False  # Flag to indicate missing key
@@ -284,25 +282,21 @@ if st.button("Generate"):
                 break  # Break the fixing loop to retry with a new generation
 
             # Fix identified problems systematically
-            result, reasons, keys, line_counts = fix_problems(evaluation)
+            problems, keys_to_fix, indices_to_fix, line_counts = fix_problems(evaluation)
             st.subheader("Fix Problems")
-            st.write("Result", result)
-            st.write("Reasons", reasons)
-            st.write("Keys", keys)
-            st.write("Line Counts", line_counts)
-            for problem, key, line_count, eval_item in zip(problems, keys_to_fix, line_counts, [value for item in evaluation for value in item["values"].values()]):
-                st.write(f"Fixing problem for {key}: {problem}")
+            for problem, key, index, line_count in zip(problems, keys_to_fix, indices_to_fix, line_counts):
+                st.write(f"Fixing problem for {key} at index {index}: {problem}")
                 prompt_with_context = f"{problem}\n\nPlease return your new text, on {line_count} lines."
                 # Send request to OpenAI for generating fix
                 fixed_response = send_plaintext_to_openai(prompt_with_context)
-                st.write(f"Fixed response for {key}: {fixed_response}")
+                st.write(f"Fixed response for {key} at index {index}: {fixed_response}")
 
-                old_value = eval_item["value"]
+                old_value = evaluation[key]["values"][index]["value"]
                 # Update the grouped structure with fixed_response
-                updated = update_grouped(grouped, key, old_value, fixed_response)
+                updated = update_grouped(grouped, key, index, old_value, fixed_response)
 
                 if not updated:
-                    st.write(f"Could not update value for {key} with content {old_value}")
+                    st.write(f"Could not update value for {key} at index {index} with content {old_value}")
 
             iterations += 1
 
