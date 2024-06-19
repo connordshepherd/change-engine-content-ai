@@ -235,14 +235,8 @@ st.write("pairs_json", pairs_json)
 st.write("Specs", specs)
 
 if st.button("Generate"):
-    # Assemble pairs_json unless you already have it
-    # tool_call_prompt = "Please extract relevant entities (Title, Subtitle and any others) from the below text." + "\n\n---------------\n\n" + response
-    # layout_messages = [{"role": "user", "content": tool_call_prompt}]
-    # layout_response = send_to_openai_with_tools(layout_messages)
-    # pairs_json = extract_key_value_pairs(layout_response)
-    # st.write(pairs_json)
-
-    # Process and evaluate the response
+    # Assume pairs_json is already available or obtained earlier in the script
+    # Initialize required variables and flags
     iterations = 0
     retry = 0
     missing_key = False  # Flag to indicate missing key
@@ -251,27 +245,33 @@ if st.button("Generate"):
     while retry < max_retries:
         while iterations < 5:  # Attempt to fix and ensure criteria max 5 times
             grouped = group_values(pairs_json)
-            st.write("Grouped", grouped)  
+            st.write("Grouped", grouped)
+            # Evaluate the grouped values based on specifications
             evaluation = evaluate_character_count_and_lines_of_group(grouped, specs)
             st.write("Evaluation", evaluation)
 
-            if not any("reason_code" in item for item in evaluation):
+            # Break if all criteria are met and no reason_code is present in the evaluation
+            if not any("reason_code" in value for item in evaluation for value in item['values'].values()):
                 st.write(f"Completed in {iterations} iterations.")
                 break  # Break the fixing loop since all criteria are met
 
-            if any("reason_code" in item and "The specified key is missing" in item["reason_code"] for item in evaluation):
+            # Check for missing key issue
+            if any("reason_code" in value and "The specified key is missing" in value["reason_code"] for item in evaluation for value in item['values'].values()):
                 missing_key = True
                 break  # Break the fixing loop to retry with a new generation
 
+            # Fix identified problems systematically
             problems, keys_to_fix, line_counts = fix_problems(evaluation)
             st.subheader("Fix Problems")
-            for problem, key, line_count, eval_item in zip(problems, keys_to_fix, line_counts, evaluation):
+            for problem, key, line_count, eval_item in zip(problems, keys_to_fix, line_counts, [value for item in evaluation for value in item["values"].values()]):
                 st.write(f"Fixing problem for {key}: {problem}")
                 prompt_with_context = f"{problem}\n\nPlease return your new text, on {line_count} lines."
+                # Send request to OpenAI for generating fix
                 fixed_response = send_plaintext_to_openai(prompt_with_context)
                 st.write(f"Fixed response for {key}: {fixed_response}")
 
                 old_value = eval_item["value"]
+                # Update the grouped structure with fixed_response
                 updated = update_grouped(grouped, key, old_value, fixed_response)
 
                 if not updated:
@@ -279,6 +279,7 @@ if st.button("Generate"):
 
             iterations += 1
 
+        # Retry if a missing key issue was detected
         if missing_key:
             retry += 1
             st.write(f"Missing key detected. Retrying {retry}/{max_retries}...")
@@ -286,4 +287,5 @@ if st.button("Generate"):
         else:
             break
 
+    # Final output after processing
     st.write(grouped)
