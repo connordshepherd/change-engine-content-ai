@@ -259,44 +259,59 @@ if selected_content_type != "Select a Content Type":
                             layout_response = send_to_openai_with_tools(layout_messages)
                             pairs_json = extract_key_value_pairs(layout_response)
 
-                            # Process and evaluate the response
                             iterations = 0
+                            retry = 0
                             missing_key = False  # Flag to indicate missing key
-
-                            while iterations < 5:  # Attempt to fix and ensure criteria max 5 times
-                                evaluation = evaluate_character_count_and_lines(pairs_json, specs)
-                                # st.write(evaluation)
-
-                                if not any("reason_code" in item for item in evaluation):
-                                    # st.write(f"Completed in {iterations} iterations.")
-                                    break  # Break the fixing loop since all criteria are met
-
-                                if any("reason_code" in item and "The specified key is missing" in item["reason_code"] for item in evaluation):
-                                    missing_key = True
-                                    break  # Break the fixing loop to retry with a new generation
-
-                                problems, keys_to_fix, line_counts = fix_problems(evaluation)
-                                # st.subheader("Fix Problems")
-                                for problem, key, line_count in zip(problems, keys_to_fix, line_counts):
-                                    # st.write(f"Fixing problem for {key}: {problem}")
-                                    prompt_with_context = f"{problem}\n\nPlease return your new text, on {line_count} lines."
-                                    fixed_response = send_plaintext_to_openai(prompt_with_context)
-                                    # st.write(fixed_response)
-
-                                    for pair in pairs_json:
-                                        if pair["key"].upper() == key.upper():
-                                            pair["value"] = fixed_response
-
-                                    # st.write(pairs_json)
-
-                                iterations += 1
-
-                            if missing_key:
-                                st.write(f"Missing key detected. Retrying {retry + 1}/3...")
-                            else:
-                                break  # Successfully completed, no need to retry
-                        else:
-                            st.write(f"Failed to process prompt for {layout_key} after 3 retries.")
+                            max_retries = 3
+                            grouped = group_values(pairs_json)
+                            st.write("Grouped", grouped)
+                            
+                            while retry < max_retries:
+                                while iterations < 5:  # Attempt to fix and ensure criteria max 5 times
+                                    # Evaluate the grouped values based on specifications
+                                    evaluation = evaluate_character_count_and_lines_of_group(grouped, specs)
+                                    st.write("Evaluation", evaluation)
+                            
+                                    # Break if all criteria are met and no reason_code is present in the evaluation
+                                    if not any("reason_code" in value for item in evaluation for value in item['values'].values()):
+                                        st.write(f"Completed in {iterations} iterations.")
+                                        break  # Break the fixing loop since all criteria are met
+                            
+                                    # Check for missing key issue
+                                    if any("reason_code" in value and "The specified key is missing" in value["reason_code"] for item in evaluation for value in item['values'].values()):
+                                        missing_key = True
+                                        break  # Break the fixing loop to retry with a new generation
+                            
+                                    # Fix identified problems systematically
+                                    problems, keys_to_fix, indices_to_fix, line_counts = fix_problems(evaluation)
+                                    st.subheader("Fix Problems")
+                                    for problem, key, index, line_count in zip(problems, keys_to_fix, indices_to_fix, line_counts):
+                                        st.write(f"Fixing problem for {key} at index {index}: {problem}")
+                                        prompt_with_context = f"{problem}\n\nPlease return your new text, on {line_count} lines."
+                                        # Send request to OpenAI for generating fix
+                                        fixed_response = send_plaintext_to_openai(prompt_with_context)
+                                        st.write(f"Fixed response for {key} at index {index}: {fixed_response}")
+                            
+                                        # Update the grouped structure with fixed_response
+                                        updated = update_grouped(grouped, key, index, fixed_response)
+                                        st.write("Updated", updated)
+                                        st.write("Updated Grouped", grouped)
+                            
+                                        if not updated:
+                                            st.write(f"Could not update value for {key} at index {index} with content {fixed_response}")
+                            
+                                    iterations += 1
+                            
+                                # Retry if a missing key issue was detected
+                                if missing_key:
+                                    retry += 1
+                                    st.write(f"Missing key detected. Retrying {retry}/{max_retries}...")
+                                    iterations = 0  # Reset the iterations for a fresh start
+                                else:
+                                    break
+                            
+                            # Final output after processing
+                            st.write("Final grouped," grouped)
 
                         # Collect and format the final output
                         result = f"Generated Response for {layout_key}:\n"
