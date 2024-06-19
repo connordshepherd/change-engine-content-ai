@@ -5,7 +5,7 @@ import requests
 
 from io import BytesIO
 from PIL import Image
-from helpers import get_content_types_data, get_table_data, process_table_data, get_selected_layouts_array, generate_prompts_array, send_to_openai
+from helpers import get_content_types_data, get_table_data, process_table_data, get_selected_layouts_array, generate_prompts_array_with_variations, send_to_openai
 from helpers import add_specs, evaluate_character_count_and_lines, extract_key_value_pairs, send_to_openai_with_tools, tools
 from helpers import send_plaintext_to_openai, get_client_data, prepare_layout_selector_data
 import openai
@@ -244,7 +244,7 @@ if selected_content_type != "Select a Content Type":
                 if image_prompt:
 
                     # Generate prompts array for image_prompt
-                    prompts_array = generate_prompts_array(topic, image_prompt, layouts_array)
+                    prompts_array = generate_prompts_array_with_variations(topic, image_prompt, layouts_array, variations)
                     st.write("Prompts array", prompts_array)
                 
                     # Go to OpenAI for each one
