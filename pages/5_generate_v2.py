@@ -245,11 +245,11 @@ if selected_content_type != "Select a Content Type":
 
                     # Generate prompts array for image_prompt
                     prompts_array = generate_prompts_array(topic, image_prompt, layouts_array)
-
+                
                     # Go to OpenAI for each one
                     for prompt, layout in zip(prompts_array, layouts_array):
                         layout_key = list(layout.keys())[0]  # Extract the layout key (e.g., "Layout 1")
-
+                
                         # Check if content type is 'FAQ'
                         if selected_content_type == "FAQ":
                             # Generate response and add directly to results
@@ -268,70 +268,67 @@ if selected_content_type != "Select a Content Type":
                             if not response:
                                 # st.write(f"Failed to get a response. Retrying {retry + 1}/3...")
                                 continue  # Retry without incrementing n
-
+                
                             tool_call_prompt = "Please extract relevant entities (Title, Subtitle and any others) from the below text." + "\n\n---------------\n\n" + response
                             layout_messages = [{"role": "user", "content": response}]
                             layout_response = send_to_openai_with_tools(layout_messages)
                             pairs_json = extract_key_value_pairs(layout_response)
-
+                
                             iterations = 0
-                            retry = 0
                             missing_key = False  # Flag to indicate missing key
                             max_retries = 3
                             grouped = group_values(pairs_json)
                             st.write("Grouped", grouped)
                             st.write("Specs", specs)
                             
-                            while retry < max_retries:
-                                while iterations < 5:  # Attempt to fix and ensure criteria max 5 times
-                                    # Evaluate the grouped values based on specifications
-                                    evaluation = evaluate_character_count_and_lines_of_group(grouped, specs)
-                                    st.write("Evaluation", evaluation)
+                            while iterations < 5:
+                                # Evaluate the grouped values based on specifications
+                                evaluation = evaluate_character_count_and_lines_of_group(grouped, specs)
+                                st.write("Evaluation", evaluation)
+                
+                                # Break if all criteria are met and no reason_code is present in the evaluation
+                                if not any("reason_code" in value for item in evaluation for value in item['values'].values()):
+                                    st.write(f"Completed in {iterations} iterations.")
+                                    break  # Break the fixing loop since all criteria are met
+                
+                                # Check for missing key issue
+                                if any("reason_code" in value and "The specified key is missing" in value["reason_code"] for item in evaluation for value in item['values'].values()):
+                                    missing_key = True
+                                    break  # Break the fixing loop to retry with a new generation
+                
+                                # Fix identified problems systematically
+                                problems, keys_to_fix, indices_to_fix, line_counts = fix_problems(evaluation)
+                                st.subheader("Fix Problems")
+                                for problem, key, index, line_count in zip(problems, keys_to_fix, indices_to_fix, line_counts):
+                                    st.write(f"Fixing problem for {key} at index {index}: {problem}")
+                                    prompt_with_context = f"{problem}\n\nPlease return your new text, on {line_count} lines."
+                                    # Send request to OpenAI for generating fix
+                                    fixed_response = send_plaintext_to_openai(prompt_with_context)
+                                    st.write(f"Fixed response for {key} at index {index}: {fixed_response}")
+                
+                                    # Update the grouped structure with fixed_response
+                                    updated = update_grouped(grouped, key, index, fixed_response)
+                                    st.write("Updated", updated)
+                                    st.write("Updated Grouped", grouped)
+                
+                                    if not updated:
+                                        st.write(f"Could not update value for {key} at index {index} with content {fixed_response}")
+                
+                                iterations += 1
+                
+                            if missing_key:
+                                st.write(f"Missing key detected. Retrying {retry + 1}/{max_retries}...")
+                            else:
+                                break
+                
+                            if retry == max_retries - 1:  # If we've exhausted retries
+                                st.write("Max retries exhausted. Moving on to the next layout.")
                             
-                                    # Break if all criteria are met and no reason_code is present in the evaluation
-                                    if not any("reason_code" in value for item in evaluation for value in item['values'].values()):
-                                        st.write(f"Completed in {iterations} iterations.")
-                                        break  # Break the fixing loop since all criteria are met
-                            
-                                    # Check for missing key issue
-                                    if any("reason_code" in value and "The specified key is missing" in value["reason_code"] for item in evaluation for value in item['values'].values()):
-                                        missing_key = True
-                                        break  # Break the fixing loop to retry with a new generation
-                            
-                                    # Fix identified problems systematically
-                                    problems, keys_to_fix, indices_to_fix, line_counts = fix_problems(evaluation)
-                                    st.subheader("Fix Problems")
-                                    for problem, key, index, line_count in zip(problems, keys_to_fix, indices_to_fix, line_counts):
-                                        st.write(f"Fixing problem for {key} at index {index}: {problem}")
-                                        prompt_with_context = f"{problem}\n\nPlease return your new text, on {line_count} lines."
-                                        # Send request to OpenAI for generating fix
-                                        fixed_response = send_plaintext_to_openai(prompt_with_context)
-                                        st.write(f"Fixed response for {key} at index {index}: {fixed_response}")
-                            
-                                        # Update the grouped structure with fixed_response
-                                        updated = update_grouped(grouped, key, index, fixed_response)
-                                        st.write("Updated", updated)
-                                        st.write("Updated Grouped", grouped)
-                            
-                                        if not updated:
-                                            st.write(f"Could not update value for {key} at index {index} with content {fixed_response}")
-                            
-                                    iterations += 1
-                            
-                                # Retry if a missing key issue was detected
-                                if missing_key:
-                                    retry += 1
-                                    st.write(f"Missing key detected. Retrying {retry}/{max_retries}...")
-                                    iterations = 0  # Reset the iterations for a fresh start
-                                else:
-                                    break
-                            
-                            # Final output after processing
                             st.write("Final grouped", grouped)
-
+                
                         # Collect and format the final output
                         result = f"Generated Response for {layout_key}:\n"
-
+                
                         # Iterate over each group and format the key-value pairs correctly
                         for group in grouped:
                             key = group['key']
@@ -341,7 +338,7 @@ if selected_content_type != "Select a Content Type":
                         
                         result += "-" * 30 + "\n"
                         results.append(result)  # Append the formatted result to the list
-
+                
                 # Append all accumulated results to the main results string
                 for result in results:
                     all_results += result
