@@ -253,6 +253,7 @@ def group_values(pairs_json):
 response = st.text_area("Response", value=draft_response, height=200)
 st.write("pairs_json", pairs_json)
 st.write("Specs", specs)
+st.info("You need to adjust the fix_problems function to return the mapping of where in the grouped object you have an issue to fix.")
 
 if st.button("Generate"):
     # Assume pairs_json is already available or obtained earlier in the script
