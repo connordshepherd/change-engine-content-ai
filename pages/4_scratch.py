@@ -60,7 +60,7 @@ Hashtag 2: #JoinOurTechTeam
 
 Hope these meet your requirements!"""
 
-response = st.text_area(value=draft_response, height=200)
+response = st.text_area("Response", value=draft_response, height=200)
 
 if st.button("Generate"):
     tool_call_prompt = "Please extract relevant entities (Title, Subtitle and any others) from the below text." + "\n\n---------------\n\n" + response
