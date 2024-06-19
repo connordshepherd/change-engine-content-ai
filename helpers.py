@@ -285,6 +285,27 @@ def generate_prompts_array(topic, image_prompt, layouts_array):
     
     return prompts_array
 
+# Creates the array of prompts to send to OpenAI
+def generate_prompts_array_with_variations(topic, image_prompt, layouts_array, variations):
+    prompts_array = []
+
+    for layout in layouts_array:
+        for layout_key, layout_details in layout.items():
+            prompt_messages = []
+            layout_messages = []
+
+            # Combine image_prompt, layout 'Text' and 'Specs'
+            full_prompt = f"{image_prompt}\n\n{fewshot_prompt}\n\n---------\n\n{layout_details['Text']}\n\n---------\n\nHere's the topic:\n\n{topic}\n\nPlease make {variations} variations."
+            prompt_messages.append({"role": "user", "content": full_prompt})
+
+            layout_messages.append({"role": "user", "content": layout_details['Text']})
+
+            specs = layout_details.get('Specs', {})
+
+            prompts_array.append({"message": prompt_messages, "layout": layout_messages, "specs": specs})
+
+    return prompts_array
+
 # Function to send request to OpenAI API
 def send_to_openai(messages):
     try:
