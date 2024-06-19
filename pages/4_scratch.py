@@ -1,5 +1,5 @@
 import streamlit as st
-from helpers import send_to_openai_with_tools, tools, extract_key_value_pairs
+from helpers import send_to_openai_with_tools, tools, extract_key_value_pairs, evaluate_character_count_and_lines_of_group
 from helpers import evaluate_character_count_and_lines, fix_problems, send_plaintext_to_openai
 
 specs = {
