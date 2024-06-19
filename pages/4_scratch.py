@@ -1,5 +1,6 @@
 import streamlit as st
 from helpers import send_to_openai_with_tools, tools, extract_key_value_pairs
+from helpers import evaluate_character_count_and_lines, fix_problems, send_plaintext_to_openai
 
 specs = {
   "Title_specs": "{\"LINES\": 3, \"LINE_1_UPPER_LIMIT\": 10, \"LINE_2_UPPER_LIMIT\": 10, \"LINE_3_UPPER_LIMIT\": 10}",
