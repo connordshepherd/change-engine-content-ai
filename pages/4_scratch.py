@@ -167,11 +167,9 @@ if st.button("Generate"):
                 if pair["key"].upper() == key.upper():
                     pair["value"] = fixed_response
 
-            st.write(pairs_json)
-
         iterations += 1
 
     if missing_key:
         st.write(f"Missing key detected. Retrying {retry + 1}/3...")
     else:
-        break  # Successfully completed, no need to retry
+        st.write(pairs_json)
