@@ -40,7 +40,13 @@ client_data = get_client_data()
 
 # Create a selectbox for company name
 company_name_list = sorted(client_data.keys())
-selected_company_name = st.selectbox("Company", options=["Select a Company"] + company_name_list)
+
+# Determine the default index for the selectbox
+default_company_index = 0  # Default to "Select a Company"
+if "Global App Testing" in company_name_list:
+    default_company_index = company_name_list.index("Global App Testing") + 1  # +1 because of "Select a Company"
+
+selected_company_name = st.selectbox("Company", options=["Select a Company"] + company_name_list, index=default_company_index)
 
 # Display the AI Brand Tone Prompt for the selected company
 if selected_company_name and selected_company_name != 'Select a Company':
