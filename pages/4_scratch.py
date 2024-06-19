@@ -24,6 +24,15 @@ def fix_problems(evaluation: List[Dict[str, Any]]) -> Tuple[List[str], List[str]
     
     return result, reasons, keys, line_counts
 
+# Define the function to update the grouped structure with fixed response
+def update_grouped(grouped: List[Dict[str, Any]], key: str, index: str, old_value: str, new_value: str) -> bool:
+    for item in grouped:
+        if item["key"] == key:
+            if index in item["values"] and item["values"][index] == old_value:
+                item["values"][index] = new_value
+                return True
+    return False
+
 # Updates into the grouped object
 def update_grouped(grouped, key, old_value, new_value):
     if key in grouped:
@@ -291,7 +300,7 @@ if st.button("Generate"):
                 fixed_response = send_plaintext_to_openai(prompt_with_context)
                 st.write(f"Fixed response for {key} at index {index}: {fixed_response}")
 
-                old_value = evaluation[key]["values"][index]["value"]
+                old_value = evaluation[next(item for item in range(len(evaluation)) if evaluation[item]["key"] == key)]["values"][index]["value"]
                 # Update the grouped structure with fixed_response
                 updated = update_grouped(grouped, key, index, old_value, fixed_response)
 
