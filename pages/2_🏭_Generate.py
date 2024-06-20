@@ -55,7 +55,7 @@ else:
     company_tone_style = st.text_area("Company Tone and Style Guide", value="", height=100)
 
 # Set a number of variations, ie a number of times to run the content loop
-variations = st.number_input("Number of Variations", 1, 5, value=5)
+variations = st.number_input("Number of Variations", 1, 10, value=5)
 
 def get_image_from_url(url):
     response = requests.get(url)
