@@ -54,7 +54,7 @@ if "Global App Testing" in company_name_list:
 # Manual input for testing parameters
 selected_company_name = st.selectbox("Company", options=["Select a Company"] + company_name_list, index=default_company_index)
 selected_content_type = st.selectbox("Content Type", options=content_type_options)
-variations = st.number_input("Number of Variations", 1, 10, value=10, step=1).astype(int)
+variations = st.number_input("Number of Variations", 1, 10, value=10, step=1)
 topic = st.text_area("Prompt", height=100)
 
 if selected_company_name and selected_company_name != "Select a Company":
