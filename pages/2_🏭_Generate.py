@@ -117,7 +117,7 @@ if selected_content_type != "Select a Content Type":
             if len(selected_layouts_numbers) > 1:
                 st.error("Please select only one layout at a time.")
             else:
-                # This button starts the generation loop.
+                # Show the Generate button only if exactly one layout is selected
                 if st.button("Generate"):
                     all_results = ""  # Initialize a single string to hold all results
                     results = []  # Initialize a list to hold the results
@@ -258,5 +258,6 @@ if selected_content_type != "Select a Content Type":
                         st.write("Download initiated.")
             else:
                 st.write("No details available for the selected content type.")
+            
             else:
                 st.write("Please select a content type to see details.")
