@@ -115,7 +115,7 @@ if selected_content_type != "Select a Content Type":
             
             # Check if more than one layout is selected
             if len(selected_layouts_numbers) > 1:
-                st.error("Please select only one layout at a time.")
+                st.write("Please select only one layout at a time.")
             else:
                 # Show the Generate button only if exactly one layout is selected
                 if st.button("Generate"):
