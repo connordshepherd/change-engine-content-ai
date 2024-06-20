@@ -95,7 +95,9 @@ if selected_content_type != "Select a Content Type":
             }
 
             # Select each layout one at a time
-            layouts_array = get_selected_layouts_array(edited_json_with_specs, list(range(len(layout_selector_data))))
+            layout_numbers = [str(i) for i in range(len(layout_selector_data))]
+            layouts_string = ", ".join(layout_numbers)
+            layouts_array = get_selected_layouts_array(edited_json_with_specs, layouts_string)
 
             # Automate testing
             all_results = ""
