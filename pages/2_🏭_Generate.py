@@ -181,13 +181,13 @@ if selected_content_type != "Select a Content Type":
             
                             # Fix identified problems systematically
                             problems, keys_to_fix, indices_to_fix, line_counts = fix_problems(evaluation)
-                            st.subheader("Fix Problems")
+                            #st.subheader("Fix Problems")
                             for problem, key, index, line_count in zip(problems, keys_to_fix, indices_to_fix, line_counts):
-                                st.write(f"Fixing problem for {key} at index {index}: {problem}")
+                                #st.write(f"Fixing problem for {key} at index {index}: {problem}")
                                 prompt_with_context = f"{problem}\n\nPlease return your new text, on {line_count} lines."
                                 # Send request to OpenAI for generating fix
                                 fixed_response = send_plaintext_to_openai(prompt_with_context)
-                                st.write(f"Fixed response for {key} at index {index}: {fixed_response}")
+                                #st.write(f"Fixed response for {key} at index {index}: {fixed_response}")
             
                                 # Update the grouped structure with fixed_response
                                 updated = update_grouped(grouped, key, index, fixed_response)
@@ -247,8 +247,8 @@ if selected_content_type != "Select a Content Type":
                         all_results += f"Generated Response for {prompt_name}:\n{response}\n\n"
 
             # Display a JSON object for debugging
-            st.subheader("Debug")
-            st.write(prompts_array)
+            #st.subheader("Debug")
+            #st.write(prompts_array)
 
             # This ends the CONTENT SUBLOOP.
 
