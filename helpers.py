@@ -295,7 +295,7 @@ def generate_prompts_array_with_variations(topic, image_prompt, layouts_array, v
             layout_messages = []
 
             # Combine image_prompt, layout 'Text' and 'Specs'
-            full_prompt = f"{image_prompt}\n\n{fewshot_prompt}\n\n---------\n\n{layout_details['Text']}\n\n---------\n\nHere's the topic:\n\n{topic}\n\nPlease make {variations} variations."
+            full_prompt = f"{image_prompt}\n\n{fewshot_prompt}\n\n---------\n\n{layout_details['Text']}\n\n---------\n\nHere's the topic:\n\n{topic}\n\nPlease make {variations} full variations. Each one should have all the keys you see in the layout description above."
             prompt_messages.append({"role": "user", "content": full_prompt})
 
             layout_messages.append({"role": "user", "content": layout_details['Text']})
