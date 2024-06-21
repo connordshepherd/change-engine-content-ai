@@ -130,7 +130,7 @@ if selected_content_type != "Select a Content Type":
         col1, col2 = st.columns([1, 3])  # 25% and 75% width
 
         with col1:
-            st_copy_to_clipboard(prompt)
+            #st_copy_to_clipboard(prompt)
             st.button("Open GPT")
             st.button("Open Adobe")
 
