@@ -127,15 +127,15 @@ if selected_content_type != "Select a Content Type":
         st.subheader("Prompt")
         
         # New section with two columns
-        col1, col2 = st.columns([1, 3])  # 25% and 75% width
+        col1, col2 = st.columns([3, 1])  # 25% and 75% width
 
         with col1:
+            prompt = st.text_area("Prompt", value=dummy_prompt, height=250)
+        
+        with col2:
             st_copy_to_clipboard(prompt)
             st.button("Open GPT")
             st.button("Open Adobe")
-
-        with col2:
-            prompt = st.text_area("Prompt", value=dummy_prompt, height=250)
 
         # Generate button
         if st.button("Generate"):
