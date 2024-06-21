@@ -9,9 +9,9 @@ from helpers import get_content_types_data, get_table_data, process_table_data, 
 from helpers import add_specs, evaluate_character_count_and_lines, extract_key_value_pairs, send_to_openai_with_tools, tools
 from helpers import send_plaintext_to_openai, get_client_data, prepare_layout_selector_data
 from helpers import group_values, fix_problems, update_grouped, evaluate_character_count_and_lines_of_group
+from dummy import dummy_prompt
 import openai
 from typing import List, Dict, Union, Any, Tuple
-
 
 # Streamlit Widescreen Mode
 st.set_page_config(layout="wide")
@@ -54,5 +54,86 @@ if selected_company_name and selected_company_name != 'Select a Company':
 else:
     company_tone_style = st.text_area("Company Tone and Style Guide", value="", height=100)
 
-# Set a number of variations, ie a number of times to run the content loop
-variations = st.number_input("Number of Variations", 1, 10, value=5)
+# Add "Group By" selectbox
+group_by = st.selectbox("Group By", options=["Layout", "Key"])
+
+def get_image_from_url(url):
+    response = requests.get(url)
+    return Image.open(BytesIO(response.content))
+
+if selected_content_type != "Select a Content Type":
+    # Filter data to get the selected content type details
+    selected_data = next((item for item in content_types_data if item["Content Type"] == selected_content_type), None)
+
+    if selected_data:
+        st.subheader("Details for: " f"{selected_content_type}")
+
+        # Display all the prompts from Content Types
+        topic = st.text_area("Prompt", height=100)
+        example_value = selected_data["Example Prompt"]
+        st.write(f"Example Prompts: {example_value}")
+        
+        # Only display these fields if they are not null
+        if selected_data.get("Image Prompt"):
+            image_prompt = st.text_area("Image Prompt", value=selected_data["Image Prompt"], height=200)
+        if selected_data.get("Content Professional"):
+            content_professional = st.text_area("Content (Professional)", value=selected_data["Content Professional"], height=200)
+        if selected_data.get("Content Casual"):
+            content_casual = st.text_area("Content (Casual)", value=selected_data["Content Casual"], height=200)
+        if selected_data.get("Content Direct"):
+            content_direct = st.text_area("Content (Direct)", value=selected_data["Content Direct"], height=200)
+
+        # Set number of variations from 'Variation Default' column
+        default_variations = selected_data.get("Variation Default", 5)  # Default to 5 if not specified
+        variations = st.number_input("Number of Variations", 1, 10, value=int(default_variations))
+
+        if selected_data.get("Image Prompt"):
+            # Load data from the table corresponding to the selected content type
+            table_data = get_table_data(selected_content_type)
+
+            # Process the table data into a DataFrame
+            df = process_table_data(table_data)
+
+            # Turn it into JSON
+            edited_data = df
+            oriented_json = edited_data.to_json(orient='records')
+            edited_json = json.loads(oriented_json)
+
+            # Add specs to the layouts data
+            edited_json_with_specs = add_specs(edited_json)
+
+            # Prepare layout selector data using the helper function
+            layout_selector_data = prepare_layout_selector_data(table_data)
+
+            # Define column configurations
+            column_config = {
+                "Layout": st.column_config.Column("Layout", disabled=True),
+                "Image": st.column_config.ImageColumn("Preview Image", help="Thumbnail previews from Airtable"),
+                "Enabled": st.column_config.CheckboxColumn("Enabled", help="Enable this layout?", default=False),
+                "Layout Number": st.column_config.Column("Layout Number", disabled=True)
+            }
+
+            image_selector_df = st.data_editor(data=layout_selector_data, column_config=column_config, hide_index=True)
+            selected_images = image_selector_df[image_selector_df["Enabled"]]
+            selected_layouts_numbers = selected_images['Layout Number'].tolist()
+            selected_layouts = ", ".join(map(str, selected_layouts_numbers))
+            st.write(f"Selected Layouts: {selected_layouts}")
+
+            # Assemble the layouts as plaintext
+            layouts_array = get_selected_layouts_array(edited_json_with_specs, selected_layouts)
+
+        # New section with two columns
+        col1, col2 = st.columns([1, 3])  # 25% and 75% width
+
+        with col1:
+            st.button("Copy to Clipboard", on_click=lambda: st.write(st.session_state.get('prompt', '')))
+            st.button("Open GPT", on_click=lambda: webbrowser.open_new_tab("https://chat.openai.com/"))
+            st.button("Open Adobe", on_click=lambda: webbrowser.open_new_tab("https://www.adobe.com/"))
+
+        with col2:
+            prompt = st.text_area("Prompt", value=dummy_prompt, height=200)
+
+        # Generate button
+        if st.button("Generate"):
+            # Your generation logic here
+            pass
