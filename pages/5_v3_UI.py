@@ -25,6 +25,9 @@ if 'loaded_data' not in st.session_state:
 # Streamlit UI - Title
 st.title("Content Creation AI")
 
+# Button
+st_copy_to_clipboard("Copy this to clipboard")
+
 # Retrieve data from Airtable
 content_types_data = get_content_types_data()
 
@@ -130,7 +133,7 @@ if selected_content_type != "Select a Content Type":
         col1, col2 = st.columns([1, 3])  # 25% and 75% width
 
         with col1:
-            st_copy_to_clipboard("Copy this to clipboard")
+            
             st.button("Open GPT")
             st.button("Open Adobe")
 
