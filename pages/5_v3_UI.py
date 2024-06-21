@@ -134,6 +134,7 @@ if selected_content_type != "Select a Content Type":
         
         with col2:
             st_copy_to_clipboard(prompt)
+            st.write("Copy to Clipboard")
             st.button("Open GPT")
             st.button("Open Adobe")
 
