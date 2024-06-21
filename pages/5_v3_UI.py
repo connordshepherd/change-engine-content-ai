@@ -135,7 +135,7 @@ if selected_content_type != "Select a Content Type":
             st.button("Open Adobe")
 
         with col2:
-            prompt = st.code("Prompt", value=dummy_prompt, height=200)
+            prompt = st.code(dummy_prompt)
 
         # Generate button
         if st.button("Generate"):
