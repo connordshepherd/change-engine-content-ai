@@ -2,7 +2,7 @@ import streamlit as st
 import json
 import pandas as pd
 import requests
-from st_copy_to_clipboard import st_copy_to_clipboard
+
 
 from io import BytesIO
 from PIL import Image
@@ -25,8 +25,23 @@ if 'loaded_data' not in st.session_state:
 # Streamlit UI - Title
 st.title("Content Creation AI")
 
-# Button
-st_copy_to_clipboard("Copy this to clipboard")
+def copy_to_clipboard(text):
+    st.markdown(f"""
+    <input type="text" value="{text}" id="myInput" style="position: absolute; left: -1000px;">
+    <button onclick="myFunction()">Copy text</button>
+    <script>
+    function myFunction() {{
+      var copyText = document.getElementById("myInput");
+      copyText.select();
+      document.execCommand("copy");
+      alert("Copied the text: " + copyText.value);
+    }}
+    </script>
+    """, unsafe_allow_html=True)
+
+# Use it like this:
+copy_to_clipboard("Copy this to clipboard")
+
 
 # Retrieve data from Airtable
 content_types_data = get_content_types_data()
