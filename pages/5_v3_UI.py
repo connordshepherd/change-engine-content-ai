@@ -2,6 +2,7 @@ import streamlit as st
 import json
 import pandas as pd
 import requests
+from st_copy_to_clipboard import st_copy_to_clipboard
 
 from io import BytesIO
 from PIL import Image
