@@ -130,7 +130,7 @@ if selected_content_type != "Select a Content Type":
         col1, col2 = st.columns([1, 3])  # 25% and 75% width
 
         with col1:
-            st.button("Copy to Clipboard", on_click=lambda: st.write(st.session_state.get('prompt', '')))
+            st_copy_to_clipboard("Copy this to clipboard")
             st.button("Open GPT", on_click=lambda: webbrowser.open_new_tab("https://chat.openai.com/"))
             st.button("Open Adobe", on_click=lambda: webbrowser.open_new_tab("https://www.adobe.com/"))
 
