@@ -131,8 +131,8 @@ if selected_content_type != "Select a Content Type":
 
         with col1:
             st_copy_to_clipboard("Copy this to clipboard")
-            st.button("Open GPT", on_click=lambda: webbrowser.open_new_tab("https://chat.openai.com/"))
-            st.button("Open Adobe", on_click=lambda: webbrowser.open_new_tab("https://www.adobe.com/"))
+            st.button("Open GPT")
+            st.button("Open Adobe")
 
         with col2:
             prompt = st.text_area("Prompt", value=dummy_prompt, height=200)
