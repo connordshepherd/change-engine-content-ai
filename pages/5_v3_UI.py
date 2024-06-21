@@ -2,7 +2,7 @@ import streamlit as st
 import json
 import pandas as pd
 import requests
-
+from st_copy_to_clipboard import st_copy_to_clipboard
 
 from io import BytesIO
 from PIL import Image
@@ -130,12 +130,12 @@ if selected_content_type != "Select a Content Type":
         col1, col2 = st.columns([1, 3])  # 25% and 75% width
 
         with col1:
-            
+            st-copy-to-clipboard("prompt)
             st.button("Open GPT")
             st.button("Open Adobe")
 
         with col2:
-            prompt = st.code(dummy_prompt)
+            prompt = st.text_area("Prompt", value=dummy_prompt, height=250)
 
         # Generate button
         if st.button("Generate"):
