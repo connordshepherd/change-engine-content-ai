@@ -133,8 +133,8 @@ if selected_content_type != "Select a Content Type":
             prompt = st.text_area("Prompt", value=dummy_prompt, height=400)
         
         with col2:
-            st_copy_to_clipboard(prompt)
             st.write("Copy to Clipboard")
+            st_copy_to_clipboard(prompt)
             st.button("Open GPT")
             st.button("Open Adobe")
 
