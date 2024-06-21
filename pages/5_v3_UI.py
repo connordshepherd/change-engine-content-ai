@@ -130,7 +130,7 @@ if selected_content_type != "Select a Content Type":
         col1, col2 = st.columns([3, 1])  # 25% and 75% width
 
         with col1:
-            prompt = st.text_area("Prompt", value=dummy_prompt, height=250)
+            prompt = st.text_area("Prompt", value=dummy_prompt, height=400)
         
         with col2:
             st_copy_to_clipboard(prompt)
