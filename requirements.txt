@@ -1,1 +1,2 @@
 openai
+st-copy-to-clipboard
