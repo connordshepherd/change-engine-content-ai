@@ -12,6 +12,7 @@ from helpers import group_values, fix_problems, update_grouped, evaluate_charact
 from dummy import dummy_prompt
 import openai
 from typing import List, Dict, Union, Any, Tuple
+import webbrowser
 
 # Streamlit Widescreen Mode
 st.set_page_config(layout="wide")
