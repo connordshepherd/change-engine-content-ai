@@ -17,7 +17,7 @@ import webbrowser
 
 def assemble_prompt(company_tone_style, image_prompt, topic, variations, layouts_array):
     layouts_text = ""
-    response_structure = "Use this structure for the response:\nVariation 1 -\n"
+    response_structure = "Use this structure for the response:\n"
     
     for layout in layouts_array:
         for layout_name, layout_details in layout.items():
