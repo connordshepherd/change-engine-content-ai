@@ -92,10 +92,10 @@ selected_company_name = st.selectbox("Company", options=["Select a Company"] + c
 
 # Display the AI Brand Tone Prompt for the selected company
 if selected_company_name and selected_company_name != 'Select a Company':
-    company_tone_style = st.text_area("Company Tone and Style Guide", value=client_data[selected_company_name], height=100)
+    company_tone_style = client_data[selected_company_name]
 else:
-    company_tone_style = st.text_area("Company Tone and Style Guide", value="", height=100)
-
+    company_tone_style = ""
+    
 def get_image_from_url(url):
     response = requests.get(url)
     return Image.open(BytesIO(response.content))
@@ -120,7 +120,7 @@ if selected_content_type != "Select a Content Type":
         
         # Only display these fields if they are not null
         if selected_data.get("Image Prompt"):
-            image_prompt = st.text_area("Image Prompt", value=selected_data["Image Prompt"], height=200)
+            image_prompt = selected_data["Image Prompt"]
         if selected_data.get("Content Professional"):
             content_professional = st.text_area("Content (Professional)", value=selected_data["Content Professional"], height=200)
         if selected_data.get("Content Casual"):
