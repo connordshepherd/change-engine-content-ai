@@ -79,22 +79,6 @@ selected_content_type = st.selectbox("Choose a Content Type", options)
 
 # Retrieve client data from Airtable
 client_data = get_client_data()
-
-# Create a selectbox for company name
-company_name_list = sorted(client_data.keys())
-
-# Determine the default index for the selectbox
-default_company_index = 0  # Default to "Select a Company"
-if "Global App Testing" in company_name_list:
-    default_company_index = company_name_list.index("Global App Testing") + 1  # +1 because of "Select a Company"
-
-selected_company_name = st.selectbox("Company", options=["Select a Company"] + company_name_list, index=default_company_index)
-
-# Display the AI Brand Tone Prompt for the selected company
-if selected_company_name and selected_company_name != 'Select a Company':
-    company_tone_style = client_data[selected_company_name]
-else:
-    company_tone_style = ""
     
 def get_image_from_url(url):
     response = requests.get(url)
@@ -116,6 +100,22 @@ if selected_content_type != "Select a Content Type":
         
         # Add "Group By" selectbox
         group_by = st.selectbox("Group By", options=["Layout", "Key"])
+
+        # Create a selectbox for company name
+        company_name_list = sorted(client_data.keys())
+        
+        # Determine the default index for the selectbox
+        default_company_index = 0  # Default to "Select a Company"
+        if "Global App Testing" in company_name_list:
+            default_company_index = company_name_list.index("Global App Testing") + 1  # +1 because of "Select a Company"
+        
+        selected_company_name = st.selectbox("Company", options=["Select a Company"] + company_name_list, index=default_company_index)
+        
+        # Display the AI Brand Tone Prompt for the selected company
+        if selected_company_name and selected_company_name != 'Select a Company':
+            company_tone_style = client_data[selected_company_name]
+        else:
+            company_tone_style = ""
         
         # Only display these fields if they are not null
         if selected_data.get("Image Prompt"):
