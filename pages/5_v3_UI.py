@@ -53,12 +53,13 @@ if "Global App Testing" in company_name_list:
 
 selected_company_name = st.selectbox("Company", options=["Select a Company"] + company_name_list, index=default_company_index)
 
-# Show an example prompt for the selected content type
-example_value = selected_data["Example Prompt"]
-st.write(f"Example Prompts: {example_value}")
+
 
 # Display the AI Brand Tone Prompt for the selected company
 if selected_company_name and selected_company_name != 'Select a Company':
+    # Show an example prompt for the selected content type
+    example_value = selected_data["Example Prompt"]
+    st.write(f"Example Prompts: {example_value}")
     company_tone_style = st.text_area("Company Tone and Style Guide", value=client_data[selected_company_name], height=100)
 else:
     company_tone_style = st.text_area("Company Tone and Style Guide", value="", height=100)
