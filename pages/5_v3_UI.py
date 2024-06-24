@@ -25,6 +25,11 @@ if 'loaded_data' not in st.session_state:
 # Streamlit UI - Title
 st.title("Content Creation AI")
 
+# Display all the prompts from Content Types
+topic = st.text_area("Prompt", height=100)
+example_value = selected_data["Example Prompt"]
+st.write(f"Example Prompts: {example_value}")
+
 # Retrieve data from Airtable
 content_types_data = get_content_types_data()
 
@@ -69,11 +74,6 @@ if selected_content_type != "Select a Content Type":
 
     if selected_data:
         st.subheader("Details for: " f"{selected_content_type}")
-
-        # Display all the prompts from Content Types
-        topic = st.text_area("Prompt", height=100)
-        example_value = selected_data["Example Prompt"]
-        st.write(f"Example Prompts: {example_value}")
         
         # Only display these fields if they are not null
         if selected_data.get("Image Prompt"):
