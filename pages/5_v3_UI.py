@@ -16,6 +16,14 @@ from typing import List, Dict, Union, Any, Tuple
 import webbrowser
 from streamlit.components.v1 import html
 
+def open_page(url):
+    open_script = """
+    <script type="text/javascript">
+        window.open('%s', '_blank').focus();
+    </script>
+    """ % url
+    html(open_script)
+
 def assemble_prompt(company_tone_style, image_prompt, topic, variations, layouts_array):
     layouts_text = ""
     response_structure = "Use this structure for the response:\nVariation n:\n"
