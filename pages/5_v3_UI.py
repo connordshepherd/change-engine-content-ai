@@ -187,8 +187,16 @@ if selected_content_type != "Select a Content Type":
         with col2:
             st.write("Copy to Clipboard")
             st_copy_to_clipboard(prompt)
-            st.button("Open GPT")
-            st.button("Open Adobe")
+            
+            # URLs for GPT and Adobe (as examples, use actual URLs)
+            gpt_url = "https://openai.com/"
+            adobe_url = "https://www.adobe.com"
+            
+            # Buttons with on_click to open a new tab
+            if st.button("Open GPT"):
+                open_page(gpt_url)
+            if st.button("Open Adobe"):
+                open_page(adobe_url)
 
         # Generate button
         if st.button("Generate"):
