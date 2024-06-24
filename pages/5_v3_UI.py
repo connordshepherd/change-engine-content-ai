@@ -105,7 +105,6 @@ if selected_content_type != "Select a Content Type":
     selected_data = next((item for item in content_types_data if item["Content Type"] == selected_content_type), None)
 
     if selected_data:
-        st.subheader("Details for: " f"{selected_content_type}")
         
         # Show an example prompt for the selected content type
         example_value = selected_data["Example Prompt"]
