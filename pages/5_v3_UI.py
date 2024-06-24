@@ -27,8 +27,6 @@ st.title("Content Creation AI")
 
 # Display all the prompts from Content Types
 topic = st.text_area("Prompt", height=100)
-example_value = selected_data["Example Prompt"]
-st.write(f"Example Prompts: {example_value}")
 
 # Retrieve data from Airtable
 content_types_data = get_content_types_data()
@@ -54,6 +52,10 @@ if "Global App Testing" in company_name_list:
     default_company_index = company_name_list.index("Global App Testing") + 1  # +1 because of "Select a Company"
 
 selected_company_name = st.selectbox("Company", options=["Select a Company"] + company_name_list, index=default_company_index)
+
+# Show an example prompt for the selected content type
+example_value = selected_data["Example Prompt"]
+st.write(f"Example Prompts: {example_value}")
 
 # Display the AI Brand Tone Prompt for the selected company
 if selected_company_name and selected_company_name != 'Select a Company':
