@@ -125,6 +125,7 @@ if selected_content_type != "Select a Content Type":
 
             # Assemble the layouts as plaintext
             layouts_array = get_selected_layouts_array(edited_json_with_specs, selected_layouts)
+            st.write(layouts_array)
 
         st.subheader("Final Prompt with Layout")
         
