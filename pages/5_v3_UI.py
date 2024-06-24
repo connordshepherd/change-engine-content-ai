@@ -158,11 +158,10 @@ if selected_content_type != "Select a Content Type":
             selected_images = image_selector_df[image_selector_df["Enabled"]]
             selected_layouts_numbers = selected_images['Layout Number'].tolist()
             selected_layouts = ", ".join(map(str, selected_layouts_numbers))
-            st.write(f"Selected Layouts: {selected_layouts}")
 
             # Assemble the layouts as plaintext
             layouts_array = get_selected_layouts_array(edited_json_with_specs, selected_layouts)
-            st.write(layouts_array)
+            #st.write(layouts_array)
 
         st.subheader("Final Prompt with Layout")
         
