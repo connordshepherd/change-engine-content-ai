@@ -57,9 +57,6 @@ selected_company_name = st.selectbox("Company", options=["Select a Company"] + c
 
 # Display the AI Brand Tone Prompt for the selected company
 if selected_company_name and selected_company_name != 'Select a Company':
-    # Show an example prompt for the selected content type
-    example_value = selected_data["Example Prompt"]
-    st.write(f"Example Prompts: {example_value}")
     company_tone_style = st.text_area("Company Tone and Style Guide", value=client_data[selected_company_name], height=100)
 else:
     company_tone_style = st.text_area("Company Tone and Style Guide", value="", height=100)
@@ -77,6 +74,10 @@ if selected_content_type != "Select a Content Type":
 
     if selected_data:
         st.subheader("Details for: " f"{selected_content_type}")
+
+        # Show an example prompt for the selected content type
+        example_value = selected_data["Example Prompt"]
+        st.write(f"Example Prompts: {example_value}")
         
         # Only display these fields if they are not null
         if selected_data.get("Image Prompt"):
