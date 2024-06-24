@@ -14,6 +14,7 @@ from dummy import dummy_prompt
 import openai
 from typing import List, Dict, Union, Any, Tuple
 import webbrowser
+from streamlit.components.v1 import html
 
 def assemble_prompt(company_tone_style, image_prompt, topic, variations, layouts_array):
     layouts_text = ""
