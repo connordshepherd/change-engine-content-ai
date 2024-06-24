@@ -53,8 +53,6 @@ if "Global App Testing" in company_name_list:
 
 selected_company_name = st.selectbox("Company", options=["Select a Company"] + company_name_list, index=default_company_index)
 
-
-
 # Display the AI Brand Tone Prompt for the selected company
 if selected_company_name and selected_company_name != 'Select a Company':
     company_tone_style = st.text_area("Company Tone and Style Guide", value=client_data[selected_company_name], height=100)
@@ -75,6 +73,10 @@ if selected_content_type != "Select a Content Type":
     if selected_data:
         st.subheader("Details for: " f"{selected_content_type}")
 
+        # Set number of variations from 'Variation Default' column
+        default_variations = selected_data.get("Variation Default", 5)  # Default to 5 if not specified
+        variations = st.number_input("Number of Variations", 1, 10, value=int(default_variations))
+        
         # Show an example prompt for the selected content type
         example_value = selected_data["Example Prompt"]
         st.write(f"Example Prompts: {example_value}")
@@ -88,10 +90,6 @@ if selected_content_type != "Select a Content Type":
             content_casual = st.text_area("Content (Casual)", value=selected_data["Content Casual"], height=200)
         if selected_data.get("Content Direct"):
             content_direct = st.text_area("Content (Direct)", value=selected_data["Content Direct"], height=200)
-
-        # Set number of variations from 'Variation Default' column
-        default_variations = selected_data.get("Variation Default", 5)  # Default to 5 if not specified
-        variations = st.number_input("Number of Variations", 1, 10, value=int(default_variations))
 
         if selected_data.get("Image Prompt"):
             # Load data from the table corresponding to the selected content type
