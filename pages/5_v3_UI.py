@@ -22,8 +22,6 @@ def assemble_prompt(company_tone_style, image_prompt, topic, variations, layouts
     for layout in layouts_array:
         for layout_name, layout_details in layout.items():
             layouts_text += f"{layout_name}:\n{layout_details['Text']}\n"
-            for spec_name, spec_value in layout_details['Specs'].items():
-                layouts_text += f"{spec_name}: {spec_value}\n"
             layouts_text += "\n"
             
             # Extract field names for the response structure
