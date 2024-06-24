@@ -15,6 +15,36 @@ import openai
 from typing import List, Dict, Union, Any, Tuple
 import webbrowser
 
+def assemble_prompt(company_tone_style, image_prompt, topic, variations, layouts_array):
+    layouts_text = ""
+    response_structure = "Use this structure for the response:\nVariation 1 -\n"
+    
+    for layout in layouts_array:
+        for layout_name, layout_details in layout.items():
+            layouts_text += f"{layout_name}:\n{layout_details['Text']}\n"
+            for spec_name, spec_value in layout_details['Specs'].items():
+                layouts_text += f"{spec_name}: {spec_value}\n"
+            layouts_text += "\n"
+            
+            # Extract field names for the response structure
+            field_names = [line.split(":")[0].strip() for line in layout_details['Text'].split("\n") if ":" in line]
+            response_structure += "\n".join(field_names) + "\n"
+
+    prompt = f"""{company_tone_style}
+
+{image_prompt}
+
+Always use the outlined character count ranges, # of questions or topics and answers, and everything else outlined in the Layout Descriptions. Never deviate from the Layout Description, and only create content for the fields it specifies.
+
+The LinkedIn Cover topic is {topic}. Come up with {variations} variations. Never output in code.
+
+For each variation include:
+
+{layouts_text}
+{response_structure}"""
+
+    return prompt
+
 # Streamlit Widescreen Mode
 st.set_page_config(layout="wide")
 
@@ -133,7 +163,19 @@ if selected_content_type != "Select a Content Type":
         col1, col2 = st.columns([3, 1])  # 25% and 75% width
 
         with col1:
-            prompt = st.text_area("Prompt", value=dummy_prompt, height=400)
+            # Only assemble and display the prompt if all necessary components are available
+            if selected_company_name != 'Select a Company' and selected_content_type != "Select a Content Type" and selected_data:
+                # Assemble the prompt
+                prompt = assemble_prompt(
+                    company_tone_style,
+                    selected_data.get("Image Prompt", ""),
+                    topic,  # You need to define this variable based on user input or selection
+                    variations,
+                    layouts_array
+                )
+                prompt_display = st.text_area("Prompt", value=prompt, height=400)
+            else:
+                st.write("Please select a company and content type to generate the prompt.")
         
         with col2:
             st.write("Copy to Clipboard")
