@@ -40,6 +40,13 @@ options = ["Select a Content Type"] + v1_true_content_types
 # Add a selectbox to the Streamlit app
 selected_content_type = st.selectbox("Choose a Content Type", options)
 
+# Set number of variations from 'Variation Default' column
+default_variations = selected_data.get("Variation Default", 5)  # Default to 5 if not specified
+variations = st.number_input("Number of Variations", 1, 10, value=int(default_variations))
+
+# Add "Group By" selectbox
+group_by = st.selectbox("Group By", options=["Layout", "Key"])
+
 # Retrieve client data from Airtable
 client_data = get_client_data()
 
@@ -59,9 +66,6 @@ if selected_company_name and selected_company_name != 'Select a Company':
 else:
     company_tone_style = st.text_area("Company Tone and Style Guide", value="", height=100)
 
-# Add "Group By" selectbox
-group_by = st.selectbox("Group By", options=["Layout", "Key"])
-
 def get_image_from_url(url):
     response = requests.get(url)
     return Image.open(BytesIO(response.content))
@@ -72,10 +76,6 @@ if selected_content_type != "Select a Content Type":
 
     if selected_data:
         st.subheader("Details for: " f"{selected_content_type}")
-
-        # Set number of variations from 'Variation Default' column
-        default_variations = selected_data.get("Variation Default", 5)  # Default to 5 if not specified
-        variations = st.number_input("Number of Variations", 1, 10, value=int(default_variations))
         
         # Show an example prompt for the selected content type
         example_value = selected_data["Example Prompt"]
