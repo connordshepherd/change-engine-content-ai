@@ -96,7 +96,7 @@ if selected_content_type != "Select a Content Type":
 
         # Set number of variations from 'Variation Default' column
         default_variations = selected_data.get("Variation Default", 5)  # Default to 5 if not specified
-        variations = st.number_input("Number of Variations", 1, 10, value=int(default_variations))
+        variations = st.number_input("Number of Variations", 1, 1000, value=int(default_variations))
         
         # Add "Group By" selectbox
         group_by = st.selectbox("Group By", options=["Layout", "Key"])
