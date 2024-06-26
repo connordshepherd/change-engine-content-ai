@@ -43,7 +43,7 @@ def assemble_prompt(company_tone_style, image_prompt, topic, variations, layouts
 
 Always use the outlined character count ranges, # of questions or topics and answers, and everything else outlined in the Layout Descriptions. Never deviate from the Layout Description, and only create content for the fields it specifies.
 
-The LinkedIn Cover topic is {topic}. Come up with {variations} variations. Never output in code.
+The topic is {topic}. Come up with {variations} variations. Never output in code.
 
 For each variation include:
 
