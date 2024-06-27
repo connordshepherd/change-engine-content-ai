@@ -147,15 +147,20 @@ if selected_content_type != "Select a Content Type":
                 st.session_state.selected_layout = None
             
             def update_selection():
-                edited_rows = st.session_state.layout_selector
-                st.write("Debug: ", edited_rows)  # Add this line
-                for idx, row in enumerate(edited_rows):
-                    if row['Enabled']:
-                        st.session_state.selected_layout = row['Layout Number']
-                        for other_idx, other_row in enumerate(edited_rows):
-                            if other_idx != idx:
-                                other_row['Enabled'] = False
-                st.session_state.layout_selector = edited_rows
+                edited_rows = st.session_state.layout_selector['edited_rows']
+                layout_data = st.session_state.layout_selector_data  # We need to access the original data
+            
+                for row_index, changes in edited_rows.items():
+                    if changes.get('Enabled'):
+                        row_index = int(row_index)
+                        st.session_state.selected_layout = layout_data[row_index]['Layout Number']
+                        
+                        # Uncheck all other rows
+                        for other_index in range(len(layout_data)):
+                            if other_index != row_index:
+                                layout_data[other_index]['Enabled'] = False
+            
+                st.session_state.layout_selector_data = layout_data
             
             # Define column configurations
             column_config = {
@@ -165,8 +170,12 @@ if selected_content_type != "Select a Content Type":
                 "Layout Number": st.column_config.Column("Layout Number", disabled=True)
             }
             
+            # Store the original data in session state
+            if 'layout_selector_data' not in st.session_state:
+                st.session_state.layout_selector_data = layout_selector_data
+            
             image_selector_df = st.data_editor(
-                data=layout_selector_data,
+                data=st.session_state.layout_selector_data,
                 column_config=column_config,
                 hide_index=True,
                 on_change=update_selection,
