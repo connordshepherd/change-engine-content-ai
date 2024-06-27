@@ -172,10 +172,9 @@ if selected_content_type != "Select a Content Type":
                 key="layout_selector"
             )
 
-            selected_images = image_selector_df[image_selector_df["Enabled"]]
-            selected_layouts_numbers = selected_images['Layout Number'].tolist()
-            selected_layouts = ", ".join(map(str, selected_layouts_numbers))
-
+            selected_layout = st.session_state.selected_layout
+            selected_layouts = str(selected_layout) if selected_layout is not None else ""
+            
             # Assemble the layouts as plaintext
             layouts_array = get_selected_layouts_array(edited_json_with_specs, selected_layouts)
             #st.write(layouts_array)
