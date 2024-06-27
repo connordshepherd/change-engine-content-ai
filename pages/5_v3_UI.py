@@ -148,12 +148,13 @@ if selected_content_type != "Select a Content Type":
             
             def update_selection():
                 edited_rows = st.session_state.layout_selector
-                for idx, row in edited_rows.iterrows():
+                st.write("Debug: ", edited_rows)  # Add this line
+                for idx, row in enumerate(edited_rows):
                     if row['Enabled']:
                         st.session_state.selected_layout = row['Layout Number']
-                        for other_idx, other_row in edited_rows.iterrows():
+                        for other_idx, other_row in enumerate(edited_rows):
                             if other_idx != idx:
-                                edited_rows.at[other_idx, 'Enabled'] = False
+                                other_row['Enabled'] = False
                 st.session_state.layout_selector = edited_rows
             
             # Define column configurations
