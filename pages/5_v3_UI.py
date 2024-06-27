@@ -57,6 +57,9 @@ st.set_page_config(layout="wide")
 if 'loaded_data' not in st.session_state:
     st.session_state.loaded_data = None
 
+if 'selected_layout_index' not in st.session_state:
+    st.session_state.selected_layout_index = None
+
 # Streamlit UI - Title
 st.title("Content Creation AI")
 
@@ -81,6 +84,13 @@ client_data = get_client_data()
 def get_image_from_url(url):
     response = requests.get(url)
     return Image.open(BytesIO(response.content))
+
+def layout_changed():
+    selected_rows = st.session_state['layout_selector']['edited_rows']
+    selected_row_index = next(iter(selected_rows))  # Get the first (and only) edited row index
+    st.session_state.selected_layout_index = selected_row_index
+    for i in range(len(st.session_state['layout_selector']['data'])):
+        st.session_state['layout_selector']['data'][i]['Enabled'] = (i == selected_row_index)
 
 if selected_content_type != "Select a Content Type":
     # Filter data to get the selected content type details
@@ -143,25 +153,6 @@ if selected_content_type != "Select a Content Type":
             # Prepare layout selector data using the helper function
             layout_selector_data = prepare_layout_selector_data(table_data)
 
-            if 'selected_layout' not in st.session_state:
-                st.session_state.selected_layout = None
-            
-            def update_selection():
-                edited_rows = st.session_state.layout_selector['edited_rows']
-                layout_data = st.session_state.layout_selector_data  # We need to access the original data
-            
-                for row_index, changes in edited_rows.items():
-                    if changes.get('Enabled'):
-                        row_index = int(row_index)
-                        st.session_state.selected_layout = layout_data[row_index]['Layout Number']
-                        
-                        # Uncheck all other rows
-                        for other_index in range(len(layout_data)):
-                            if other_index != row_index:
-                                layout_data[other_index]['Enabled'] = False
-            
-                st.session_state.layout_selector_data = layout_data
-            
             # Define column configurations
             column_config = {
                 "Layout": st.column_config.Column("Layout", disabled=True),
@@ -169,22 +160,19 @@ if selected_content_type != "Select a Content Type":
                 "Enabled": st.column_config.CheckboxColumn("Enabled", help="Enable this layout?", default=False),
                 "Layout Number": st.column_config.Column("Layout Number", disabled=True)
             }
-            
-            # Store the original data in session state
-            if 'layout_selector_data' not in st.session_state:
-                st.session_state.layout_selector_data = layout_selector_data
-            
+
             image_selector_df = st.data_editor(
-                data=st.session_state.layout_selector_data,
-                column_config=column_config,
-                hide_index=True,
-                on_change=update_selection,
-                key="layout_selector"
+                data=layout_selector_data, 
+                column_config=column_config, 
+                hide_index=True, 
+                on_change=layout_changed, 
+                key='layout_selector'
             )
-            
-            selected_layout = st.session_state.selected_layout
-            selected_layouts = str(selected_layout) if selected_layout is not None else ""
-            
+
+            selected_images = image_selector_df[image_selector_df["Enabled"]]
+            selected_layouts_numbers = selected_images['Layout Number'].tolist()
+            selected_layouts = ", ".join(map(str, selected_layouts_numbers))
+
             # Assemble the layouts as plaintext
             layouts_array = get_selected_layouts_array(edited_json_with_specs, selected_layouts)
             #st.write(layouts_array)
