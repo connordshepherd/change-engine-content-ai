@@ -151,7 +151,20 @@ if selected_content_type != "Select a Content Type":
                 "Layout Number": st.column_config.Column("Layout Number", disabled=True)
             }
 
-            image_selector_df = st.data_editor(data=layout_selector_data, column_config=column_config, hide_index=True)
+            # New section with two columns
+            col3, col4 = st.columns([3, 1])  # 25% and 75% width
+
+            with col3:
+                image_selector_df = st.data_editor(data=layout_selector_data, column_config=column_config, hide_index=True)
+
+            with col4:
+                # URLs for GPT and Adobe (as examples, use actual URLs)
+                design_url = "ChangeEngine.designhuddle.com"
+                
+                # Buttons with on_click to open a new tab
+                if st.button("Open DH Layouts"):
+                    open_page(design_url)
+                    
             selected_images = image_selector_df[image_selector_df["Enabled"]]
             selected_layouts_numbers = selected_images['Layout Number'].tolist()
             selected_layouts = ", ".join(map(str, selected_layouts_numbers))
