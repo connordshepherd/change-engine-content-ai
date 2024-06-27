@@ -143,6 +143,18 @@ if selected_content_type != "Select a Content Type":
             # Prepare layout selector data using the helper function
             layout_selector_data = prepare_layout_selector_data(table_data)
 
+           if 'selected_layout' not in st.session_state:
+                st.session_state.selected_layout = None
+            
+            def update_selection(edited_rows):
+                for idx, row in enumerate(edited_rows):
+                    if row['Enabled']:
+                        st.session_state.selected_layout = row['Layout Number']
+                        for other_idx, other_row in enumerate(edited_rows):
+                            if other_idx != idx:
+                                other_row['Enabled'] = False
+                return edited_rows
+            
             # Define column configurations
             column_config = {
                 "Layout": st.column_config.Column("Layout", disabled=True),
@@ -150,6 +162,15 @@ if selected_content_type != "Select a Content Type":
                 "Enabled": st.column_config.CheckboxColumn("Enabled", help="Enable this layout?", default=False),
                 "Layout Number": st.column_config.Column("Layout Number", disabled=True)
             }
+            
+            image_selector_df = st.data_editor(
+                data=layout_selector_data,
+                column_config=column_config,
+                hide_index=True,
+                on_change=update_selection,
+                args=(layout_selector_data,),
+                key="layout_selector"
+            )
 
             image_selector_df = st.data_editor(data=layout_selector_data, column_config=column_config, hide_index=True)
             selected_images = image_selector_df[image_selector_df["Enabled"]]
