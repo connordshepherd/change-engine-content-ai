@@ -57,9 +57,6 @@ st.set_page_config(layout="wide")
 if 'loaded_data' not in st.session_state:
     st.session_state.loaded_data = None
 
-if 'selected_layout_index' not in st.session_state:
-    st.session_state.selected_layout_index = None
-
 # Streamlit UI - Title
 st.title("Content Creation AI")
 
@@ -84,24 +81,6 @@ client_data = get_client_data()
 def get_image_from_url(url):
     response = requests.get(url)
     return Image.open(BytesIO(response.content))
-
-def layout_changed():
-    # Debugging: Print session state
-    st.write("Session State during layout_changed:", st.session_state)
-    
-    if 'layout_selector' not in st.session_state:
-        st.write("Error: 'layout_selector' not found in session_state")
-        return
-    
-    selected_rows = st.session_state['layout_selector']['edited_rows']
-    selected_row_index = next(iter(selected_rows))  # Get the first (and only) edited row index
-    st.session_state.selected_layout_index = selected_row_index
-    
-    for i in range(len(st.session_state['layout_selector']['data'])):
-        st.session_state['layout_selector']['data'][i]['Enabled'] = (i == selected_row_index)
-
-# Debugging: Initial session state print
-st.write("Session State at start:", st.session_state)
 
 if selected_content_type != "Select a Content Type":
     # Filter data to get the selected content type details
@@ -172,17 +151,7 @@ if selected_content_type != "Select a Content Type":
                 "Layout Number": st.column_config.Column("Layout Number", disabled=True)
             }
 
-            # Before creating the data editor, print the initial session state
-            st.write("Session State before data editor creation:", st.session_state)
-
-            image_selector_df = st.data_editor(
-                data=layout_selector_data, 
-                column_config=column_config, 
-                hide_index=True, 
-                on_change=layout_changed, 
-                key='layout_selector'
-            )
-
+            image_selector_df = st.data_editor(data=layout_selector_data, column_config=column_config, hide_index=True)
             selected_images = image_selector_df[image_selector_df["Enabled"]]
             selected_layouts_numbers = selected_images['Layout Number'].tolist()
             selected_layouts = ", ".join(map(str, selected_layouts_numbers))
