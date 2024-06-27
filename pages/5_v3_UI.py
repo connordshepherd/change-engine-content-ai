@@ -152,7 +152,7 @@ if selected_content_type != "Select a Content Type":
             }
 
             # New section with two columns
-            col3, col4 = st.columns([3, 1])  # 25% and 75% width
+            col3, col4 = st.columns([2, 2])  # 25% and 75% width
 
             with col3:
                 image_selector_df = st.data_editor(data=layout_selector_data, column_config=column_config, hide_index=True)
