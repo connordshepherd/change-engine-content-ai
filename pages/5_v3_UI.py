@@ -86,11 +86,22 @@ def get_image_from_url(url):
     return Image.open(BytesIO(response.content))
 
 def layout_changed():
+    # Debugging: Print session state
+    st.write("Session State during layout_changed:", st.session_state)
+    
+    if 'layout_selector' not in st.session_state:
+        st.write("Error: 'layout_selector' not found in session_state")
+        return
+    
     selected_rows = st.session_state['layout_selector']['edited_rows']
     selected_row_index = next(iter(selected_rows))  # Get the first (and only) edited row index
     st.session_state.selected_layout_index = selected_row_index
+    
     for i in range(len(st.session_state['layout_selector']['data'])):
         st.session_state['layout_selector']['data'][i]['Enabled'] = (i == selected_row_index)
+
+# Debugging: Initial session state print
+st.write("Session State at start:", st.session_state)
 
 if selected_content_type != "Select a Content Type":
     # Filter data to get the selected content type details
@@ -160,6 +171,9 @@ if selected_content_type != "Select a Content Type":
                 "Enabled": st.column_config.CheckboxColumn("Enabled", help="Enable this layout?", default=False),
                 "Layout Number": st.column_config.Column("Layout Number", disabled=True)
             }
+
+            # Before creating the data editor, print the initial session state
+            st.write("Session State before data editor creation:", st.session_state)
 
             image_selector_df = st.data_editor(
                 data=layout_selector_data, 
