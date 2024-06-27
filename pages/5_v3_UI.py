@@ -159,7 +159,7 @@ if selected_content_type != "Select a Content Type":
 
             with col4:
                 # URLs for GPT and Adobe (as examples, use actual URLs)
-                design_url = "ChangeEngine.designhuddle.com"
+                design_url = "https://changeEngine.designhuddle.com"
                 
                 # Buttons with on_click to open a new tab
                 if st.button("Open DH Layouts"):
