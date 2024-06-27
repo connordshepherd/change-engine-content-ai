@@ -143,7 +143,7 @@ if selected_content_type != "Select a Content Type":
             # Prepare layout selector data using the helper function
             layout_selector_data = prepare_layout_selector_data(table_data)
 
-           if 'selected_layout' not in st.session_state:
+            if 'selected_layout' not in st.session_state:
                 st.session_state.selected_layout = None
             
             def update_selection(edited_rows):
