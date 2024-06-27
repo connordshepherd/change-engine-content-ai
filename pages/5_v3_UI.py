@@ -185,8 +185,8 @@ if selected_content_type != "Select a Content Type":
             st_copy_to_clipboard(prompt)
             
             # URLs for GPT and Adobe (as examples, use actual URLs)
-            gpt_url = "https://openai.com/"
-            adobe_url = "https://www.adobe.com"
+            gpt_url = "https://chatgpt.com/"
+            adobe_url = "https://new.express.adobe.com/?category=generative-ai"
             
             # Buttons with on_click to open a new tab
             if st.button("Open GPT"):
