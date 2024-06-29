@@ -270,14 +270,31 @@ if selected_content_type != "Select a Content Type":
                             st.write("Grouped",grouped)
                     
                             # Iterate over each group and format the key-value pairs correctly
-                            for group in grouped:
-                                key = group['key']
-                                values = group['values']
-                                for index, value in values.items():
-                                    result += f"{key} {index}: {value}\n"
+                            if group_by == "Key":
+                                # Grouping by Key, keep current logic
+                                result = ""
+                                for group in grouped:
+                                    key = group['key']
+                                    values = group['values']
+                                    for index, value in values.items():
+                                        result += f"{key} {index}: {value}\n"
+                                    result += "-" * 30 + "\n"
+                                results.append(result)
                             
-                            result += "-" * 30 + "\n"
-                            results.append(result)  # Append the formatted result to the list
+                            elif group_by == "Layout":
+                                # Grouping by Layout, new logic
+                                indices = set()
+                                for group in grouped:
+                                    indices.update(group['values'].keys())
+                                
+                                result = ""
+                                for index in sorted(indices):
+                                    for group in grouped:
+                                        key = group['key']
+                                        value = group['values'].get(index, "")  # Use .get() to avoid KeyError
+                                        result += f"{key} {index}: {value}\n"
+                                    result += "-" * 30 + "\n"
+                                results.append(result)
                         
                         # Append all accumulated results to the main results string
                         for result in results:
