@@ -312,7 +312,7 @@ if selected_content_type != "Select a Content Type":
         
                         for prompt_name, prompt_content in other_prompts:
                             if prompt_content:
-                                st.subheader(f"Generated Response for {prompt_name}")
+                                st.subheader(f"Generated Results for {prompt_name}")
                                 other_prompt_messages = []
                                 other_prompt = company_tone_style + "\n\n--------------\n\n" + topic + "\n\n-----------\n\n" + prompt_content + "\n\nPlease create " + str(variations) + "different variations."
                                 other_prompt_messages.append({"role": "user", "content": other_prompt})
