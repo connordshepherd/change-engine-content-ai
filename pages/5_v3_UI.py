@@ -57,21 +57,25 @@ if selected_content_type != "Select a Content Type":
         # Add "Group By" selectbox
         group_by = st.selectbox("Group By", options=["Layout", "Key"])
 
-        # Create a selectbox for company name
-        company_name_list = sorted(client_data.keys())
+        # Fetch Tone table data from Airtable
+        tone_data = get_table_data('Tone')
         
-        # Determine the default index for the selectbox
-        default_company_index = 0  # Default to "Select a Company"
-        if "Global App Testing" in company_name_list:
-            default_company_index = company_name_list.index("Global App Testing") + 1  # +1 because of "Select a Company"
+        # Extract 'Tone' and 'Tone Description' columns
+        tone_list = [record['fields']['Tone'] for record in tone_data if 'Tone' in record['fields']]
+        tone_description_dict = {record['fields']['Tone']: record['fields']['Tone Description'] for record in tone_data if 'Tone' in record['fields'] and 'Tone Description' in record['fields']}
         
-        selected_company_name = st.selectbox("Company", options=["Select a Company"] + company_name_list, index=default_company_index)
+        # Create a selectbox for Tone values
+        selected_tone = st.selectbox("Select Tone", options=["Select a Tone"] + tone_list)
         
-        # Display the AI Brand Tone Prompt for the selected company
-        if selected_company_name and selected_company_name != 'Select a Company':
-            company_tone_style = client_data[selected_company_name]
+        # Display the corresponding Tone Description for the selected Tone
+        if selected_tone and selected_tone != 'Select a Tone':
+            company_tone_style = tone_description_dict[selected_tone]
         else:
             company_tone_style = ""
+        
+        # Show the company_tone_style
+        st.write("Selected Tone Description:")
+        st.write(company_tone_style)
 
         if selected_data.get("Image Prompt"):
             # Load data from the table corresponding to the selected content type
