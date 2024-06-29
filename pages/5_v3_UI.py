@@ -182,46 +182,50 @@ if selected_content_type != "Select a Content Type":
             selected_layouts_numbers = selected_images['Layout Number'].tolist()
             selected_layouts = ", ".join(map(str, selected_layouts_numbers))
 
-            # Assemble the layouts as plaintext
-            layouts_array = get_selected_layouts_array(edited_json_with_specs, selected_layouts)
-            #st.write(layouts_array)
+            # Check if more than one layout is selected
+            if len(selected_layouts_numbers) > 1:
+                st.info("Please select only one layout to continue.")
+            else:
+                # Assemble the layouts as plaintext
+                layouts_array = get_selected_layouts_array(edited_json_with_specs, selected_layouts)
+                #st.write(layouts_array)
 
-            st.subheader("Final Prompt with Layout")
+                st.subheader("Final Prompt with Layout")
+                        
+                # New section with two columns
+                col1, col2 = st.columns([3, 1])  # 25% and 75% width
+                
+                with col1:
+                    # Only assemble and display the prompt if all necessary components are available
+                    if selected_company_name != 'Select a Company' and selected_content_type != "Select a Content Type" and selected_data:
+                        # Assemble the prompt
+                        prompt = assemble_prompt(
+                            company_tone_style,
+                            selected_data.get("Image Prompt", ""),
+                            topic,  # You need to define this variable based on user input or selection
+                            variations,
+                            layouts_array,
+                            content_professional=selected_data.get("Content Professional"),
+                            content_casual=selected_data.get("Content Casual"),
+                            content_direct=selected_data.get("Content Direct")
+                        )
+                        prompt_display = st.text_area("Prompt", value=prompt, height=400)
+                    else:
+                        st.write("Please select a company and content type to generate the prompt.")
                     
-            # New section with two columns
-            col1, col2 = st.columns([3, 1])  # 25% and 75% width
-            
-            with col1:
-                # Only assemble and display the prompt if all necessary components are available
-                if selected_company_name != 'Select a Company' and selected_content_type != "Select a Content Type" and selected_data:
-                    # Assemble the prompt
-                    prompt = assemble_prompt(
-                        company_tone_style,
-                        selected_data.get("Image Prompt", ""),
-                        topic,  # You need to define this variable based on user input or selection
-                        variations,
-                        layouts_array,
-                        content_professional=selected_data.get("Content Professional"),
-                        content_casual=selected_data.get("Content Casual"),
-                        content_direct=selected_data.get("Content Direct")
-                    )
-                    prompt_display = st.text_area("Prompt", value=prompt, height=400)
-                else:
-                    st.write("Please select a company and content type to generate the prompt.")
-                
-            with col2:
-                st.write("Copy to Clipboard")
-                st_copy_to_clipboard(prompt)
-                
-                # URLs for GPT and Adobe (as examples, use actual URLs)
-                gpt_url = "https://chatgpt.com/"
-                adobe_url = "https://new.express.adobe.com/?category=generative-ai"
-                
-                # Buttons with on_click to open a new tab
-                if st.button("Open GPT"):
-                    open_page(gpt_url)
-                if st.button("Open Adobe"):
-                    open_page(adobe_url)
+                with col2:
+                    st.write("Copy to Clipboard")
+                    st_copy_to_clipboard(prompt)
+                    
+                    # URLs for GPT and Adobe (as examples, use actual URLs)
+                    gpt_url = "https://chatgpt.com/"
+                    adobe_url = "https://new.express.adobe.com/?category=generative-ai"
+                    
+                    # Buttons with on_click to open a new tab
+                    if st.button("Open GPT"):
+                        open_page(gpt_url)
+                    if st.button("Open Adobe"):
+                        open_page(adobe_url)
 
         # Generate button
         if st.button("Generate"):
