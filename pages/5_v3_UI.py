@@ -51,16 +51,17 @@ def assemble_prompt(company_tone_style, image_prompt, topic, variations, layouts
     prompt = f"""{company_tone_style}
 
 {image_prompt}
-
+----
 The topic is: {topic}. Come up with {variations} variations. Never output in code.
-
-
+----
 
 For each variation include:
 
 {layouts_text}
 
 {concatenated_content}
+
+----
 
 {response_structure}"""
 
