@@ -136,7 +136,7 @@ if selected_content_type != "Select a Content Type":
                 
                 with col1:
                     # Only assemble and display the prompt if all necessary components are available
-                    if selected_company_name != 'Select a Company' and selected_content_type != "Select a Content Type" and selected_data:
+                    if selected_tone != 'Select a Tone' and selected_content_type != "Select a Content Type" and selected_data:
                         # Assemble the prompt
                         prompt = assemble_prompt(
                             company_tone_style,
