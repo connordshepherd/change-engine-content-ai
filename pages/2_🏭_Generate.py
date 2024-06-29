@@ -158,7 +158,7 @@ if selected_content_type != "Select a Content Type":
                     
                 with col2:
                     st.write("Copy to Clipboard")
-                    st_copy_to_clipboard(prompt)
+                    st_copy_to_clipboard(prompt_display)
                     
                     # URLs for GPT and Adobe (as examples, use actual URLs)
                     gpt_url = "https://chatgpt.com/"
