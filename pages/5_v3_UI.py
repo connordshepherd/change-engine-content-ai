@@ -178,7 +178,8 @@ if selected_content_type != "Select a Content Type":
                     # This starts the IMAGE SUBLOOP. Images are complicated because they have stringent character length requirements. 
                     # Only FAQ images are exempt - they are actually too complex to map here.
                     if image_prompt:
-        
+
+                        st.subheader("Image Results")
                         # Generate prompts array for image_prompt
                         prompts_array = generate_prompts_array_with_variations(topic, image_prompt, layouts_array, variations)
                         st.write("Prompts array", prompts_array)
