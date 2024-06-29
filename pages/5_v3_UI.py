@@ -131,16 +131,6 @@ if selected_content_type != "Select a Content Type":
             company_tone_style = client_data[selected_company_name]
         else:
             company_tone_style = ""
-        
-        # Only display these fields if they are not null
-        if selected_data.get("Image Prompt"):
-            image_prompt = selected_data["Image Prompt"]
-        if selected_data.get("Content Professional"):
-            content_professional = st.text_area("Content (Professional)", value=selected_data["Content Professional"], height=200)
-        if selected_data.get("Content Casual"):
-            content_casual = st.text_area("Content (Casual)", value=selected_data["Content Casual"], height=200)
-        if selected_data.get("Content Direct"):
-            content_direct = st.text_area("Content (Direct)", value=selected_data["Content Direct"], height=200)
 
         if selected_data.get("Image Prompt"):
             # Load data from the table corresponding to the selected content type
