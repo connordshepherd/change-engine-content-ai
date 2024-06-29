@@ -180,7 +180,7 @@ if selected_content_type != "Select a Content Type":
                     # Only FAQ images are exempt - they are actually too complex to map here.
                     if image_prompt:
 
-                        st.subheader("Image Results")
+                        st.subheader("Image Results: Text for Selected Layout")
                         # Generate prompts array for image_prompt
                         prompts_array = generate_prompts_array_with_variations(topic, image_prompt, layouts_array, variations)
                         #st.write("Prompts array", prompts_array)
