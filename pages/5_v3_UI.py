@@ -72,10 +72,6 @@ if selected_content_type != "Select a Content Type":
             company_tone_style = tone_description_dict[selected_tone]
         else:
             company_tone_style = ""
-        
-        # Show the company_tone_style
-        st.write("Selected Tone Description:")
-        st.write(company_tone_style)
 
         if selected_data.get("Image Prompt"):
             # Load data from the table corresponding to the selected content type
