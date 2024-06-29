@@ -16,57 +16,6 @@ from typing import List, Dict, Union, Any, Tuple
 import webbrowser
 from streamlit.components.v1 import html
 
-def open_page(url):
-    open_script = """
-    <script type="text/javascript">
-        window.open('%s', '_blank').focus();
-    </script>
-    """ % url
-    html(open_script)
-
-def assemble_prompt(company_tone_style, image_prompt, topic, variations, layouts_array, content_professional=None, content_casual=None, content_direct=None):
-    layouts_text = ""
-    response_structure = "Use this structure for the response:\nVariation n:\n"
-    
-    for layout in layouts_array:
-        for layout_name, layout_details in layout.items():
-            layouts_text += f"{layout_details['Text']}\n"
-            layouts_text += "\n"
-            
-            # Extract field names for the response structure
-            field_names = [line.split(":")[0].strip() for line in layout_details['Text'].split("\n") if ":" in line]
-            response_structure += "\n".join(field_names) + "\n"
-    
-    # Concatenating content fields with newlines
-    content_parts = []
-    if content_professional:
-        content_parts.append(content_professional)
-    if content_casual:
-        content_parts.append(content_casual)
-    if content_direct:
-        content_parts.append(content_direct)
-    
-    concatenated_content = "\n\n".join(content_parts)
-
-    prompt = f"""{company_tone_style}
-
-{image_prompt}
-----
-The topic is: {topic}. Come up with {variations} variations. Never output in code.
-----
-
-For each variation include:
-
-{layouts_text}
-
-{concatenated_content}
-
-----
-
-{response_structure}"""
-
-    return prompt
-
 # Streamlit Widescreen Mode
 st.set_page_config(layout="wide")
 
