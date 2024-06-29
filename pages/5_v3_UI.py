@@ -165,6 +165,7 @@ if selected_content_type != "Select a Content Type":
                 # Generate button
                 if st.button("Generate"):
                     # Your generation logic here
+                    image_prompt = selected_data.get("Image Prompt")
                     st.write("Image Prompt",image_prompt)
                     st.write("Content Professional",content_professional)
                     pass
