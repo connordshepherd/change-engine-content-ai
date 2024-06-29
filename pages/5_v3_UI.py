@@ -182,7 +182,7 @@ if selected_content_type != "Select a Content Type":
                         st.subheader("Image Results")
                         # Generate prompts array for image_prompt
                         prompts_array = generate_prompts_array_with_variations(topic, image_prompt, layouts_array, variations)
-                        st.write("Prompts array", prompts_array)
+                        #st.write("Prompts array", prompts_array)
                     
                         # Go to OpenAI for each one
                         for prompt, layout in zip(prompts_array, layouts_array):
@@ -267,8 +267,6 @@ if selected_content_type != "Select a Content Type":
                     
                             # Collect and format the final output
                             result = f"Generated Response for {layout_key}:\n"
-
-                            st.write("Grouped",grouped)
                     
                             # Iterate over each group and format the key-value pairs correctly
                             if group_by == "Key":
@@ -300,7 +298,7 @@ if selected_content_type != "Select a Content Type":
                         # Append all accumulated results to the main results string
                         for result in results:
                             all_results += result
-                            st.text(all_results)
+                            st.write(all_results)
         
                         # ------ The above is the end of the IMAGE SUBLOOP.
         
