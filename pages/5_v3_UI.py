@@ -8,7 +8,7 @@ from io import BytesIO
 from PIL import Image
 from helpers import get_content_types_data, get_table_data, process_table_data, get_selected_layouts_array, generate_prompts_array_with_variations, send_to_openai
 from helpers import add_specs, evaluate_character_count_and_lines, extract_key_value_pairs, send_to_openai_with_tools, tools
-from helpers import send_plaintext_to_openai, get_client_data, prepare_layout_selector_data, open_page, assemble_prompt
+from helpers import send_plaintext_to_openai, get_client_data, prepare_layout_selector_data, open_page, assemble_prompt, get_image_from_url
 from helpers import group_values, fix_problems, update_grouped, evaluate_character_count_and_lines_of_group
 from dummy import dummy_prompt
 import openai
@@ -18,10 +18,6 @@ from streamlit.components.v1 import html
 
 # Streamlit Widescreen Mode
 st.set_page_config(layout="wide")
-
-# Session State: Initialize the required session states
-if 'loaded_data' not in st.session_state:
-    st.session_state.loaded_data = None
 
 # Streamlit UI - Title
 st.title("Content Creation AI")
@@ -43,10 +39,6 @@ selected_content_type = st.selectbox("Choose a Content Type", options)
 
 # Retrieve client data from Airtable
 client_data = get_client_data()
-    
-def get_image_from_url(url):
-    response = requests.get(url)
-    return Image.open(BytesIO(response.content))
 
 if selected_content_type != "Select a Content Type":
     # Filter data to get the selected content type details
