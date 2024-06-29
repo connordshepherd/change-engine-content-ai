@@ -136,7 +136,7 @@ if selected_content_type != "Select a Content Type":
                         # Assemble the prompt
                         prompt = assemble_prompt(
                             company_tone_style,
-                            image_prompt=selected_data.get("Image Prompt", ""),
+                            image_prompt=selected_data.get("Image Prompt"),
                             topic,  # You need to define this variable based on user input or selection
                             variations,
                             layouts_array,
