@@ -164,7 +164,7 @@ if selected_content_type != "Select a Content Type":
 
                 # Generate button
                 if st.button("Generate"):
-                    st.info("Generating content via OpenAI")
+                    st.write("---")
                     # Set the prompt values
                     image_prompt = selected_data.get("Image Prompt")
                     content_professional = selected_data.get("Content Professional")
@@ -299,7 +299,7 @@ if selected_content_type != "Select a Content Type":
                         # Append all accumulated results to the main results string
                         for result in results:
                             all_results += result
-                            st.write(all_results)
+                            st.text(all_results)
         
                         # ------ The above is the end of the IMAGE SUBLOOP.
         
