@@ -50,15 +50,18 @@ def assemble_prompt(company_tone_style, image_prompt, topic, variations, layouts
 
     prompt = f"""{company_tone_style}
 
-{concatenated_content}
-
 {image_prompt}
 
 The topic is: {topic}. Come up with {variations} variations. Never output in code.
 
+
+
 For each variation include:
 
 {layouts_text}
+
+{concatenated_content}
+
 {response_structure}"""
 
     return prompt
@@ -227,7 +230,7 @@ if selected_content_type != "Select a Content Type":
                     if st.button("Open Adobe"):
                         open_page(adobe_url)
 
-        # Generate button
-        if st.button("Generate"):
-            # Your generation logic here
-            pass
+                # Generate button
+                if st.button("Generate"):
+                    # Your generation logic here
+                    pass
