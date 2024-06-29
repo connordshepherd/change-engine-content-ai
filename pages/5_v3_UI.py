@@ -266,6 +266,8 @@ if selected_content_type != "Select a Content Type":
                     
                             # Collect and format the final output
                             result = f"Generated Response for {layout_key}:\n"
+
+                            st.write("Grouped",grouped)
                     
                             # Iterate over each group and format the key-value pairs correctly
                             for group in grouped:
