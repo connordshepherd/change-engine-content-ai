@@ -687,3 +687,7 @@ For each variation include:
 {response_structure}"""
 
     return prompt
+
+def get_image_from_url(url):
+    response = requests.get(url)
+    return Image.open(BytesIO(response.content))
