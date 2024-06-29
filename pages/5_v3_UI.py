@@ -133,7 +133,7 @@ if selected_content_type != "Select a Content Type":
                 with col1:
                     # Only assemble and display the prompt if all necessary components are available
                     if selected_tone != 'Select a Tone' and selected_content_type != "Select a Content Type" and selected_data:
-                        # Assemble the prompt
+                        # Assemble the prompt for display
                         prompt = assemble_prompt(
                             company_tone_style,
                             selected_data.get("Image Prompt", ""),
@@ -166,6 +166,9 @@ if selected_content_type != "Select a Content Type":
                 if st.button("Generate"):
                     # Your generation logic here
                     image_prompt = selected_data.get("Image Prompt")
+                    content_professional = selected_data.get("Content Professional")
+                    content_casual = selected_data.get("Content Casual")
+                    content_direct = selected_data.get("Content Direct")
                     st.write("Image Prompt",image_prompt)
                     st.write("Content Professional",content_professional)
                     pass
