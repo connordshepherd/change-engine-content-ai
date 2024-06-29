@@ -169,4 +169,144 @@ if selected_content_type != "Select a Content Type":
                     content_professional = selected_data.get("Content Professional")
                     content_casual = selected_data.get("Content Casual")
                     content_direct = selected_data.get("Content Direct")
-                    pass
+                    
+                    # Start generating
+                    all_results = ""  # Initialize a single string to hold all results
+                    # Variation loop I took out
+                    results = []  # Initialize a list to hold the results
+        
+                    # This starts the IMAGE SUBLOOP. Images are complicated because they have stringent character length requirements. 
+                    # Only FAQ images are exempt - they are actually too complex to map here.
+                    if image_prompt:
+        
+                        # Generate prompts array for image_prompt
+                        prompts_array = generate_prompts_array_with_variations(topic, image_prompt, layouts_array, variations)
+                        st.write("Prompts array", prompts_array)
+                    
+                        # Go to OpenAI for each one
+                        for prompt, layout in zip(prompts_array, layouts_array):
+                            layout_key = list(layout.keys())[0]  # Extract the layout key (e.g., "Layout 1")
+                    
+                            # Check if content type is 'FAQ'
+                            if selected_content_type == "FAQ":
+                                # Generate response and add directly to results
+                                messages = prompt['message']
+                                response = send_to_openai(messages)
+                                all_results += f"Generated Response for {layout_key}:\n{response}\n\n"
+                                st.text(all_results)
+                                continue  # Skip rest of the iteration
+                            
+                            for retry in range(3):  # Retry up to 3 times
+                                # st.subheader(f"Images - Generated Response for {layout_key}")
+                                messages = prompt['message']
+                                specs = prompt['specs']
+                                response = send_to_openai(messages)
+                                #st.write("OpenAI response", response)
+                                if not response:
+                                    # st.write(f"Failed to get a response. Retrying {retry + 1}/3...")
+                                    continue  # Retry without incrementing n
+                    
+                                tool_call_prompt = "Please extract relevant entities (Title, Subtitle and any others) from the below text." + "\n\n---------------\n\n" + response
+                                layout_messages = [{"role": "user", "content": response}]
+                                layout_response = send_to_openai_with_tools(layout_messages)
+                                pairs_json = extract_key_value_pairs(layout_response)
+                                #st.write("Pairs JSON initial", pairs_json)
+                    
+                                iterations = 0
+                                missing_key = False  # Flag to indicate missing key
+                                max_retries = 3
+                                grouped = group_values(pairs_json)
+                                #st.write("Grouped", grouped)
+                                #st.write("Specs", specs)
+                                
+                                while iterations < 5:
+                                    # Evaluate the grouped values based on specifications
+                                    evaluation = evaluate_character_count_and_lines_of_group(grouped, specs)
+                                    #st.write("Evaluation", evaluation)
+                    
+                                    # Break if all criteria are met and no reason_code is present in the evaluation
+                                    if not any("reason_code" in value for item in evaluation for value in item['values'].values()):
+                                        st.write(f"Completed in {iterations} iterations.")
+                                        break  # Break the fixing loop since all criteria are met
+                    
+                                    # Check for missing key issue
+                                    if any("reason_code" in value and "The specified key is missing" in value["reason_code"] for item in evaluation for value in item['values'].values()):
+                                        missing_key = True
+                                        break  # Break the fixing loop to retry with a new generation
+                    
+                                    # Fix identified problems systematically
+                                    problems, keys_to_fix, indices_to_fix, line_counts = fix_problems(evaluation)
+                                    #st.subheader("Fix Problems")
+                                    for problem, key, index, line_count in zip(problems, keys_to_fix, indices_to_fix, line_counts):
+                                        #st.write(f"Fixing problem for {key} at index {index}: {problem}")
+                                        prompt_with_context = f"{problem}\n\nPlease return your new text, on {line_count} lines."
+                                        # Send request to OpenAI for generating fix
+                                        fixed_response = send_plaintext_to_openai(prompt_with_context)
+                                        #st.write(f"Fixed response for {key} at index {index}: {fixed_response}")
+                    
+                                        # Update the grouped structure with fixed_response
+                                        updated = update_grouped(grouped, key, index, fixed_response)
+                                        #st.write("Updated", updated)
+                                        #st.write("Updated Grouped", grouped)
+                    
+                                        if not updated:
+                                            st.write(f"Could not update value for {key} at index {index} with content {fixed_response}")
+                    
+                                    iterations += 1
+                    
+                                if missing_key:
+                                    st.write(f"Missing key detected. Retrying {retry + 1}/{max_retries}...")
+                                else:
+                                    break
+                    
+                                if retry == max_retries - 1:  # If we've exhausted retries
+                                    st.write("Max retries exhausted. Moving on to the next layout.")
+                                
+                                #st.write("Final grouped", grouped)
+                    
+                            # Collect and format the final output
+                            result = f"Generated Response for {layout_key}:\n"
+                    
+                            # Iterate over each group and format the key-value pairs correctly
+                            for group in grouped:
+                                key = group['key']
+                                values = group['values']
+                                for index, value in values.items():
+                                    result += f"{key} {index}: {value}\n"
+                            
+                            result += "-" * 30 + "\n"
+                            results.append(result)  # Append the formatted result to the list
+                        
+                        # Append all accumulated results to the main results string
+                        for result in results:
+                            all_results += result
+                            st.text(all_results)
+        
+                        # ------ The above is the end of the IMAGE SUBLOOP.
+        
+                        # Now we do the CONTENT SUBLOOP. We work through other prompts (content_professional, content_casual, content_direct) and apply different logic.
+                        other_prompts = [
+                            ("Content Professional", content_professional),
+                            ("Content Casual", content_casual),
+                            ("Content Direct", content_direct)
+                        ]
+        
+                        for prompt_name, prompt_content in other_prompts:
+                            if prompt_content:
+                                st.subheader(f"Generated Response for {prompt_name}")
+                                other_prompt_messages = []
+                                other_prompt = company_tone_style + "\n\n--------------\n\n" + topic + "\n\n-----------\n\n" + prompt_content + "\n\nPlease create " + str(variations) + "different variations."
+                                other_prompt_messages.append({"role": "user", "content": other_prompt})
+                                response = send_to_openai(other_prompt_messages)
+                                st.write(response)
+                                all_results += f"Generated Response for {prompt_name}:\n{response}\n\n"
+        
+                    # Display a JSON object for debugging
+                    #st.subheader("Debug")
+                    #st.write(prompts_array)
+        
+                    # This ends the CONTENT SUBLOOP.
+        
+                    # Button to download the results as RTF
+                    if st.download_button("Download Results as RTF", all_results, file_name="results.rtf", mime="application/rtf"):
+                        st.write("Download initiated.")
