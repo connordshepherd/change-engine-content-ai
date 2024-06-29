@@ -164,6 +164,7 @@ if selected_content_type != "Select a Content Type":
 
                 # Generate button
                 if st.button("Generate"):
+                    st.info("Generating content via OpenAI")
                     # Set the prompt values
                     image_prompt = selected_data.get("Image Prompt")
                     content_professional = selected_data.get("Content Professional")
@@ -227,7 +228,7 @@ if selected_content_type != "Select a Content Type":
                     
                                     # Break if all criteria are met and no reason_code is present in the evaluation
                                     if not any("reason_code" in value for item in evaluation for value in item['values'].values()):
-                                        st.info(f"Completed in {iterations} iterations.")
+                                        #st.info(f"Completed in {iterations} iterations.")
                                         break  # Break the fixing loop since all criteria are met
                     
                                     # Check for missing key issue
@@ -298,7 +299,7 @@ if selected_content_type != "Select a Content Type":
                         # Append all accumulated results to the main results string
                         for result in results:
                             all_results += result
-                            st.write(str(all_results))
+                            st.write(all_results)
         
                         # ------ The above is the end of the IMAGE SUBLOOP.
         
