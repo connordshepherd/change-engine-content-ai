@@ -4,7 +4,8 @@ import io
 
 def process_csv(df):
     output = ""
-    for _, row in df.iterrows():
+    for index, row in df.iterrows():
+        output += f"ROW {index + 1}\n"  # Adding row number
         output += f"Content Title:\n{row['Content Title']}\n\n"
         output += f"Goals:\n{row['Goals']}\n\n"
         output += f"Content Type:\n{row['Content Type']}\n\n"
