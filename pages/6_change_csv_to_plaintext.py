@@ -1,18 +1,28 @@
 import streamlit as st
 import pandas as pd
 import io
+import numpy as np
 
 def process_csv(df):
     output = ""
     for index, row in df.iterrows():
         output += f"ROW {index + 1}\n"  # Adding row number
-        output += f"Content Title: {row['Content Title']}\n"
-        output += f"Goals: {row['Goals']}\n"
-        output += f"Content Type: {row['Content Type']}\n"
-        output += f"Type: {row['Type']}\n"
-        output += f"Description: {row['Description']}\n"
-        output += f"Timeline Text: {row['Timeline Text']}\n\n"
-        output += "-----\n\n"
+        
+        # Only include non-null values
+        if pd.notna(row['Content Title']):
+            output += f"Content Title: {row['Content Title']}\n"
+        if pd.notna(row['Goals']):
+            output += f"Goals: {row['Goals']}\n"
+        if pd.notna(row['Content Type']):
+            output += f"Content Type: {row['Content Type']}\n"
+        if pd.notna(row['Type']):
+            output += f"Type: {row['Type']}\n"
+        if pd.notna(row['Description']):
+            output += f"Description: {row['Description']}\n"
+        if pd.notna(row['Timeline Text']):
+            output += f"Timeline Text: {row['Timeline Text']}\n"
+        
+        output += "\n-----\n\n"
     return output
 
 st.title("CSV Processor")
