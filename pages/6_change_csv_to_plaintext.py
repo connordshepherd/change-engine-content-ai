@@ -6,11 +6,11 @@ def process_csv(df):
     output = ""
     for index, row in df.iterrows():
         output += f"ROW {index + 1}\n"  # Adding row number
-        output += f"Content Title: {row['Content Title']}\n\n"
-        output += f"Goals: {row['Goals']}\n\n"
-        output += f"Content Type: {row['Content Type']}\n\n"
-        output += f"Type: {row['Type']}\n\n"
-        output += f"Description: {row['Description']}\n\n"
+        output += f"Content Title: {row['Content Title']}\n"
+        output += f"Goals: {row['Goals']}\n"
+        output += f"Content Type: {row['Content Type']}\n"
+        output += f"Type: {row['Type']}\n"
+        output += f"Description: {row['Description']}\n"
         output += f"Timeline Text: {row['Timeline Text']}\n\n"
         output += "-----\n\n"
     return output
