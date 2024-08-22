@@ -27,15 +27,3 @@ if uploaded_file is not None:
     
     # Display the output in an editable text area
     edited_output = st.text_area("Processed Output (Editable)", value=output, height=500)
-
-    # Option to download the edited output
-    if st.button("Download Edited Output"):
-        buffer = io.StringIO()
-        buffer.write(edited_output)
-        buffer.seek(0)
-        st.download_button(
-            label="Click here to download",
-            data=buffer,
-            file_name="processed_output.txt",
-            mime="text/plain"
-        )
