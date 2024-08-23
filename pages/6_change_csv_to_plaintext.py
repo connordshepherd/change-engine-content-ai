@@ -16,25 +16,25 @@ def call_openai(messages):
 
 def process_prompts():
     messages = []
-    
+
+    st.write("Running prompt 1")
     # Process prompt 1
     messages.append({"role": "user", "content": prompt_1_editable})
     response_1 = call_openai(messages)
     messages.append({"role": "assistant", "content": response_1})
-    st.write("Running prompt 1")
-    st.write(messages)
     
+    st.write("Running prompt 2")
     # Process prompt 2
     messages.append({"role": "user", "content": prompt_2_editable})
     response_2 = call_openai(messages)
     messages.append({"role": "assistant", "content": response_2})
-    st.write("Running prompt 2")
     
+    st.write("Running prompt 3")
     # Process prompt 3
     messages.append({"role": "user", "content": prompt_3_editable})
     response_3 = call_openai(messages)
     messages.append({"role": "assistant", "content": response_3})
-    st.write("Running prompt 3")
+    
     
     # Strip backticks and extra whitespace from the response
     cleaned_response = re.sub(r'^```json\s*|\s*```$', '', response_3.strip())
@@ -107,7 +107,7 @@ Here's the menu of Educational Elements:
 5. Define Goal
 Please add one or two Educational Elements to each step. You will need to write your own Description."""
 
-full_prompt_3 = """Wonderful. Now please output the full list as a JSON object with the headers: Step, Step Description, Content Title, Content Family, Content Type, Description."""
+full_prompt_3 = """Wonderful. Now please output the full list as a JSON object with the headers: Step, Step Description, Content Title, Description."""
 
 uploaded_file = st.file_uploader("Choose a CSV file", type="csv")
 
