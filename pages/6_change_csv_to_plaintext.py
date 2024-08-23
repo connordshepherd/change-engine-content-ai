@@ -13,6 +13,14 @@ def call_openai(messages):
     )
     return response_raw.choices[0].message.content
 
+def call_openai_json(messages):
+    response_raw = openai.chat.completions.create(
+        model="gpt-4o",
+        messages=messages,
+        response_format: { type: "json_object" }
+    )
+    return response
+
 def process_prompts():
     messages = []
     
