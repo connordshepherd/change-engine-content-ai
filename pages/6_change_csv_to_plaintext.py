@@ -29,7 +29,7 @@ st.title("Blueprint Builder")
 
 user_prompt = st.text_area("What kind of blueprint do you want to make?", value="New Hire Onboarding", height=100)
 
-prompt_1_intro_boilerplate = """Create program/initiative blueprints for an HR/People employee initiative to be executed using the design and communications menu of options provided below. The theme of this initiative is: """"
+prompt_1_intro_boilerplate = """Create program/initiative blueprints for an HR/People employee initiative to be executed using the design and communications menu of options provided below. The theme of this initiative is: """
 prompt_1_outro_boilerplate = """\n\nAs a first pass, we need to group these menu options into steps.\n
 Create 5 Steps in TOTAL to launch the program provided.\n
 For each step, pick 3-4 of the options on the menu. First, create the title of the step and write 2 sentences explaining why you are choosing the menu options you pick.\n
