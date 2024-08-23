@@ -25,7 +25,16 @@ def process_csv(df):
         output += "\n-----\n\n"
     return output
 
-st.title("CSV Processor")
+st.title("Blueprint Builder")
+
+user_prompt = st.text_area("What kind of content plan are you putting in?", value="New Hire Onboarding", height=200)
+
+prompt_1_intro_boilerplate = """Create program/initiative blueprints for an HR/People employee initiative to be executed using the design and communications menu of options provided below. The theme of this initiative is """""
+prompt_1_outro_boilerplate = """As a first pass, we need to group these menu options into steps.\n
+Create 5 Steps in TOTAL to launch the program provided.\n
+For each step, pick 3-4 of the options on the menu. First, create the title of the step and write 2 sentences explaining why you are choosing the menu options you pick.\n
+Then, output with the headers: Step, Step Description, Content Title, Content Type, Type, Description. (In later passes, we will flesh out the steps.)\n
+Here's the menu of options:\n\n"""
 
 uploaded_file = st.file_uploader("Choose a CSV file", type="csv")
 
@@ -35,6 +44,9 @@ if uploaded_file is not None:
     
     # Process the CSV and generate the output
     output = process_csv(df)
+
+    # Concatenate Full Prompt
+    full_prompt_1 = prompt_1_intro_boilerplate + user_prompt + prompt_1_outro_boilerplate + output
     
     # Display the output in an editable text area
-    edited_output = st.text_area("Processed Output (Editable)", value=output, height=500)
+    edited_output = st.text_area("Processed Output (Editable)", value=full_prompt_1, height=500)
