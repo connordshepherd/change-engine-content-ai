@@ -5,6 +5,7 @@ import numpy as np
 import json
 import openai
 import csv
+import re
 
 def call_openai(messages):
     response_raw = openai.chat.completions.create(
@@ -37,9 +38,12 @@ def process_prompts():
     st.write("Messages after prompt 3:")
     st.write(messages)
     
+    # Strip backticks and extra whitespace from the response
+    cleaned_response = re.sub(r'^```json\s*|\s*```$', '', response_3.strip())
+    
     # Display final response as JSON
     try:
-        json_response = json.loads(response_3)
+        json_response = json.loads(cleaned_response)
         st.json(json_response)
         
         # Convert JSON to CSV and offer download
@@ -62,6 +66,8 @@ def process_prompts():
         )
     except json.JSONDecodeError:
         st.error("The final response is not a valid JSON object.")
+        st.text("Cleaned response:")
+        st.text(cleaned_response)
 
 def process_csv(df):
     output = ""
