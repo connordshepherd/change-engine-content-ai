@@ -37,7 +37,7 @@ For each step, pick 3-4 of the options on the menu. First, create the title of t
 Then, output with the headers: Step, Step Description, Content Title, Content Family, Content Type, Description. (In later passes, we will flesh out the steps.)\n
 Here's the menu of options:\n\n"""
 
-prompt_2_boilerplate = """Great! Now, we need to add in "Educational Elements." These are places in the plan where the HR lead needs to gather information, circulate information, or define their goals.
+full_prompt_2 = """Great! Now, we need to add in "Educational Elements." These are places in the plan where the HR lead needs to gather information, circulate information, or define their goals.
 Here's the menu of Educational Elements:
 1. Identify Stakeholders
 2. Analyze Data
