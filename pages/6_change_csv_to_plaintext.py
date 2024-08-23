@@ -7,6 +7,8 @@ import openai
 import csv
 import re
 
+global df
+
 def call_openai(messages):
     response_raw = openai.chat.completions.create(
         model="gpt-4o",
@@ -35,13 +37,22 @@ def process_prompts():
     response_3 = call_openai(messages)
     messages.append({"role": "assistant", "content": response_3})
     
-    
     # Strip backticks and extra whitespace from the response
     cleaned_response = re.sub(r'^```json\s*|\s*```$', '', response_3.strip())
     
     # Display final response as JSON
     try:
         json_response = json.loads(cleaned_response)
+        
+        # Add 'Content Type' and 'Type' from input dataframe
+        for item in json_response:
+            content_title = item.get('Content Title')
+            if content_title:
+                matching_row = df[df['Content Title'] == content_title]
+                if not matching_row.empty:
+                    item['Content Type'] = matching_row['Content Type'].iloc[0]
+                    item['Type'] = matching_row['Type'].iloc[0]
+        
         st.json(json_response)
         
         # Convert JSON to CSV and offer download
