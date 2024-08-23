@@ -27,7 +27,7 @@ def process_csv(df):
 
 st.title("Blueprint Builder")
 
-user_prompt = st.text_area("What kind of content plan are you putting in?", value="New Hire Onboarding", height=200)
+user_prompt = st.text_area("What kind of blueprint do you want to make?", value="New Hire Onboarding", height=100)
 
 prompt_1_intro_boilerplate = """Create program/initiative blueprints for an HR/People employee initiative to be executed using the design and communications menu of options provided below. The theme of this initiative is """""
 prompt_1_outro_boilerplate = """As a first pass, we need to group these menu options into steps.\n
