@@ -98,12 +98,18 @@ def process_csv(df):
         output += "\n-----\n\n"
     return output
 
+def normalize_string(s):
+    # Convert to lowercase and remove special characters
+    return re.sub(r'[^a-z0-9]', '', s.lower())
+
 def create_content_map(df):
     content_map = {}
     for _, row in df.iterrows():
         if pd.notna(row['Content Title']):
             content_title = row['Content Title'].strip()
-            content_map[content_title] = {
+            normalized_title = normalize_string(content_title)
+            content_map[normalized_title] = {
+                'Content Title': content_title,  # Keep the original title
                 'Content Type': row['Content Type'].strip() if pd.notna(row['Content Type']) else '',
                 'Type': row['Type'].strip() if pd.notna(row['Type']) else ''
             }
@@ -115,12 +121,16 @@ def update_json_with_content_info(json_data, content_map):
     
     for item in json_data:
         content_title = item.get('Content Title', '').strip()
+        normalized_title = normalize_string(content_title)
+        
         if content_title in special_cases:
             content_type = content_title
             item_type = "Educational Elements"
-        elif content_title in content_map:
-            content_type = content_map[content_title]['Content Type']
-            item_type = content_map[content_title]['Type']
+        elif normalized_title in content_map:
+            content_type = content_map[normalized_title]['Content Type']
+            item_type = content_map[normalized_title]['Type']
+            # Use the original content title from the map
+            content_title = content_map[normalized_title]['Content Title']
         else:
             content_type = ""
             item_type = ""
