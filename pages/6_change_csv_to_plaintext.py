@@ -35,56 +35,6 @@ def call_openai(messages):
     )
     return response_raw.choices[0].message.content
 
-def process_prompts():
-    messages = []
-    
-    # Process prompt 1
-    messages.append({"role": "user", "content": prompt_1_editable})
-    response_1 = call_openai(messages)
-    messages.append({"role": "assistant", "content": response_1})
-    st.write("Messages after prompt 1:")
-    st.write(messages)
-    
-    # Process prompt 2
-    messages.append({"role": "user", "content": prompt_2_editable})
-    response_2 = call_openai(messages)
-    messages.append({"role": "assistant", "content": response_2})
-    st.write("Messages after prompt 2:")
-    st.write(messages)
-    
-    # Process prompt 3
-    messages.append({"role": "user", "content": prompt_3_editable})
-    response_3 = call_openai(messages)
-    messages.append({"role": "assistant", "content": response_3})
-    st.write("Messages after prompt 3:")
-    st.write(messages)
-    
-    # Display final response as JSON
-    try:
-        json_response = json.loads(response_3)
-        st.json(json_response)
-        
-        # Convert JSON to CSV and offer download
-        csv_string = io.StringIO()
-        writer = csv.writer(csv_string)
-        
-        # Write headers
-        headers = list(json_response[0].keys()) if json_response else []
-        writer.writerow(headers)
-        
-        # Write data
-        for item in json_response:
-            writer.writerow(item.values())
-        
-        st.download_button(
-            label="Download CSV",
-            data=csv_string.getvalue(),
-            file_name="output.csv",
-            mime="text/csv"
-        )
-    except json.JSONDecodeError:
-        st.error("The final response is not a valid JSON object.")
-
 st.title("Blueprint Builder")
 
 user_prompt = st.text_area("What kind of blueprint do you want to make?", value="New Hire Onboarding", height=100)
@@ -127,4 +77,51 @@ if uploaded_file is not None:
 
     # Add a "Process" button
     if st.button("Process"):
-        process_prompts()
+        messages = []
+
+        # Process prompt 1
+        messages.append({"role": "user", "content": prompt_1_editable})
+        response_1 = call_openai(messages)
+        messages.append({"role": "assistant", "content": response_1})
+        st.write("Messages after prompt 1:")
+        st.write(messages)
+        
+        # Process prompt 2
+        messages.append({"role": "user", "content": prompt_2_editable})
+        response_2 = call_openai(messages)
+        messages.append({"role": "assistant", "content": response_2})
+        st.write("Messages after prompt 2:")
+        st.write(messages)
+        
+        # Process prompt 3
+        messages.append({"role": "user", "content": prompt_3_editable})
+        response_3 = call_openai(messages)
+        messages.append({"role": "assistant", "content": response_3})
+        st.write("Messages after prompt 3:")
+        st.write(messages)
+        
+        # Display final response as JSON
+        try:
+            json_response = json.loads(response_3)
+            st.json(json_response)
+            
+            # Convert JSON to CSV and offer download
+            csv_string = io.StringIO()
+            writer = csv.writer(csv_string)
+            
+            # Write headers
+            headers = list(json_response[0].keys()) if json_response else []
+            writer.writerow(headers)
+            
+            # Write data
+            for item in json_response:
+                writer.writerow(item.values())
+            
+            st.download_button(
+                label="Download CSV",
+                data=csv_string.getvalue(),
+                file_name="output.csv",
+                mime="text/csv"
+            )
+        except json.JSONDecodeError:
+            st.error("The final response is not a valid JSON object.")
