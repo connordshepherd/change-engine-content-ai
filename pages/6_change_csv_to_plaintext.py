@@ -35,15 +35,9 @@ def process_prompts():
     response_3 = call_openai(messages)
     messages.append({"role": "assistant", "content": response_3})
     
-    # Extract content between triple backticks
-    pattern = r'```json\s*([\s\S]*?)\s*```'
-    match = re.search(pattern, response_3)
-
-    if match:
-        cleaned_response = match.group(1).strip()
-    else:
-        st.error("No JSON content found between triple backticks.")
-        cleaned_response = response_3.strip()  # Fallback to the original stripped response
+    
+    # Strip backticks and extra whitespace from the response
+    cleaned_response = re.sub(r'^```json\s*|\s*```$', '', response_3.strip())
     
     # Display final response as JSON
     try:
@@ -72,6 +66,24 @@ def process_prompts():
         st.error("The final response is not a valid JSON object.")
         st.text("Cleaned response:")
         st.text(cleaned_response)
+
+def process_csv(df):
+    output = ""
+    for index, row in df.iterrows():
+        output += f"ROW {index + 1}\n"  # Adding row number
+        
+        # Only include non-null values
+        if pd.notna(row['Content Title']):
+            output += f"Content Title: {row['Content Title']}\n"
+        if pd.notna(row['Goals']):
+            output += f"Goals: {row['Goals']}\n"
+        if pd.notna(row['Description']):
+            output += f"Description: {row['Description']}\n"
+        if pd.notna(row['Timeline Text']):
+            output += f"Timeline Text: {row['Timeline Text']}\n"
+        
+        output += "\n-----\n\n"
+    return output
 
 st.title("Blueprint Builder")
 
