@@ -94,8 +94,16 @@ prompt_1_intro_boilerplate = """Create program/initiative blueprints for an HR/P
 prompt_1_outro_boilerplate = """\n\nAs a first pass, we need to group these menu options into steps.\n
 Create 5 Steps in TOTAL to launch the program provided.\n
 For each step, pick 3-4 of the options on the menu. First, create the title of the step and write 2 sentences explaining why you are choosing the menu options you pick.\n
-Then, output with the headers: Step, Step Description, Content Title, Content Family, Content Type, Description. (In later passes, we will flesh out the steps.)\n
-Here's the menu of options:\n\n"""
+Then, output with the headers: Step, Step Description, Content Title, Content Family, Content Type, Description. (In later passes, we will flesh out the steps.)\n\n
+Here are all the valid Content Families and Content Types:\n\n
+CONTENT FAMILY: Educational elements\n
+CONTENT TYPES IN EDUCATIONAL ELEMENTS FAMILY: Identify Stakeholders, Analyze Data, Quick Win, Top Tip, Define Goal\n\n
+CONTENT FAMILY: Design Assets\n
+CONTENT TYPES IN DESIGN ASSETS FAMILY: Zoom Background, Gift Card, TV Display, Recognition, Certificate, LinkedIn Cover, Logo Landscape, Logo Square, FAQ, Poster, Manager One-Pager, Swag, Presentation, GIF Square, Video\n\n
+CONTENT FAMILY: Communications\n
+CONTENT TYPES IN COMMUNICATIONS FAMILY: Communication, Social Post, Appreciation\n\n
+
+Here's the menu of options for you to choose from this time:\n\n"""
 
 full_prompt_2 = """Great! Now, we need to add in "Educational Elements." These are places in the plan where the HR lead needs to gather information, circulate information, or define their goals.
 Here's the menu of Educational Elements:
