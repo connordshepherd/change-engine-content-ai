@@ -6,6 +6,7 @@ import json
 import openai
 import csv
 import re
+from collections import OrderedDict
 
 def call_openai(messages):
     response_raw = openai.chat.completions.create(
@@ -48,18 +49,22 @@ def process_prompts():
     # Display final response as JSON
     try:
         json_response = json.loads(cleaned_response)
-        st.json(json_response)
+        st.json("Original JSON", json_response)
+
+        # Update the hardcoded JSON with Content Type and Type
+        updated_json = update_json_with_content_info(hardcoded_json, content_map)
+        st.json("Updated JSON", updated_json)
         
         # Convert JSON to CSV and offer download
         csv_string = io.StringIO()
         writer = csv.writer(csv_string)
         
         # Write headers
-        headers = list(json_response[0].keys()) if json_response else []
+        headers = list(updated_json[0].keys()) if updated_json else []
         writer.writerow(headers)
         
         # Write data
-        for item in json_response:
+        for item in updated_json:
             writer.writerow(item.values())
         
         st.download_button(
@@ -90,6 +95,46 @@ def process_csv(df):
         
         output += "\n-----\n\n"
     return output
+
+def create_content_map(df):
+    content_map = {}
+    for _, row in df.iterrows():
+        if pd.notna(row['Content Title']):
+            content_title = row['Content Title'].strip()
+            content_map[content_title] = {
+                'Content Type': row['Content Type'].strip() if pd.notna(row['Content Type']) else '',
+                'Type': row['Type'].strip() if pd.notna(row['Type']) else ''
+            }
+    return content_map
+
+def update_json_with_content_info(json_data, content_map):
+    special_cases = ["Identify Stakeholders", "Analyze Data", "Quick Win", "Top Tip", "Define Goal"]
+    updated_data = []
+    
+    for item in json_data:
+        content_title = item.get('Content Title', '').strip()
+        if content_title in special_cases:
+            content_type = "Educational Elements"
+            item_type = content_title
+        elif content_title in content_map:
+            content_type = content_map[content_title]['Content Type']
+            item_type = content_map[content_title]['Type']
+        else:
+            content_type = ""
+            item_type = ""
+        
+        # Create a new OrderedDict with the specified order
+        ordered_item = OrderedDict([
+            ("Step", item.get("Step", "")),
+            ("Step Description", item.get("Step Description", "")),
+            ("Content Title", content_title),
+            ("Content Type", content_type),
+            ("Type", item_type),
+            ("Description", item.get("Description", ""))
+        ])
+        updated_data.append(ordered_item)
+    
+    return updated_data
 
 st.title("Blueprint Builder")
 
@@ -125,6 +170,9 @@ if uploaded_file is not None:
     
     # Process the CSV and generate the output
     output = process_csv(df)
+
+    # Process the CSV and generate the content map
+    content_map = create_content_map(df)
 
     # Concatenate Full Prompt
     full_prompt_1 = prompt_1_intro_boilerplate + user_prompt + prompt_1_outro_boilerplate + output
