@@ -101,6 +101,7 @@ prompt_1_outro_boilerplate = """\n\nAs a first pass, we need to group these menu
 Create 5 Steps in TOTAL to launch the program provided.\n
 For each step, pick 3-4 of the options on the menu. First, create the title of the step and write 2 sentences explaining why you are choosing the menu options you pick.\n
 Then, output with the headers: Step, Step Description, Content Title, Content Family, Content Type, Description. (In later passes, we will flesh out the steps.)\n\n
+The possible Content Families are: Educational Element, Communication, or Design.\n
 
 Here's the menu of options for you to choose from this time:\n\n"""
 
