@@ -124,3 +124,6 @@ if uploaded_file is not None:
     prompt_1_editable = st.text_area("Prompt 1 (Editable)", value=full_prompt_1, height=500)
     prompt_2_editable = st.text_area("Prompt 2 (Editable)", value=full_prompt_2, height=200)
     prompt_3_editable = st.text_area("Prompt 3 (Editable)", value=full_prompt_3, height=200)
+
+    if st.button("Process"):
+        process_prompts()
