@@ -23,6 +23,8 @@ def process_prompts():
     messages.append({"role": "user", "content": prompt_1_editable})
     response_1 = call_openai(messages)
     messages.append({"role": "assistant", "content": response_1})
+    st.write("First Response")
+    st.write(response_1)
     
     st.write("Running prompt 2")
     # Process prompt 2
@@ -92,6 +94,8 @@ def process_csv(df):
             output += f"Goals: {row['Goals']}\n"
         if pd.notna(row['Description']):
             output += f"Description: {row['Description']}\n"
+        if pd.notna(row['Type']):
+            output += f"Type: {row['Type']}\n"
         if pd.notna(row['Timeline Text']):
             output += f"Timeline Text: {row['Timeline Text']}\n"
         
