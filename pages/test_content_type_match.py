@@ -169,11 +169,20 @@ def process_csv(df):
     return content_map
 
 def update_json_with_content_info(json_data, content_map):
+    special_cases = ["Identify Stakeholders", "Analyze Data", "Quick Win", "Top Tip", "Define Goal"]
+    
     for item in json_data:
         content_title = item.get('Content Title')
-        if content_title in content_map:
+        if content_title in special_cases:
+            item['Content Type'] = "Educational Elements"
+            item['Type'] = content_title
+        elif content_title in content_map:
             item['Content Type'] = content_map[content_title]['Content Type']
             item['Type'] = content_map[content_title]['Type']
+        else:
+            # If no match is found, you might want to set default values or leave them empty
+            item['Content Type'] = ""
+            item['Type'] = ""
     return json_data
 
 st.title("Blueprint Builder - Test Page")
