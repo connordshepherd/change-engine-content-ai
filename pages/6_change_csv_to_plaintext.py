@@ -46,7 +46,7 @@ Here's the menu of Educational Elements:
 5. Define Goal
 Please add one or two Educational Elements to each step. Keep in mind that the Educational Element, in the data structure, is a Content Type. The name of the Educational Element you choose will be a Content Title. You will need to write your own Description."""
 
-prompt_3_boilerplate = """Wonderful. Now please output the full list as a JSON object with the headers: Step, Step Description, Content Title, Content Family, Content Type, Description."""
+full_prompt_3 = """Wonderful. Now please output the full list as a JSON object with the headers: Step, Step Description, Content Title, Content Family, Content Type, Description."""
 
 uploaded_file = st.file_uploader("Choose a CSV file", type="csv")
 
@@ -62,4 +62,5 @@ if uploaded_file is not None:
     
     # Display the output in an editable text area
     prompt_1_editable = st.text_area("Prompt 1 (Editable)", value=full_prompt_1, height=500)
-    prompt_2_editable = st.text_area("Prompt 2 (Editable)", value=full_prompt_2, height_200)
+    prompt_2_editable = st.text_area("Prompt 2 (Editable)", value=full_prompt_2, height=200)
+    prompt_3_editable = st.text_area("Prompt 3 (Editable)", value=full_prompt_3, height=200)
