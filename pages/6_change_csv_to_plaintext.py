@@ -113,7 +113,9 @@ Here's the menu of Educational Elements:
 5. Define Goal
 Please add one or two Educational Elements to each step. You will need to write your own Description."""
 
-full_prompt_3 = """Wonderful. Now please output the full list as a JSON object with the headers: Step, Step Description, Content Title, Description."""
+full_prompt_3 = """Wonderful. Now please output the full list as a JSON object with the headers: Step, Step Description, Content Title, Description.\n\n
+
+Don't nest anything - just return a JSON object with each entity containing each of those headers."""
 
 uploaded_file = st.file_uploader("Choose a CSV file", type="csv")
 
