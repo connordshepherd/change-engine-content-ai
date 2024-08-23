@@ -52,8 +52,8 @@ def process_prompts():
         st.write("Original JSON")
         st.json(json_response)
 
-        # Update the hardcoded JSON with Content Type and Type
-        updated_json = update_json_with_content_info(hardcoded_json, content_map)
+        # Update the JSON response with Content Type and Type
+        updated_json = update_json_with_content_info(json_response, content_map)
         st.write("Updated JSON")
         st.json(updated_json)
         
