@@ -162,9 +162,11 @@ def process_csv(df):
     content_map = {}
     for _, row in df.iterrows():
         if pd.notna(row['Content Title']):
-            content_map[row['Content Title']] = {
-                'Content Type': row['Content Type'] if pd.notna(row['Content Type']) else '',
-                'Type': row['Type'] if pd.notna(row['Type']) else ''
+            # Trim the Content Title
+            content_title = row['Content Title'].strip()
+            content_map[content_title] = {
+                'Content Type': row['Content Type'].strip() if pd.notna(row['Content Type']) else '',
+                'Type': row['Type'].strip() if pd.notna(row['Type']) else ''
             }
     return content_map
 
@@ -172,7 +174,8 @@ def update_json_with_content_info(json_data, content_map):
     special_cases = ["Identify Stakeholders", "Analyze Data", "Quick Win", "Top Tip", "Define Goal"]
     
     for item in json_data:
-        content_title = item.get('Content Title')
+        # Trim the Content Title in the JSON data
+        content_title = item.get('Content Title', '').strip()
         if content_title in special_cases:
             item['Content Type'] = "Educational Elements"
             item['Type'] = content_title
@@ -180,7 +183,7 @@ def update_json_with_content_info(json_data, content_map):
             item['Content Type'] = content_map[content_title]['Content Type']
             item['Type'] = content_map[content_title]['Type']
         else:
-            # If no match is found, you might want to set default values or leave them empty
+            # If no match is found, set default values
             item['Content Type'] = ""
             item['Type'] = ""
     return json_data
