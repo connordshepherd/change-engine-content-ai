@@ -2,9 +2,6 @@ import streamlit as st
 import pandas as pd
 import io
 import numpy as np
-import json
-import openai
-import csv
 
 def process_csv(df):
     output = ""
@@ -26,14 +23,7 @@ def process_csv(df):
             output += f"Timeline Text: {row['Timeline Text']}\n"
         
         output += "\n-----\n\n"
-    return 
-
-def call_openai(messages):
-    response_raw = openai.chat.completions.create(
-        model="gpt-4",
-        messages=messages
-    )
-    return response_raw.choices[0].message.content
+    return output
 
 st.title("Blueprint Builder")
 
