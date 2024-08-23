@@ -49,11 +49,13 @@ def process_prompts():
     # Display final response as JSON
     try:
         json_response = json.loads(cleaned_response)
-        st.json("Original JSON", json_response)
+        st.write("Original JSON")
+        st.json(json_response)
 
         # Update the hardcoded JSON with Content Type and Type
         updated_json = update_json_with_content_info(hardcoded_json, content_map)
-        st.json("Updated JSON", updated_json)
+        st.write("Updated JSON")
+        st.json(updated_json)
         
         # Convert JSON to CSV and offer download
         csv_string = io.StringIO()
