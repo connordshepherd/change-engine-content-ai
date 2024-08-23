@@ -162,7 +162,6 @@ def process_csv(df):
     content_map = {}
     for _, row in df.iterrows():
         if pd.notna(row['Content Title']):
-            # Trim the Content Title
             content_title = row['Content Title'].strip()
             content_map[content_title] = {
                 'Content Type': row['Content Type'].strip() if pd.notna(row['Content Type']) else '',
@@ -172,21 +171,32 @@ def process_csv(df):
 
 def update_json_with_content_info(json_data, content_map):
     special_cases = ["Identify Stakeholders", "Analyze Data", "Quick Win", "Top Tip", "Define Goal"]
+    updated_data = []
     
     for item in json_data:
-        # Trim the Content Title in the JSON data
         content_title = item.get('Content Title', '').strip()
         if content_title in special_cases:
-            item['Content Type'] = "Educational Elements"
-            item['Type'] = content_title
+            content_type = "Educational Elements"
+            item_type = content_title
         elif content_title in content_map:
-            item['Content Type'] = content_map[content_title]['Content Type']
-            item['Type'] = content_map[content_title]['Type']
+            content_type = content_map[content_title]['Content Type']
+            item_type = content_map[content_title]['Type']
         else:
-            # If no match is found, set default values
-            item['Content Type'] = ""
-            item['Type'] = ""
-    return json_data
+            content_type = ""
+            item_type = ""
+        
+        # Create a new OrderedDict with the specified order
+        ordered_item = OrderedDict([
+            ("Step", item.get("Step", "")),
+            ("Step Description", item.get("Step Description", "")),
+            ("Content Title", content_title),
+            ("Content Type", content_type),
+            ("Type", item_type),
+            ("Description", item.get("Description", ""))
+        ])
+        updated_data.append(ordered_item)
+    
+    return updated_data
 
 st.title("Blueprint Builder - Test Page")
 
@@ -210,12 +220,12 @@ if uploaded_file is not None:
     writer = csv.writer(csv_string)
     
     # Write headers
-    headers = list(updated_json[0].keys()) if updated_json else []
+    headers = ["Step", "Step Description", "Content Title", "Content Type", "Type", "Description"]
     writer.writerow(headers)
     
     # Write data
     for item in updated_json:
-        writer.writerow(item.values())
+        writer.writerow([item.get(header, "") for header in headers])
     
     st.download_button(
         label="Download CSV",
