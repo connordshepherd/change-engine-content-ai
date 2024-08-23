@@ -116,8 +116,8 @@ def update_json_with_content_info(json_data, content_map):
     for item in json_data:
         content_title = item.get('Content Title', '').strip()
         if content_title in special_cases:
-            content_type = "Educational Elements"
-            item_type = content_title
+            content_type = content_title
+            item_type = "Educational Elements"
         elif content_title in content_map:
             content_type = content_map[content_title]['Content Type']
             item_type = content_map[content_title]['Type']
