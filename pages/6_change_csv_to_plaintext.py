@@ -94,8 +94,7 @@ prompt_1_intro_boilerplate = """Create program/initiative blueprints for an HR/P
 prompt_1_outro_boilerplate = """\n\nAs a first pass, we need to group these menu options into steps.\n
 Create 5 Steps in TOTAL to launch the program provided.\n
 For each step, pick 3-4 of the options on the menu. First, create the title of the step and write 2 sentences explaining why you are choosing the menu options you pick.\n
-Then, output with the headers: Step, Step Description, Content Title, Content Family, Content Type, Description. (In later passes, we will flesh out the steps.)\n\n
-The possible Content Families are: Educational Element, Communication, or Design.\n
+Then, output with the headers: Step, Step Description, Content Title, Description. (In later passes, we will flesh out the steps.)\n\n
 
 Here's the menu of options for you to choose from this time:\n\n"""
 
@@ -106,7 +105,7 @@ Here's the menu of Educational Elements:
 3. Quick Win
 4. Top Tip
 5. Define Goal
-Please add one or two Educational Elements to each step. Keep in mind that the Educational Element, in the data structure, is a Content Type. The name of the Educational Element you choose will be a Content Title. You will need to write your own Description."""
+Please add one or two Educational Elements to each step. You will need to write your own Description."""
 
 full_prompt_3 = """Wonderful. Now please output the full list as a JSON object with the headers: Step, Step Description, Content Title, Content Family, Content Type, Description."""
 
