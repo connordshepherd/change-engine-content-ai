@@ -35,9 +35,15 @@ def process_prompts():
     response_3 = call_openai(messages)
     messages.append({"role": "assistant", "content": response_3})
     
-    
-    # Strip backticks and extra whitespace from the response
-    cleaned_response = re.sub(r'^```json\s*|\s*```$', '', response_3.strip())
+    # Extract content between triple backticks
+    pattern = r'```(?:json)?\s*([\s\S]*?)\s*```'
+    match = re.search(pattern, response_3)
+
+    if match:
+        cleaned_response = match.group(1).strip()
+    else:
+        cleaned_response = response_3.strip()
+        st.warning("No content found between triple backticks. Using the entire response.")
     
     # Display final response as JSON
     try:
