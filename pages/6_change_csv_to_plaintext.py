@@ -14,9 +14,9 @@ def process_csv(df):
         if pd.notna(row['Goals']):
             output += f"Goals: {row['Goals']}\n"
         if pd.notna(row['Content Type']):
-            output += f"Content Type: {row['Content Type']}\n"
+            output += f"Content Family: {row['Content Type']}\n"
         if pd.notna(row['Type']):
-            output += f"Type: {row['Type']}\n"
+            output += f"Content Type: {row['Type']}\n"
         if pd.notna(row['Description']):
             output += f"Description: {row['Description']}\n"
         if pd.notna(row['Timeline Text']):
