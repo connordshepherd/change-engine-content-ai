@@ -135,8 +135,7 @@ response = requests.post(url, headers=headers, json=payload)
 
 # Raw write
 st.write("RAW")
-st.write(response.status_code)
-st.write(response.json)
+st.write(response)
 
 # Check if the request was successful
 if response.status_code == 200:
