@@ -16,6 +16,33 @@ from typing import List, Dict, Union, Any, Tuple
 import webbrowser
 from streamlit.components.v1 import html
 
+# NEW import
+from pydantic import BaseModel
+from enum import Enum
+
+class ImageType(str, Enum):
+    icon = "icon"
+    illustration = "illustration"
+    photo = "photo"
+
+class QuestionAnswer(BaseModel):
+    question: str
+    answer: str
+    image_type: ImageType
+    image_description: str
+
+class Variation(BaseModel):
+    title: str
+    subtitle: str
+    questions_answers: List[QuestionAnswer]
+
+class ContractorOnboarding(BaseModel):
+    variations: List[Variation]
+
+# This is the main response model
+class Response(BaseModel):
+    contractor_onboarding: ContractorOnboarding    
+
 prompt_default_value = """You are Employee Experience Manager at a company of about 100 to 5,000 employees. This company is a hybrid work environment. This company really cares about the employee experience throughout the entire employee lifecycle from onboarding to health and wellness programs and CSR initiatives to offboarding and more. The tone should be friendly, supportive, and encouraging and not too serious. Always refer to the HR Team as the People Team instead. Use this structure for the response: group response output by the category of output (where applicable) e.g. Title variation 1, Title variation 2 etc. Then subtitle variation 1, subtitle variation 2 et.c then illustration variation 1, illustration variation 2, illustration variation 3 etc. Never include headers like "Title Variation 10". Ignore any subsequent guidance on output structure in this prompt. Always group by title, subtitle etc. 
 
 You need to create a bunch of summaries and key highlights in a FAQ. This FAQ must answer all of the questions and answers in one page maximum. The policies in the Employee Handbook will cover them in more detail, so these FAQ's don't need to have too much detail. We want these FAQ's to be informative but also engaging and friendly/supportive/helpful in tone. Use the Layouts below to use as a framework for the FAQs. The description of the Layouts outline the character count ranges and other info to produce an FAQ for the topic chosen. Produce an FAQ providing all of the content for the outline. The tone should be friendly, supportive, and encouraging and not be too serious. Always use the outlined character count ranges, # of questions or topics and answers, and everything else outlined in the Layout Descriptions. Never deviate from the Layout Description.
@@ -57,8 +84,19 @@ Description"""
 
 # Streamlit UI
 st.title("FAQ JSON")
+client = OpenAI()
 prompt = st.text_area("Prompt", value=prompt_default_value, height=400)
 messages = [{"role": "user", "content": prompt}]
-plaintext_response = send_to_openai(messages)
+
+
+# Use the model
+completion = client.beta.chat.completions.parse(
+    model="gpt-4o-2024-08-06",  # Make sure to use an available model
+    messages=messages,
+    response_format=Response,
+)
+
+result = completion.choices[0].message.parsed
 st.write("Response")
-st.write(plaintext_response)
+st.write(result)
+
