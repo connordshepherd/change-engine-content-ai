@@ -57,7 +57,6 @@ Description"""
 
 # Streamlit UI
 st.title("FAQ JSON")
-client = OpenAI()
 prompt = st.text_area("Prompt", value=prompt_default_value, height=400)
 messages = [{"role": "user", "content": prompt}]
 
