@@ -58,94 +58,95 @@ Description"""
 # Streamlit UI
 st.title("FAQ JSON")
 prompt = st.text_area("Prompt", value=prompt_default_value, height=400)
-messages = [{"role": "user", "content": prompt}]
 
-
-# Your OpenAI API key
-api_key = st.secrets.OPENAI_API_KEY
-
-# The API endpoint
-url = "https://api.openai.com/v1/chat/completions"
-
-# The headers for the request
-headers = {
-    "Content-Type": "application/json",
-    "Authorization": f"Bearer {api_key}"
-}
-
-# The request payload
-payload = {
-    "model": "gpt-4o-2024-08-06",  # Use an available model
-    "messages": [
-        {
-            "role": "system",
-            "content": "You are an AI that generates contractor onboarding information."
-        },
-        {
-            "role": "user",
-            "content": prompt
+if st.button("Submit"):
+        messages = [{"role": "user", "content": prompt}]
+        
+        # Your OpenAI API key
+        api_key = st.secrets.OPENAI_API_KEY
+        
+        # The API endpoint
+        url = "https://api.openai.com/v1/chat/completions"
+        
+        # The headers for the request
+        headers = {
+            "Content-Type": "application/json",
+            "Authorization": f"Bearer {api_key}"
         }
-    ],
-    "tools": [
-        {
-            "type": "function",
-            "function": {
-                "name": "generate_contractor_onboarding",
-                "description": "Generate contractor onboarding information",
-                "parameters": {
-                    "type": "object",
-                    "properties": {
-                        "variations": {
-                            "type": "array",
-                            "items": {
-                                "type": "object",
-                                "properties": {
-                                    "title": {"type": "string"},
-                                    "subtitle": {"type": "string"},
-                                    "questions_answers": {
-                                        "type": "array",
-                                        "items": {
-                                            "type": "object",
-                                            "properties": {
-                                                "question": {"type": "string"},
-                                                "answer": {"type": "string"},
-                                                "image_type": {
-                                                    "type": "string",
-                                                    "enum": ["icon", "illustration", "photo"]
-                                                },
-                                                "image_description": {"type": "string"}
-                                            },
-                                            "required": ["question", "answer", "image_type", "image_description"]
-                                        }
-                                    }
-                                },
-                                "required": ["title", "subtitle", "questions_answers"]
-                            }
-                        }
-                    },
-                    "required": ["variations"]
+        
+        # The request payload
+        payload = {
+            "model": "gpt-4o-2024-08-06",  # Use an available model
+            "messages": [
+                {
+                    "role": "system",
+                    "content": "You are an AI that generates contractor onboarding information."
+                },
+                {
+                    "role": "user",
+                    "content": prompt
                 }
-            }
+            ],
+            "tools": [
+                {
+                    "type": "function",
+                    "function": {
+                        "name": "generate_contractor_onboarding",
+                        "description": "Generate contractor onboarding information",
+                        "parameters": {
+                            "type": "object",
+                            "properties": {
+                                "variations": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "object",
+                                        "properties": {
+                                            "title": {"type": "string"},
+                                            "subtitle": {"type": "string"},
+                                            "questions_answers": {
+                                                "type": "array",
+                                                "items": {
+                                                    "type": "object",
+                                                    "properties": {
+                                                        "question": {"type": "string"},
+                                                        "answer": {"type": "string"},
+                                                        "image_type": {
+                                                            "type": "string",
+                                                            "enum": ["icon", "illustration", "photo"]
+                                                        },
+                                                        "image_description": {"type": "string"}
+                                                    },
+                                                    "required": ["question", "answer", "image_type", "image_description"]
+                                                }
+                                            }
+                                        },
+                                        "required": ["title", "subtitle", "questions_answers"]
+                                    }
+                                }
+                            },
+                            "required": ["variations"]
+                        }
+                    }
+                }
+            ]
         }
-    ]
-}
-
-# Make the API call
-response = requests.post(url, headers=headers, json=payload)
-
-# Check if the request was successful
-if response.status_code == 200:
-    # Parse the JSON response
-    result = response.json()
-    
-    # Extract the generated content
-    generated_content = result['choices'][0]['message']['tool_calls'][0]['function']['arguments']
-    
-    # Parse the JSON string into a Python dictionary
-    contractor_onboarding = json.loads(generated_content)
-    
-    #st.write(json.dumps(contractor_onboarding, indent=2))
-    st.write(contractor_onboarding)
-else:
-    st.write(f"Error: {response.status_code}")
-    st.write(response.text)
+        
+        # Make the API call
+        response = requests.post(url, headers=headers, json=payload)
+        
+        # Check if the request was successful
+        if response.status_code == 200:
+            # Parse the JSON response
+            result = response.json()
+            
+            # Extract the generated content
+            generated_content = result['choices'][0]['message']['tool_calls'][0]['function']['arguments']
+            
+            # Parse the JSON string into a Python dictionary
+            contractor_onboarding = json.loads(generated_content)
+            
+            #st.write(json.dumps(contractor_onboarding, indent=2))
+            st.write(contractor_onboarding)
+        else:
+            st.write(f"Error: {response.status_code}")
+            st.write(response.text)
