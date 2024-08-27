@@ -37,12 +37,14 @@ def process_prompts():
     messages.append({"role": "user", "content": prompt_2_editable})
     response_2 = call_openai(messages)
     messages.append({"role": "assistant", "content": response_2})
+    st.write(response_2)
     
     st.write("Running prompt 3")
     # Process prompt 3
     messages.append({"role": "user", "content": prompt_3_editable})
     response_3 = call_openai(messages)
     messages.append({"role": "assistant", "content": response_3})
+    st.write(response_3)
     
     # Extract content between triple backticks
     pattern = r'```(?:json)?\s*([\s\S]*?)\s*```'
