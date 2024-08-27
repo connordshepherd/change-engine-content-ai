@@ -23,8 +23,14 @@ def process_prompts():
     messages.append({"role": "user", "content": prompt_1_editable})
     response_1 = call_openai(messages)
     messages.append({"role": "assistant", "content": response_1})
-    #st.write("First Response")
-    #st.write(response_1)
+    st.write("First Response")
+    st.write(response_1)
+
+    st.write("Running prompt 1a")
+    messages.append({"role": "user", "content": prompt_1a_editable})
+    response_1a = call_openai(messages)
+    messages.append({"role": "assistant", "content": response_1a})
+    st.write(response_1a)
     
     st.write("Running prompt 2")
     # Process prompt 2
@@ -83,24 +89,43 @@ def process_prompts():
         st.text(cleaned_response)
 
 def process_csv(df):
-    output = ""
-    for index, row in df.iterrows():
-        output += f"ROW {index + 1}\n"  # Adding row number
-        
-        # Only include non-null values
+    # Split the dataframe based on 'Type'
+    df_communication = df[df['Type'] == 'Communication']
+    df_design = df[df['Type'] == 'Design']
+    
+    # Process Communication dataframe
+    output_communication = ""
+    for index, row in df_communication.iterrows():
+        output_communication += f"ROW {index + 1}\n"
         if pd.notna(row['Content Title']):
-            output += f"Content Title: {row['Content Title']}\n"
+            output_communication += f"Content Title: {row['Content Title']}\n"
         if pd.notna(row['Goals']):
-            output += f"Goals: {row['Goals']}\n"
+            output_communication += f"Goals: {row['Goals']}\n"
         if pd.notna(row['Description']):
-            output += f"Description: {row['Description']}\n"
+            output_communication += f"Description: {row['Description']}\n"
         if pd.notna(row['Type']):
-            output += f"Type: {row['Type']}\n"
+            output_communication += f"Type: {row['Type']}\n"
         if pd.notna(row['Timeline Text']):
-            output += f"Timeline Text: {row['Timeline Text']}\n"
-        
-        output += "\n-----\n\n"
-    return output
+            output_communication += f"Timeline Text: {row['Timeline Text']}\n"
+        output_communication += "\n-----\n\n"
+    
+    # Process Design dataframe
+    output_design = ""
+    for index, row in df_design.iterrows():
+        output_design += f"ROW {index + 1}\n"
+        if pd.notna(row['Content Title']):
+            output_design += f"Content Title: {row['Content Title']}\n"
+        if pd.notna(row['Goals']):
+            output_design += f"Goals: {row['Goals']}\n"
+        if pd.notna(row['Description']):
+            output_design += f"Description: {row['Description']}\n"
+        if pd.notna(row['Type']):
+            output_design += f"Type: {row['Type']}\n"
+        if pd.notna(row['Timeline Text']):
+            output_design += f"Timeline Text: {row['Timeline Text']}\n"
+        output_design += "\n-----\n\n"
+    
+    return output_communication, output_design
 
 def normalize_string(s):
     # Convert to lowercase and remove special characters
@@ -160,11 +185,13 @@ prompt_1_intro_boilerplate = """Create program/initiative blueprints for an HR/P
 
 prompt_1_outro_boilerplate = """\n\nAs a first pass, we need to group these menu options into steps.\n
 Create 5 Steps in TOTAL to launch the program provided.\n
-For each step, pick 3-4 of the options on the menu. First, create the title of the step and write 2 sentences explaining why you are choosing the menu options you pick.\n
-Keep in mind that a good blueprint supports the whole company - try to include communications, one or more FAQs, at least 1 graphic design element, company swag, and more.\n
+For each step, pick 1-2 of the options on the menu of Communications. First, create the title of the step and write 2 sentences explaining why you are choosing the menu options you pick.\n
 Then, output with the headers: Step, Step Description, Content Title, Description. (In later passes, we will flesh out the steps.)\n\n
 
-Here's the menu of options for you to choose from this time:\n\n"""
+Here's the menu of Communications options for you to choose from this time:\n\n"""
+
+prompt_1a_intro_boilerplate = """Awesome. For each step, next please add 1-2 of the options on the below menu of Designs. \n
+Just like before, output with the headers: Step, Step Description, Content Title, Description.\n\n"""
 
 full_prompt_2 = """Great! Now, we need to add in "Educational Elements." These are places in the plan where the HR lead needs to gather information, circulate information, or define their goals.
 Here's the menu of Educational Elements:
@@ -186,16 +213,20 @@ if uploaded_file is not None:
     df = pd.read_csv(uploaded_file)
     
     # Process the CSV and generate the output
-    output = process_csv(df)
+    output_communication, output_design = process_csv(df)
 
     # Process the CSV and generate the content map
     content_map = create_content_map(df)
 
-    # Concatenate Full Prompt
-    full_prompt_1 = prompt_1_intro_boilerplate + user_prompt + prompt_1_outro_boilerplate + output
+    # Concatenate Full Prompt 1
+    full_prompt_1 = prompt_1_intro_boilerplate + user_prompt + prompt_1_outro_boilerplate + output_communication
+
+    # Concatenate Full Prompt 1a
+    full_prompt_1a = prompt_1a_intro_boilerplate + output_design
     
     # Display the output in an editable text area
-    prompt_1_editable = st.text_area("Prompt 1 (Editable)", value=full_prompt_1, height=500)
+    prompt_1_editable = st.text_area("Prompt 1 Communications (Editable)", value=full_prompt_1, height=400)
+    prompt_1_editable = st.text_area("Prompt 1a Designs (Editable)", value=full_prompt_1, height=400)
     prompt_2_editable = st.text_area("Prompt 2 (Editable)", value=full_prompt_2, height=200)
     prompt_3_editable = st.text_area("Prompt 3 (Editable)", value=full_prompt_3, height=200)
 
