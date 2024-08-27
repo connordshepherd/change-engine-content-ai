@@ -16,34 +16,6 @@ from typing import List, Dict, Union, Any, Tuple
 import webbrowser
 from streamlit.components.v1 import html
 
-# NEW import
-from pydantic import BaseModel
-from enum import Enum
-from openai import OpenAI
-
-class ImageType(str, Enum):
-    icon = "icon"
-    illustration = "illustration"
-    photo = "photo"
-
-class QuestionAnswer(BaseModel):
-    question: str
-    answer: str
-    image_type: ImageType
-    image_description: str
-
-class Variation(BaseModel):
-    title: str
-    subtitle: str
-    questions_answers: List[QuestionAnswer]
-
-class ContractorOnboarding(BaseModel):
-    variations: List[Variation]
-
-# This is the main response model
-class Response(BaseModel):
-    contractor_onboarding: ContractorOnboarding    
-
 prompt_default_value = """You are Employee Experience Manager at a company of about 100 to 5,000 employees. This company is a hybrid work environment. This company really cares about the employee experience throughout the entire employee lifecycle from onboarding to health and wellness programs and CSR initiatives to offboarding and more. The tone should be friendly, supportive, and encouraging and not too serious. Always refer to the HR Team as the People Team instead. Use this structure for the response: group response output by the category of output (where applicable) e.g. Title variation 1, Title variation 2 etc. Then subtitle variation 1, subtitle variation 2 et.c then illustration variation 1, illustration variation 2, illustration variation 3 etc. Never include headers like "Title Variation 10". Ignore any subsequent guidance on output structure in this prompt. Always group by title, subtitle etc. 
 
 You need to create a bunch of summaries and key highlights in a FAQ. This FAQ must answer all of the questions and answers in one page maximum. The policies in the Employee Handbook will cover them in more detail, so these FAQ's don't need to have too much detail. We want these FAQ's to be informative but also engaging and friendly/supportive/helpful in tone. Use the Layouts below to use as a framework for the FAQs. The description of the Layouts outline the character count ranges and other info to produce an FAQ for the topic chosen. Produce an FAQ providing all of the content for the outline. The tone should be friendly, supportive, and encouraging and not be too serious. Always use the outlined character count ranges, # of questions or topics and answers, and everything else outlined in the Layout Descriptions. Never deviate from the Layout Description.
@@ -90,14 +62,90 @@ prompt = st.text_area("Prompt", value=prompt_default_value, height=400)
 messages = [{"role": "user", "content": prompt}]
 
 
-# Use the model
-completion = client.beta.chat.completions.parse(
-    model="gpt-4o-2024-08-06",  # Make sure to use an available model
-    messages=messages,
-    response_format=Response,
-)
+# Your OpenAI API key
+api_key = st.secrets.OPENAI_API_KEY
 
-#result = completion.choices[0].message.parsed
-st.write("Response")
-st.write(completion)
+# The API endpoint
+url = "https://api.openai.com/v1/chat/completions"
 
+# The headers for the request
+headers = {
+    "Content-Type": "application/json",
+    "Authorization": f"Bearer {api_key}"
+}
+
+# The request payload
+payload = {
+    "model": "gpt-4o-2024-08-06",  # Use an available model
+    "messages": [
+        {
+            "role": "system",
+            "content": "You are an AI that generates contractor onboarding information."
+        },
+        {
+            "role": "user",
+            "content": prompt
+        }
+    ],
+    "tools": [
+        {
+            "type": "function",
+            "function": {
+                "name": "generate_contractor_onboarding",
+                "description": "Generate contractor onboarding information",
+                "parameters": {
+                    "type": "object",
+                    "properties": {
+                        "variations": {
+                            "type": "array",
+                            "items": {
+                                "type": "object",
+                                "properties": {
+                                    "title": {"type": "string"},
+                                    "subtitle": {"type": "string"},
+                                    "questions_answers": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "object",
+                                            "properties": {
+                                                "question": {"type": "string"},
+                                                "answer": {"type": "string"},
+                                                "image_type": {
+                                                    "type": "string",
+                                                    "enum": ["icon", "illustration", "photo"]
+                                                },
+                                                "image_description": {"type": "string"}
+                                            },
+                                            "required": ["question", "answer", "image_type", "image_description"]
+                                        }
+                                    }
+                                },
+                                "required": ["title", "subtitle", "questions_answers"]
+                            }
+                        }
+                    },
+                    "required": ["variations"]
+                }
+            }
+        }
+    ]
+}
+
+# Make the API call
+response = requests.post(url, headers=headers, json=payload)
+
+# Check if the request was successful
+if response.status_code == 200:
+    # Parse the JSON response
+    result = response.json()
+    
+    # Extract the generated content
+    generated_content = result['choices'][0]['message']['tool_calls'][0]['function']['arguments']
+    
+    # Parse the JSON string into a Python dictionary
+    contractor_onboarding = json.loads(generated_content)
+    
+    print(json.dumps(contractor_onboarding, indent=2))
+else:
+    print(f"Error: {response.status_code}")
+    print(response.text)
