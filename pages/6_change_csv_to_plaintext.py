@@ -188,7 +188,8 @@ prompt_1_intro_boilerplate = """Create program/initiative blueprints for an HR/P
 prompt_1_outro_boilerplate = """\n\nAs a first pass, we need to group these menu options into steps.\n
 Create 5 Steps in TOTAL to launch the program provided.\n
 For each step, pick 1-2 of the options on the menu of Communications. First, create the title of the step and write 2 sentences explaining why you are choosing the menu options you pick.\n
-Then, output with the headers: Step, Step Description, Content Title, Description. (In later passes, we will flesh out the steps.)\n\n
+Then, output with the headers: Step, Step Description, Content Title, Description. (In later passes, we will flesh out the steps.)\n
+When you output the step name, use this format: Step {n}: {Title}. For example, "Step 1: Align Stakeholders"\n\n
 
 Here's the menu of Communications options for you to choose from this time:\n\n"""
 
