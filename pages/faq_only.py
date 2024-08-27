@@ -133,10 +133,6 @@ payload = {
 # Make the API call
 response = requests.post(url, headers=headers, json=payload)
 
-# Raw write
-st.write("RAW")
-st.write(response)
-
 # Check if the request was successful
 if response.status_code == 200:
     # Parse the JSON response
@@ -148,7 +144,7 @@ if response.status_code == 200:
     # Parse the JSON string into a Python dictionary
     contractor_onboarding = json.loads(generated_content)
     
-    print(json.dumps(contractor_onboarding, indent=2))
+    st.write(json.dumps(contractor_onboarding, indent=2))
 else:
-    print(f"Error: {response.status_code}")
-    print(response.text)
+    st.write(f"Error: {response.status_code}")
+    st.write(response.text)
