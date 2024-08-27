@@ -133,6 +133,11 @@ payload = {
 # Make the API call
 response = requests.post(url, headers=headers, json=payload)
 
+# Raw write
+st.write("RAW")
+st.write(response.status_code)
+st.write(response.json)
+
 # Check if the request was successful
 if response.status_code == 200:
     # Parse the JSON response
