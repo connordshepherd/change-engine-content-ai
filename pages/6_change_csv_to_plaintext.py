@@ -226,7 +226,7 @@ if uploaded_file is not None:
     
     # Display the output in an editable text area
     prompt_1_editable = st.text_area("Prompt 1 Communications (Editable)", value=full_prompt_1, height=400)
-    prompt_1_editable = st.text_area("Prompt 1a Designs (Editable)", value=full_prompt_1a, height=400)
+    prompt_1a_editable = st.text_area("Prompt 1a Designs (Editable)", value=full_prompt_1a, height=400)
     prompt_2_editable = st.text_area("Prompt 2 (Editable)", value=full_prompt_2, height=200)
     prompt_3_editable = st.text_area("Prompt 3 (Editable)", value=full_prompt_3, height=200)
 
