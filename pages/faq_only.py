@@ -97,7 +97,7 @@ completion = client.beta.chat.completions.parse(
     response_format=Response,
 )
 
-result = completion.choices[0].message.parsed
+#result = completion.choices[0].message.parsed
 st.write("Response")
-st.write(result)
+st.write(completion)
 
