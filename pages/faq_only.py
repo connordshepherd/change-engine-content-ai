@@ -19,6 +19,7 @@ from streamlit.components.v1 import html
 # NEW import
 from pydantic import BaseModel
 from enum import Enum
+from openai import OpenAI
 
 class ImageType(str, Enum):
     icon = "icon"
