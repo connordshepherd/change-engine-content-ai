@@ -58,6 +58,7 @@ Description"""
 # Streamlit UI
 st.title("FAQ JSON")
 prompt = st.text_area("Prompt", value=prompt_default_value, height=400)
-plaintext_response = send_to_openai(prompt)
+messages = [{"role": "user", "content": prompt}]
+plaintext_response = send_to_openai(messages)
 st.write("Response")
 st.write(plaintext_response)
