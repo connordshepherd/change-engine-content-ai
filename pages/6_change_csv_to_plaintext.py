@@ -214,6 +214,8 @@ if uploaded_file is not None:
     
     # Process the CSV and generate the output
     output_communication, output_design = process_csv(df)
+    st.write("Output communication", output_communication)
+    st.write("Output design", output_design)
 
     # Process the CSV and generate the content map
     content_map = create_content_map(df)
