@@ -144,7 +144,8 @@ if response.status_code == 200:
     # Parse the JSON string into a Python dictionary
     contractor_onboarding = json.loads(generated_content)
     
-    st.write(json.dumps(contractor_onboarding, indent=2))
+    #st.write(json.dumps(contractor_onboarding, indent=2))
+    st.write(contractor_onboarding)
 else:
     st.write(f"Error: {response.status_code}")
     st.write(response.text)
