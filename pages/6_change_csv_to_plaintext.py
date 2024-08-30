@@ -198,21 +198,20 @@ prompt_1_outro_boilerplate = """\n\nAs a first pass, we need to create 5 Steps i
 Create the title of the step and write one sentence describing what it means. Output with this format:\n\n
 
 <EXAMPLE FORMAT>
-Employee Referral Program Launch Blueprint
-Step 1: Program Design & Objectives
-Define the goals and structure of the Employee Referral Program, including setting clear objectives such as increasing quality hires, reducing time-to-hire, and promoting a positive company culture.
+Step 1: Program Design & Objectives\n
+Description: Define the goals and structure of the Employee Referral Program, including setting clear objectives such as increasing quality hires, reducing time-to-hire, and promoting a positive company culture.\n\n
 
-Step 2: Policy Development & Guidelines
-Establish the rules and guidelines for the referral program, including eligibility, reward structures, and processes.
+Step 2: Policy Development & Guidelines\n
+Description: Establish the rules and guidelines for the referral program, including eligibility, reward structures, and processes.\n\n
 
-Step 3: Communication & Promotion Plan
-Develop a comprehensive communication plan to introduce the Employee Referral Program to all employees. Utilize various channels such as emails, intranet, and team meetings to ensure maximum awareness and engagement.
+Step 3: Communication & Promotion Plan\n
+Description: Develop a comprehensive communication plan to introduce the Employee Referral Program to all employees. Utilize various channels such as emails, intranet, and team meetings to ensure maximum awareness and engagement.\n\n
 
-Step 4: Training & Resources
-Provide training sessions and resources to help employees understand how to effectively refer candidates. This could include workshops, online tutorials, and informational brochures outlining best practices for making referrals.
+Step 4: Training & Resources\n
+Description: Provide training sessions and resources to help employees understand how to effectively refer candidates. This could include workshops, online tutorials, and informational brochures outlining best practices for making referrals.\n\n
 
-Step 5: Monitoring, Feedback & Improvement
-Implement a system to track the effectiveness of the referral program, including metrics and employee feedback. Regularly review the program’s performance and make necessary adjustments to improve its efficiency and effectiveness.
+Step 5: Monitoring, Feedback & Improvement\n
+Description: Implement a system to track the effectiveness of the referral program, including metrics and employee feedback. Regularly review the program’s performance and make necessary adjustments to improve its efficiency and effectiveness.
 </EXAMPLE FORMAT>"""
 
 prompt_1a_comms_boilerplate = """Great! Now we're going to begin adding elements to each step, from our database of element options. 
