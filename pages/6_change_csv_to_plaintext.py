@@ -23,23 +23,23 @@ def process_prompts():
     messages.append({"role": "user", "content": prompt_1_editable})
     response_1 = call_openai(messages)
     messages.append({"role": "assistant", "content": response_1})
-    st.write("First Response")
-    st.write(response_1)
+    3st.write("First Response")
+    #st.write(response_1)
 
     st.write("Running prompt 1 - Communications")
     # Process prompt 1 Comms
     messages.append({"role": "user", "content": prompt_1_comms_editable})
     response_1_comms = call_openai(messages)
     messages.append({"role": "assistant", "content": response_1_comms})
-    st.write("Comms Response")
-    st.write(response_1_comms)
+    #st.write("Comms Response")
+    #st.write(response_1_comms)
 
     st.write("Running prompt 1 - Designs")
     messages.append({"role": "user", "content": prompt_1a_editable})
     response_1a = call_openai(messages)
     messages.append({"role": "assistant", "content": response_1a})
-    st.write("Designs Response")
-    st.write(response_1a)
+    #st.write("Designs Response")
+    #st.write(response_1a)
     
     st.write("Running prompt 2")
     # Process prompt 2
