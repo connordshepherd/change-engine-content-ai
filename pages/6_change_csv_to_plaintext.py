@@ -191,9 +191,9 @@ For each step, pick two or three of the options on the menu of Communications. F
 Then, output with the headers: Step, Step Description, Content Title, Description. (In later passes, we will flesh out the steps.)\n
 When you output the step name, use this format: Step {n}: {Title}. For example, "Step 1: Align Stakeholders"\n\n
 
-Here's the menu of Communications options for you to choose from this time (please only use each option ONCE in your plan):\n\n"""
+Here's the menu of Communications options for you to choose from this time. Please only use each option ONCE in your plan - if you use an option in one step you can't use it in other steps.\n\n Here's the list:\n\n"""
 
-prompt_1a_intro_boilerplate = """Awesome. For each step, next please add two of the options on the below menu of Designs. Don't repeat any options - use each only once.\n
+prompt_1a_intro_boilerplate = """Awesome. For each step, next please add two of the options on the below menu of Designs. Don't repeat any options - use each only once in your entire plan. You can't use the seme element in different steps, so plan carefully.\n
 Just like before, output with the headers: Step, Step Description, Content Title, Description.\n\n"""
 
 full_prompt_2 = """Great! Now, we need to add in "Educational Elements." These are places in the plan where the HR lead needs to gather information, circulate information, or define their goals.
