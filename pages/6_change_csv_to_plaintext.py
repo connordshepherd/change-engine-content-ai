@@ -213,11 +213,11 @@ Provide training sessions and resources to help employees understand how to effe
 
 Step 5: Monitoring, Feedback & Improvement
 Implement a system to track the effectiveness of the referral program, including metrics and employee feedback. Regularly review the program’s performance and make necessary adjustments to improve its efficiency and effectiveness.
-</EXAMPLE FORMAT"""
+</EXAMPLE FORMAT>"""
 
 prompt_1a_comms_boilerplate = """For each step, pick two or three of the options on the below menu of Communications. 
-Then, output with the headers: Step, Step Description, Content Title, Description. (In later passes, we will flesh out the steps.)\n
-When you output the step name, use this format: Step {n}: {Title}. For example, "Step 1: Align Stakeholders"\n\n
+Repeat the Steps and Step Descriptions exactly from before.
+Then, output with the headers: Step, Step Description, Content Title, Description.\n\n
 
 Here's the menu of Communications options for you to choose from this time. Please only use each option ONCE in your plan - if you use an option in one step you can't use it in other steps.\n\n Here's the list:\n\n"""
 
