@@ -18,19 +18,28 @@ def call_openai(messages):
 def process_prompts():
     messages = []
 
-    st.write("Running prompt 1")
+    st.write("Running prompt 1 - Steps")
     # Process prompt 1
     messages.append({"role": "user", "content": prompt_1_editable})
     response_1 = call_openai(messages)
     messages.append({"role": "assistant", "content": response_1})
-    #st.write("First Response")
-    #st.write(response_1)
+    st.write("First Response")
+    st.write(response_1)
 
-    st.write("Running prompt 1a")
+    st.write("Running prompt 1 - Communications")
+    # Process prompt 1 Comms
+    messages.append({"role": "user", "content": prompt_1_comms_editable})
+    response_1_comms = call_openai(messages)
+    messages.append({"role": "assistant", "content": response_1_comms})
+    st.write("Comms Response")
+    st.write(response_1_comms)
+
+    st.write("Running prompt 1 - Designs")
     messages.append({"role": "user", "content": prompt_1a_editable})
     response_1a = call_openai(messages)
     messages.append({"role": "assistant", "content": response_1a})
-    #st.write(response_1a)
+    st.write("Designs Response")
+    st.write(response_1a)
     
     st.write("Running prompt 2")
     # Process prompt 2
@@ -187,7 +196,9 @@ prompt_1_intro_boilerplate = """Create program/initiative blueprints for an HR/P
 
 prompt_1_outro_boilerplate = """\n\nAs a first pass, we need to group these menu options into steps.\n
 Create 5 Steps in TOTAL to launch the program provided.\n
-For each step, pick two or three of the options on the menu of Communications. First, create the title of the step and write 2 sentences explaining why you are choosing the menu options you pick.\n
+Create the title of the step and write 2 sentences explaining why you are choosing the menu options you pick.\n"""
+
+prompt_1a_comms_boilerplate = """For each step, pick two or three of the options on the menu of Communications. 
 Then, output with the headers: Step, Step Description, Content Title, Description. (In later passes, we will flesh out the steps.)\n
 When you output the step name, use this format: Step {n}: {Title}. For example, "Step 1: Align Stakeholders"\n\n
 
@@ -222,13 +233,17 @@ if uploaded_file is not None:
     content_map = create_content_map(df)
 
     # Concatenate Full Prompt 1
-    full_prompt_1 = prompt_1_intro_boilerplate + user_prompt + prompt_1_outro_boilerplate + output_communication
+    full_prompt_1 = prompt_1_intro_boilerplate + user_prompt + prompt_1_outro_boilerplate
+
+    # Concatenate Steps Prompt 1
+    full_prompt_1_comms = prompt_1a_comms_boilerplate + output_communication
 
     # Concatenate Full Prompt 1a
     full_prompt_1a = prompt_1a_intro_boilerplate + output_design
     
     # Display the output in an editable text area
-    prompt_1_editable = st.text_area("Prompt 1 Communications (Editable)", value=full_prompt_1, height=400)
+    prompt_1_editable = st.text_area("Prompt 1 Steps (Editable)", value=full_prompt_1, height=200)
+    prompt_1_comms_editable = st.text_area("Prompt 1 Communications (Editable)", value=full_prompt_1_comms, height=400)
     prompt_1a_editable = st.text_area("Prompt 1a Designs (Editable)", value=full_prompt_1a, height=400)
     prompt_2_editable = st.text_area("Prompt 2 (Editable)", value=full_prompt_2, height=200)
     prompt_3_editable = st.text_area("Prompt 3 (Editable)", value=full_prompt_3, height=200)
