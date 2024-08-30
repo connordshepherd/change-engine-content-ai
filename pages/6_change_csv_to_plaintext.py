@@ -197,7 +197,7 @@ prompt_1_intro_boilerplate = """Create program/initiative blueprints for an HR/P
 prompt_1_outro_boilerplate = """\n\nAs a first pass, we need to create 5 Steps in TOTAL to launch the program provided.\n
 Create the title of the step and write 2 sentences explaining what it means.\n"""
 
-prompt_1a_comms_boilerplate = """For each step, pick two or three of the options on the menu of Communications. 
+prompt_1a_comms_boilerplate = """For each step, pick two or three of the options on the below menu of Communications. 
 Then, output with the headers: Step, Step Description, Content Title, Description. (In later passes, we will flesh out the steps.)\n
 When you output the step name, use this format: Step {n}: {Title}. For example, "Step 1: Align Stakeholders"\n\n
 
