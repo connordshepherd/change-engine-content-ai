@@ -216,7 +216,7 @@ Description: Implement a system to track the effectiveness of the referral progr
 
 prompt_1a_comms_boilerplate = """Great! Now we're going to begin adding elements to each step, from our database of element options. 
 
-For each step, pick two or three of the options on the below menu of Communications. 
+For each step, pick exactly 2 of the options on the below menu of Communications. 
 In your output you'll need to repeat the Steps and Step Descriptions exactly from before.
 Your full output will have these headers: Step, Step Description, Content Title, Description.\n\n
 
