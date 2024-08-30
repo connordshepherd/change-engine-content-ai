@@ -215,9 +215,11 @@ Step 5: Monitoring, Feedback & Improvement
 Implement a system to track the effectiveness of the referral program, including metrics and employee feedback. Regularly review the program’s performance and make necessary adjustments to improve its efficiency and effectiveness.
 </EXAMPLE FORMAT>"""
 
-prompt_1a_comms_boilerplate = """For each step, pick two or three of the options on the below menu of Communications. 
-Repeat the Steps and Step Descriptions exactly from before.
-Then, output with the headers: Step, Step Description, Content Title, Description.\n\n
+prompt_1a_comms_boilerplate = """Great! Now we're going to begin adding elements to each step, from our database of element options. 
+
+For each step, pick two or three of the options on the below menu of Communications. 
+In your output you'll need to repeat the Steps and Step Descriptions exactly from before.
+Your full output will have these headers: Step, Step Description, Content Title, Description.\n\n
 
 Here's the menu of Communications options for you to choose from this time. Please only use each option ONCE in your plan - if you use an option in one step you can't use it in other steps.\n\n Here's the list:\n\n"""
 
