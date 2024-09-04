@@ -23,7 +23,7 @@ def process_prompts():
     messages.append({"role": "user", "content": prompt_1_editable})
     response_1 = call_openai(messages)
     messages.append({"role": "assistant", "content": response_1})
-    3st.write("First Response")
+    #st.write("First Response")
     #st.write(response_1)
 
     st.write("Running prompt 1 - Communications")
