@@ -50,13 +50,5 @@ if response.status_code == 200:
     # Display the DataFrame in Streamlit
     st.dataframe(df)
 
-    # Optionally, display the images
-    st.write("Preview Images:")
-    for index, row in df.iterrows():
-        if row['Preview Image Final']:
-            st.image(row['Preview Image Final'], caption=row['Moment Title'], width=200)
-        else:
-            st.write(f"No image for: {row['Moment Title']}")
-
 else:
     st.error(f"Error: Unable to fetch data from Airtable. Status code: {response.status_code}")
