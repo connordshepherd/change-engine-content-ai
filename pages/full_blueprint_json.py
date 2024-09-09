@@ -163,22 +163,22 @@ for record in records:
     pcc_plaintext += f"Has Image: {'Yes' if image_url else 'No'}\n"
     pcc_plaintext += f"Has Communication: {'Yes' if extracted_record['Subject Line'] else 'No'}\n\n"
 
+# Streamlit UI
+st.title("Blueprint Builder")
+
+user_prompt = st.text_area("What kind of blueprint do you want to make?", value="New Hire Onboarding", height=100)
+
 # Create a DataFrame from the extracted data
 df = pd.DataFrame(extracted_data)
 
 # Display the dataframe
-display_data = st.data_editor(df)
+display_data = st.data_editor("Data from Airtable", df)
 
 # Display the pcc_plaintext in a text area
 st.text_area("PCC Plaintext", pcc_plaintext, height=400)
 
 # Create JSON object from DataFrame
 airtable_pcc = df.to_json(orient='records')
-
-# Streamlit UI
-st.title("Blueprint Builder")
-
-user_prompt = st.text_area("What kind of blueprint do you want to make?", value="New Hire Onboarding", height=100)
 
 prompt_1_intro_boilerplate = """Create program/initiative blueprints for an HR/People employee initiative. The theme of this initiative is: """
 
