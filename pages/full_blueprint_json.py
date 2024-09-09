@@ -202,9 +202,9 @@ Description: Implement a system to track the effectiveness of the referral progr
 
 prompt_2_boilerplate = """Great! Now we're going to begin adding elements to each step, from our database of element options. \n
 For each step, pick exactly 4 of the options on the below menu of Elements. \n
-Please only use each option ONCE in your plan - if you use an element in one step you can't use it in other steps.\n
 For 'type' on these, return 'pcc'.
-Here's the list:\n\n"""
+Very important - please only use each element ONCE in your plan - if you use an element in one step you can't use it in other steps.\n
+Here's the list of element options:\n\n"""
 
 prompt_3_boilerplate = """Great! Now, we need to add in "Educational Elements." These are places in the plan where the HR lead needs to gather information, circulate information, or define their goals.\n
 Here's the menu of Educational Elements: \n
