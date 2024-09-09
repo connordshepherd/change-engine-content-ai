@@ -85,7 +85,7 @@ def process_prompts(pcc_plaintext):
 
     st.write("Running prompt 2 - Fill in steps")
     # Process prompt 2
-    full_prompt_2 = f"Here's a list of content from our database:\n\n{pcc_plaintext}\n\nUsing this content, please fill in the steps you created with appropriate content. For each step, choose 2-3 pieces of content that fit well. Output in the same format as before, but include the content title and a brief description of how it fits into the step."
+    full_prompt_2 = prompt_2_boilerplate + pcc_plaintext
     messages.append({"role": "user", "content": full_prompt_2})
     response_2 = call_openai_with_tools(messages, tools)
     messages.append({"role": "assistant", "content": response_2})
@@ -194,6 +194,10 @@ Description: Provide training sessions and resources to help employees understan
 Step 5: Monitoring, Feedback & Improvement\n
 Description: Implement a system to track the effectiveness of the referral program, including metrics and employee feedback. Regularly review the program's performance and make necessary adjustments to improve its efficiency and effectiveness.
 </EXAMPLE FORMAT>"""
+
+prompt_2_boilerplate = """Great! Now we're going to begin adding elements to each step, from our database of element options. 
+
+For each step, pick exactly 2 of the options on the below menu of Elements. Please only use each option ONCE in your plan - if you use an element in one step you can't use it in other steps.\n\n Here's the list:\n\n"""
 
 if st.button("Process"):
     if 'pcc_plaintext' in locals():
