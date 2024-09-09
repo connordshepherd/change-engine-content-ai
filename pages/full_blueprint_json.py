@@ -81,7 +81,7 @@ def process_prompts(pcc_plaintext):
     messages.append({"role": "user", "content": full_prompt_1})
     response_1 = call_openai_with_tools(messages, tools)
     messages.append({"role": "assistant", "content": response_1})
-    st.write(response_1)
+    st.json(response_1)
 
     st.write("Running prompt 2 - Fill in steps")
     # Process prompt 2
@@ -89,7 +89,15 @@ def process_prompts(pcc_plaintext):
     messages.append({"role": "user", "content": full_prompt_2})
     response_2 = call_openai_with_tools(messages, tools)
     messages.append({"role": "assistant", "content": response_2})
-    st.write(response_2)
+    st.json(response_2)
+
+    st.write("Running prompt 3 - Adding Educational Elements")
+    # Process prompt 3
+    full_prompt_3 = prompt_3_boilerplate
+    messages.append({"role": "user", "content": full_prompt_3})
+    response_3 = call_openai_with_tools(messages, tools)
+    messages.append({"role": "assistant", "content": response_3})
+    st.json(response_3)
 
     # You can add more steps here if needed
 
