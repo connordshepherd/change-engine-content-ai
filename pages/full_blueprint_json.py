@@ -6,6 +6,7 @@ import json
 import openai
 import csv
 import re
+import requests
 from collections import OrderedDict
 
 def call_openai(messages):
