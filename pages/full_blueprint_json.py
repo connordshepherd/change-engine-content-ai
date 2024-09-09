@@ -172,7 +172,8 @@ user_prompt = st.text_area("What kind of blueprint do you want to make?", value=
 df = pd.DataFrame(extracted_data)
 
 # Display the dataframe
-display_data = st.data_editor("Data from Airtable", df)
+st.write("Data from Airtable")
+display_data = st.data_editor(df)
 
 # Display the pcc_plaintext in a text area
 st.text_area("PCC Plaintext", pcc_plaintext, height=400)
