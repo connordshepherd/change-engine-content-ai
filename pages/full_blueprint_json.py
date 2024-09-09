@@ -1,7 +1,42 @@
 import streamlit as st
-import requests
 import pandas as pd
+import io
+import numpy as np
 import json
+import openai
+import csv
+import re
+from collections import OrderedDict
+
+def call_openai(messages):
+    response_raw = openai.chat.completions.create(
+        model="gpt-4",
+        messages=messages
+    )
+    return response_raw.choices[0].message.content
+
+def process_prompts(pcc_plaintext):
+    messages = []
+
+    st.write("Running prompt 1 - Steps")
+    # Process prompt 1
+    full_prompt_1 = prompt_1_intro_boilerplate + user_prompt + prompt_1_outro_boilerplate
+    messages.append({"role": "user", "content": full_prompt_1})
+    response_1 = call_openai(messages)
+    messages.append({"role": "assistant", "content": response_1})
+    st.write(response_1)
+
+    st.write("Running prompt 2 - Fill in steps")
+    # Process prompt 2
+    full_prompt_2 = f"Here's a list of content from our database:\n\n{pcc_plaintext}\n\nUsing this content, please fill in the steps you created with appropriate content. For each step, choose 2-3 pieces of content that fit well. Output in the same format as before, but include the content title and a brief description of how it fits into the step."
+    messages.append({"role": "user", "content": full_prompt_2})
+    response_2 = call_openai(messages)
+    messages.append({"role": "assistant", "content": response_2})
+    st.write(response_2)
+
+    # You can add more steps here if needed
+
+    return response_2
 
 # Airtable API endpoint
 base_id = "appkUZW01q89QDGB9"
@@ -77,8 +112,38 @@ if response.status_code == 200:
     # Create JSON object from DataFrame
     airtable_pcc = df.to_json(orient='records')
 
-    # Display the JSON object
-    st.json(airtable_pcc)
-
-else:
-    st.error(f"Error: Unable to fetch data from Airtable. Status code: {response.status_code}")
+    # Streamlit UI
+    st.title("Blueprint Builder")
+    
+    user_prompt = st.text_area("What kind of blueprint do you want to make?", value="New Hire Onboarding", height=100)
+    
+    prompt_1_intro_boilerplate = """Create program/initiative blueprints for an HR/People employee initiative. The theme of this initiative is: """
+    
+    prompt_1_outro_boilerplate = """\n\nAs a first pass, we need to create 5 Steps in TOTAL to launch the program provided.\n
+    Create the title of the step and write one sentence describing what it means. Output with this format:\n\n
+    
+    <EXAMPLE FORMAT>
+    Step 1: Program Design & Objectives\n
+    Description: Define the goals and structure of the Employee Referral Program, including setting clear objectives such as increasing quality hires, reducing time-to-hire, and promoting a positive company culture.\n\n
+    
+    Step 2: Policy Development & Guidelines\n
+    Description: Establish the rules and guidelines for the referral program, including eligibility, reward structures, and processes.\n\n
+    
+    Step 3: Communication & Promotion Plan\n
+    Description: Develop a comprehensive communication plan to introduce the Employee Referral Program to all employees. Utilize various channels such as emails, intranet, and team meetings to ensure maximum awareness and engagement.\n\n
+    
+    Step 4: Training & Resources\n
+    Description: Provide training sessions and resources to help employees understand how to effectively refer candidates. This could include workshops, online tutorials, and informational brochures outlining best practices for making referrals.\n\n
+    
+    Step 5: Monitoring, Feedback & Improvement\n
+    Description: Implement a system to track the effectiveness of the referral program, including metrics and employee feedback. Regularly review the program's performance and make necessary adjustments to improve its efficiency and effectiveness.
+    </EXAMPLE FORMAT>"""
+    
+    if st.button("Process"):
+        if 'pcc_plaintext' in locals():
+            process_prompts(pcc_plaintext)
+        else:
+            st.error("Please run the Airtable data retrieval first to generate pcc_plaintext.")
+    
+    else:
+        st.error(f"Error: Unable to fetch data from Airtable. Status code: {response.status_code}")
