@@ -56,95 +56,91 @@ headers = {
 # Make the API request
 response = requests.get(url, headers=headers)
 
-if response.status_code == 200:
-    # Parse the JSON response
-    data = response.json()
-    
-    # Extract the records
-    records = data['records']
-    
-    # Create a list to store the extracted data
-    extracted_data = []
-    
-    # Create the pcc_plaintext
-    pcc_plaintext = ""
-    
-    # Extract the desired fields from each record
-    for record in records:
-        # Handle the "Preview Image Final" field
-        preview_image = record['fields'].get('Preview Image Final')
-        image_url = preview_image[0]['url'] if preview_image else None
+# Parse the JSON response
+data = response.json()
 
-        # Handle the "Context" field
-        context = record['fields'].get('Context', '')
-        first_paragraph = context.split('\n')[0] if context else ''
-        
-        # Extract the first sentence
-        first_sentence = context.split('.')[0] + '.' if context else ''
+# Extract the records
+records = data['records']
 
-        extracted_record = {
-            'Airtable Record ID': record['id'],
-            'Moment Title': record['fields'].get('Moment Title', ''),
-            'What': record['fields'].get('What', ''),
-            'Context': context,
-            'Preview Image Final': image_url,
-            'Subject Line': record['fields'].get('Subject Line', ''),
-            'context_first_sentence': first_sentence
-        }
-        extracted_data.append(extracted_record)
+# Create a list to store the extracted data
+extracted_data = []
 
-        # Add to pcc_plaintext
-        pcc_plaintext += f"Record ID: {record['id']}\n"
-        pcc_plaintext += f"Title: {extracted_record['Moment Title']}\n"
-        pcc_plaintext += f"Description_short: {extracted_record['What']}\n"
-        pcc_plaintext += f"More Context: {first_paragraph}\n"
-        pcc_plaintext += f"Has Image: {'Yes' if image_url else 'No'}\n"
-        pcc_plaintext += f"Has Communication: {'Yes' if extracted_record['Subject Line'] else 'No'}\n\n"
-    
-    # Create a DataFrame from the extracted data
-    df = pd.DataFrame(extracted_data)
+# Create the pcc_plaintext
+pcc_plaintext = ""
 
-    # Display the dataframe
-    display_data = st.data_editor(df)
-    
-    # Display the pcc_plaintext in a text area
-    st.text_area("PCC Plaintext", pcc_plaintext, height=400)
+# Extract the desired fields from each record
+for record in records:
+    # Handle the "Preview Image Final" field
+    preview_image = record['fields'].get('Preview Image Final')
+    image_url = preview_image[0]['url'] if preview_image else None
 
-    # Create JSON object from DataFrame
-    airtable_pcc = df.to_json(orient='records')
+    # Handle the "Context" field
+    context = record['fields'].get('Context', '')
+    first_paragraph = context.split('\n')[0] if context else ''
+    
+    # Extract the first sentence
+    first_sentence = context.split('.')[0] + '.' if context else ''
 
-    # Streamlit UI
-    st.title("Blueprint Builder")
-    
-    user_prompt = st.text_area("What kind of blueprint do you want to make?", value="New Hire Onboarding", height=100)
-    
-    prompt_1_intro_boilerplate = """Create program/initiative blueprints for an HR/People employee initiative. The theme of this initiative is: """
-    
-    prompt_1_outro_boilerplate = """\n\nAs a first pass, we need to create 5 Steps in TOTAL to launch the program provided.\n
-    Create the title of the step and write one sentence describing what it means. Output with this format:\n\n
-    
-    <EXAMPLE FORMAT>
-    Step 1: Program Design & Objectives\n
-    Description: Define the goals and structure of the Employee Referral Program, including setting clear objectives such as increasing quality hires, reducing time-to-hire, and promoting a positive company culture.\n\n
-    
-    Step 2: Policy Development & Guidelines\n
-    Description: Establish the rules and guidelines for the referral program, including eligibility, reward structures, and processes.\n\n
-    
-    Step 3: Communication & Promotion Plan\n
-    Description: Develop a comprehensive communication plan to introduce the Employee Referral Program to all employees. Utilize various channels such as emails, intranet, and team meetings to ensure maximum awareness and engagement.\n\n
-    
-    Step 4: Training & Resources\n
-    Description: Provide training sessions and resources to help employees understand how to effectively refer candidates. This could include workshops, online tutorials, and informational brochures outlining best practices for making referrals.\n\n
-    
-    Step 5: Monitoring, Feedback & Improvement\n
-    Description: Implement a system to track the effectiveness of the referral program, including metrics and employee feedback. Regularly review the program's performance and make necessary adjustments to improve its efficiency and effectiveness.
-    </EXAMPLE FORMAT>"""
-    
-    if st.button("Process"):
-        if 'pcc_plaintext' in locals():
-            process_prompts(pcc_plaintext)
-        else:
-            st.error("Please run the Airtable data retrieval first to generate pcc_plaintext.")
-    
+    extracted_record = {
+        'Airtable Record ID': record['id'],
+        'Moment Title': record['fields'].get('Moment Title', ''),
+        'What': record['fields'].get('What', ''),
+        'Context': context,
+        'Preview Image Final': image_url,
+        'Subject Line': record['fields'].get('Subject Line', ''),
+        'context_first_sentence': first_sentence
+    }
+    extracted_data.append(extracted_record)
+
+    # Add to pcc_plaintext
+    pcc_plaintext += f"Record ID: {record['id']}\n"
+    pcc_plaintext += f"Title: {extracted_record['Moment Title']}\n"
+    pcc_plaintext += f"Description_short: {extracted_record['What']}\n"
+    pcc_plaintext += f"More Context: {first_paragraph}\n"
+    pcc_plaintext += f"Has Image: {'Yes' if image_url else 'No'}\n"
+    pcc_plaintext += f"Has Communication: {'Yes' if extracted_record['Subject Line'] else 'No'}\n\n"
+
+# Create a DataFrame from the extracted data
+df = pd.DataFrame(extracted_data)
+
+# Display the dataframe
+display_data = st.data_editor(df)
+
+# Display the pcc_plaintext in a text area
+st.text_area("PCC Plaintext", pcc_plaintext, height=400)
+
+# Create JSON object from DataFrame
+airtable_pcc = df.to_json(orient='records')
+
+# Streamlit UI
+st.title("Blueprint Builder")
+
+user_prompt = st.text_area("What kind of blueprint do you want to make?", value="New Hire Onboarding", height=100)
+
+prompt_1_intro_boilerplate = """Create program/initiative blueprints for an HR/People employee initiative. The theme of this initiative is: """
+
+prompt_1_outro_boilerplate = """\n\nAs a first pass, we need to create 5 Steps in TOTAL to launch the program provided.\n
+Create the title of the step and write one sentence describing what it means. Output with this format:\n\n
+
+<EXAMPLE FORMAT>
+Step 1: Program Design & Objectives\n
+Description: Define the goals and structure of the Employee Referral Program, including setting clear objectives such as increasing quality hires, reducing time-to-hire, and promoting a positive company culture.\n\n
+
+Step 2: Policy Development & Guidelines\n
+Description: Establish the rules and guidelines for the referral program, including eligibility, reward structures, and processes.\n\n
+
+Step 3: Communication & Promotion Plan\n
+Description: Develop a comprehensive communication plan to introduce the Employee Referral Program to all employees. Utilize various channels such as emails, intranet, and team meetings to ensure maximum awareness and engagement.\n\n
+
+Step 4: Training & Resources\n
+Description: Provide training sessions and resources to help employees understand how to effectively refer candidates. This could include workshops, online tutorials, and informational brochures outlining best practices for making referrals.\n\n
+
+Step 5: Monitoring, Feedback & Improvement\n
+Description: Implement a system to track the effectiveness of the referral program, including metrics and employee feedback. Regularly review the program's performance and make necessary adjustments to improve its efficiency and effectiveness.
+</EXAMPLE FORMAT>"""
+
+if st.button("Process"):
+    if 'pcc_plaintext' in locals():
+        process_prompts(pcc_plaintext)
     else:
-        st.error(f"Error: Unable to fetch data from Airtable. Status code: {response.status_code}")
+        st.error("Please run the Airtable data retrieval first to generate pcc_plaintext.")
