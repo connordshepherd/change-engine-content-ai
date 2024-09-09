@@ -35,7 +35,8 @@ if response.status_code == 200:
             'Airtable Record ID': record['id'],
             'Moment Title': record['fields'].get('Moment Title', ''),
             'What': record['fields'].get('What', ''),
-            'Context': record['fields'].get('Context', '')
+            'Context': record['fields'].get('Context', ''),
+            'Preview Image Final': record['fields'].get('Preview Image Final', ''),
         }
         extracted_data.append(extracted_record)
     
