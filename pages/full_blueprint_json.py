@@ -76,10 +76,10 @@ for record in records:
 
     # Handle the "Context" field
     context = record['fields'].get('Context', '')
-    first_paragraph = context.split('\n')[0] if context else ''
     
-    # Extract the first sentence
-    first_sentence = context.split('.')[0] + '.' if context else ''
+    # Extract the first two sentences
+    sentences = re.split(r'(?<=[.!?])\s+', context)
+    first_two_sentences = ' '.join(sentences[:2]) if len(sentences) >= 2 else context
 
     extracted_record = {
         'Airtable Record ID': record['id'],
@@ -88,7 +88,7 @@ for record in records:
         'Context': context,
         'Preview Image Final': image_url,
         'Subject Line': record['fields'].get('Subject Line', ''),
-        'context_first_sentence': first_sentence
+        'context_first_two_sentences': first_two_sentences
     }
     extracted_data.append(extracted_record)
 
@@ -96,7 +96,7 @@ for record in records:
     pcc_plaintext += f"Record ID: {record['id']}\n"
     pcc_plaintext += f"Title: {extracted_record['Moment Title']}\n"
     pcc_plaintext += f"Description_short: {extracted_record['What']}\n"
-    pcc_plaintext += f"More Context: {first_paragraph}\n"
+    pcc_plaintext += f"More Context: {first_two_sentences}\n"
     pcc_plaintext += f"Has Image: {'Yes' if image_url else 'No'}\n"
     pcc_plaintext += f"Has Communication: {'Yes' if extracted_record['Subject Line'] else 'No'}\n\n"
 
