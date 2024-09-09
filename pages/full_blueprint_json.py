@@ -62,12 +62,13 @@ def call_openai(messages):
     )
     return response_raw.choices[0].message.content
 
-def call_openai_with_tools(messages):
+def call_openai_with_tools(messages, tools):
     response_raw = openai.chat.completions.create(
         model="gpt-4o-2024-08-06",
-        messages=messages
+        messages=messages,
+        tools=tools
     )
-    return response_raw.choices[0].message.content
+    return response_raw['choices'][0]['message']['tool_calls'][0]['function']['arguments']
 
 def process_prompts(pcc_plaintext):
     messages = []
@@ -76,7 +77,7 @@ def process_prompts(pcc_plaintext):
     # Process prompt 1
     full_prompt_1 = prompt_1_intro_boilerplate + user_prompt + prompt_1_outro_boilerplate
     messages.append({"role": "user", "content": full_prompt_1})
-    response_1 = call_openai(messages)
+    response_1 = call_openai_with_tools(messages, tools)
     messages.append({"role": "assistant", "content": response_1})
     st.write(response_1)
 
@@ -84,7 +85,7 @@ def process_prompts(pcc_plaintext):
     # Process prompt 2
     full_prompt_2 = f"Here's a list of content from our database:\n\n{pcc_plaintext}\n\nUsing this content, please fill in the steps you created with appropriate content. For each step, choose 2-3 pieces of content that fit well. Output in the same format as before, but include the content title and a brief description of how it fits into the step."
     messages.append({"role": "user", "content": full_prompt_2})
-    response_2 = call_openai(messages)
+    response_2 = call_openai_with_tools(messages, tools)
     messages.append({"role": "assistant", "content": response_2})
     st.write(response_2)
 
