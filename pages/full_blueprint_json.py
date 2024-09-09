@@ -63,6 +63,9 @@ if response.status_code == 200:
     
     # Create a DataFrame from the extracted data
     df = pd.DataFrame(extracted_data)
+
+    # Display the dataframe
+    display_data = st.data_editor(df)
     
     # Display the pcc_plaintext in a text area
     st.text_area("PCC Plaintext", pcc_plaintext, height=400)
@@ -71,7 +74,7 @@ if response.status_code == 200:
     airtable_pcc = df.to_json(orient='records')
 
     # Display the JSON object
-    st.text_area("Airtable PCC JSON", airtable_pcc, height=400)
+    st.write("Airtable PCC JSON", airtable_pcc)
 
 else:
     st.error(f"Error: Unable to fetch data from Airtable. Status code: {response.status_code}")
