@@ -39,9 +39,12 @@ if response.status_code == 200:
         preview_image = record['fields'].get('Preview Image Final')
         image_url = preview_image[0]['url'] if preview_image else None
 
-        # Handle the "Context" field - get the first paragraph
+        # Handle the "Context" field
         context = record['fields'].get('Context', '')
         first_paragraph = context.split('\n')[0] if context else ''
+        
+        # Extract the first sentence
+        first_sentence = context.split('.')[0] + '.' if context else ''
 
         extracted_record = {
             'Airtable Record ID': record['id'],
@@ -49,7 +52,8 @@ if response.status_code == 200:
             'What': record['fields'].get('What', ''),
             'Context': context,
             'Preview Image Final': image_url,
-            'Subject Line': record['fields'].get('Subject Line', '')
+            'Subject Line': record['fields'].get('Subject Line', ''),
+            'context_first_sentence': first_sentence
         }
         extracted_data.append(extracted_record)
 
