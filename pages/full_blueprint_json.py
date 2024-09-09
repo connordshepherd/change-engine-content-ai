@@ -57,14 +57,14 @@ tools = [
 
 def call_openai(messages):
     response_raw = openai.chat.completions.create(
-        model="gpt-4",
+        model="gpt-4o-2024-08-06",
         messages=messages
     )
     return response_raw.choices[0].message.content
 
 def call_openai_with_tools(messages):
     response_raw = openai.chat.completions.create(
-        model="gpt-4",
+        model="gpt-4o-2024-08-06",
         messages=messages
     )
     return response_raw.choices[0].message.content
