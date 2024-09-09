@@ -175,9 +175,6 @@ df = pd.DataFrame(extracted_data)
 st.write("Data from Airtable")
 display_data = st.data_editor(df)
 
-# Display the pcc_plaintext in a text area
-st.text_area("PCC Plaintext", pcc_plaintext, height=400)
-
 # Create JSON object from DataFrame
 airtable_pcc = df.to_json(orient='records')
 
