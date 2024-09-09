@@ -9,7 +9,60 @@ import re
 import requests
 from collections import OrderedDict
 
+# Set the main JSON schema
+tools = [
+    {
+        "type": "function",
+        "function": {
+            "name": "generate_blueprint",
+            "description": "Generate a blueprint for an HR/People employee initiative",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "steps": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "properties": {
+                                "step_number": {"type": "integer"},
+                                "step_description": {"type": "string"},
+                                "elements": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "object",
+                                        "properties": {
+                                            "type": {
+                                                "type": "string",
+                                                "enum": ["pcc", "educational"]
+                                            },
+                                            "record_id": {"type": "string"},
+                                            "title": {"type": "string"},
+                                            "description": {"type": "string"},
+                                            "more_context": {"type": "string"},
+                                            "image": {"type": "string"}
+                                        },
+                                        "required": ["type"]
+                                    }
+                                }
+                            },
+                            "required": ["step_number", "step_description"]
+                        }
+                    }
+                },
+                "required": ["steps"]
+            }
+        }
+    }
+]
+
 def call_openai(messages):
+    response_raw = openai.chat.completions.create(
+        model="gpt-4",
+        messages=messages
+    )
+    return response_raw.choices[0].message.content
+
+def call_openai_with_tools(messages):
     response_raw = openai.chat.completions.create(
         model="gpt-4",
         messages=messages
