@@ -68,6 +68,8 @@ def call_openai_with_tools(messages, tools):
         messages=messages,
         tools=tools
     )
+    st.write("Raw Response")
+    st.json(response_Raw)
     tool_call = response_raw.choices[0].message.tool_calls[0]
     json_str = tool_call.function.arguments
     result = json.loads(json_str)
