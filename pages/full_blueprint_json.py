@@ -74,7 +74,7 @@ if response.status_code == 200:
     airtable_pcc = df.to_json(orient='records')
 
     # Display the JSON object
-    st.write("Airtable PCC JSON", airtable_pcc)
+    st.json(airtable_pcc)
 
 else:
     st.error(f"Error: Unable to fetch data from Airtable. Status code: {response.status_code}")
