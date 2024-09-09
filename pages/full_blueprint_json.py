@@ -25,6 +25,7 @@ tools = [
                             "type": "object",
                             "properties": {
                                 "step_number": {"type": "integer"},
+                                "step_title": {"type": "string"},
                                 "step_description": {"type": "string"},
                                 "elements": {
                                     "type": "array",
