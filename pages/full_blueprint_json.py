@@ -40,6 +40,7 @@ if response.status_code == 200:
             'Moment Title': record['fields'].get('Moment Title', ''),
             'What': record['fields'].get('What', ''),
             'Context': record['fields'].get('Context', ''),
+            'Subject Line': record['fields'].get('Subject Line', ''),
             'Preview Image Final': image_url
         }
         extracted_data.append(extracted_record)
