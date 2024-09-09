@@ -68,12 +68,9 @@ def call_openai_with_tools(messages, tools):
         messages=messages,
         tools=tools
     )
-    st.write("Raw Response")
-    st.json(response_raw)
     tool_call = response_raw.choices[0].message.tool_calls[0]
     json_str = tool_call.function.arguments
-    result = json.loads(json_str)
-    return result
+    return json_str
 
 def process_prompts(pcc_plaintext):
     messages = []
