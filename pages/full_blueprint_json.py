@@ -86,7 +86,7 @@ def process_prompts(pcc_plaintext):
 
     st.write("Running prompt 2 - Fill in steps")
     # Process prompt 2
-    full_prompt_2 = prompt_2_boilerplate + pcc_plaintext
+    full_prompt_2 = prompt_2_boilerplate + pcc_plaintext + "As a reminder, the JSON object with the step numbers and descriptions is:" + '\n\n' + str(response_1)
     messages.append({"role": "user", "content": full_prompt_2})
     response_2 = call_openai_with_tools(messages, tools)
     messages.append({"role": "assistant", "content": response_2})
