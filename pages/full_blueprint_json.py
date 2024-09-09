@@ -216,7 +216,7 @@ Here's the menu of Educational Elements: \n
 4. Top Tip
 5. Define Goal
 Please add two Educational Elements to each step. \n
-For 'type' on these, return 'educational_element.' \n
+For 'type' on these, return 'educational.' \n
 You will need to write your own Description."""
 
 if st.button("Process"):
