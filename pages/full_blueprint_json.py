@@ -93,15 +93,13 @@ def process_prompts(pcc_plaintext):
 
     st.write("Running prompt 3 - Adding Educational Elements")
     # Process prompt 3
-    full_prompt_3 = prompt_3_boilerplate
+    full_prompt_3 = prompt_3_boilerplate + '\n\n' + "As a reminder, the JSON object with steps and elements we're adding to is:" + \n\n + str(response_2)
     messages.append({"role": "user", "content": full_prompt_3})
     response_3 = call_openai_with_tools(messages, tools)
     messages.append({"role": "assistant", "content": response_3})
     st.json(response_3)
 
-    # You can add more steps here if needed
-
-    return response_2
+    return response_3
 
 # Airtable API endpoint
 base_id = "appkUZW01q89QDGB9"
