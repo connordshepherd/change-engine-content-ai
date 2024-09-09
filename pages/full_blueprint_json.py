@@ -195,9 +195,10 @@ Step 5: Monitoring, Feedback & Improvement\n
 Description: Implement a system to track the effectiveness of the referral program, including metrics and employee feedback. Regularly review the program's performance and make necessary adjustments to improve its efficiency and effectiveness.
 </EXAMPLE FORMAT>"""
 
-prompt_2_boilerplate = """Great! Now we're going to begin adding elements to each step, from our database of element options. 
-
-For each step, pick exactly 2 of the options on the below menu of Elements. Please only use each option ONCE in your plan - if you use an element in one step you can't use it in other steps.\n\n Here's the list:\n\n"""
+prompt_2_boilerplate = """Great! Now we're going to begin adding elements to each step, from our database of element options. \n
+For each step, pick exactly 2 of the options on the below menu of Elements. \n
+Please only use each option ONCE in your plan - if you use an element in one step you can't use it in other steps.\n
+Here's the list:\n\n"""
 
 if st.button("Process"):
     if 'pcc_plaintext' in locals():
