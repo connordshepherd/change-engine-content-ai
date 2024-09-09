@@ -68,7 +68,7 @@ def call_openai_with_tools(messages, tools):
         messages=messages,
         tools=tools
     )
-    return response_raw['choices'][0]['message']['tool_calls'][0]['function']['arguments']
+    return response_raw
 
 def process_prompts(pcc_plaintext):
     messages = []
