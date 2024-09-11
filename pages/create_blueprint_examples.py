@@ -29,7 +29,9 @@ def process_content_table(records):
     
     for record in records:
         fields = record['fields']
-        kit = fields.get('Content Kits', 'Uncategorized')
+        kits = fields.get('Content Kits', ['Uncategorized'])
+        # Join multiple kits into a single string
+        kit = ', '.join(kits) if isinstance(kits, list) else kits
         step = fields.get('Step', 'Uncategorized')
         
         content_kits[kit][step].append(fields)
