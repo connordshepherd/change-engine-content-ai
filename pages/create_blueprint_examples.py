@@ -13,7 +13,11 @@ def query_airtable_content_table():
         "Content-Type": "application/json"
     }
     
-    response = requests.get(url, headers=headers)
+    params = {
+        "cellFormat": "string"  # This will return the string value for linked fields
+    }
+    
+    response = requests.get(url, headers=headers, params=params)
     
     if response.status_code == 200:
         return response.json()['records']
@@ -30,8 +34,9 @@ def process_content_table(records):
     for record in records:
         fields = record['fields']
         kits = fields.get('Content Kits', ['Uncategorized'])
-        # Join multiple kits into a single string
-        kit = ', '.join(kits) if isinstance(kits, list) else kits
+        # Ensure kits is always a list
+        kits = kits if isinstance(kits, list) else [kits]
+        kit = ', '.join(kits)
         step = fields.get('Step', 'Uncategorized')
         
         content_kits[kit][step].append(fields)
@@ -48,8 +53,12 @@ def process_content_table(records):
             for item in items:
                 output.append(f"Element Title: {item.get('Content Title', 'N/A')}")
                 output.append(f"Element Description: {item.get('Description', 'N/A')}")
-                output.append(f"Content Type: {item.get('Content Type', 'N/A')}")
-                output.append(f"Type: {item.get('Type', 'N/A')}")
+                content_type = item.get('Content Type', 'N/A')
+                content_type = content_type if isinstance(content_type, str) else ', '.join(content_type)
+                output.append(f"Content Type: {content_type}")
+                item_type = item.get('Type', 'N/A')
+                item_type = item_type if isinstance(item_type, str) else ', '.join(item_type)
+                output.append(f"Type: {item_type}")
                 output.append("")
             
             output.append("")
