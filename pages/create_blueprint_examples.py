@@ -1,6 +1,5 @@
 import streamlit as st
 import requests
-import json
 from collections import defaultdict
 
 def query_airtable_content_table():
@@ -13,19 +12,32 @@ def query_airtable_content_table():
         "Content-Type": "application/json"
     }
     
-    params = {
-        "cellFormat": "string"  # This will return the string value for linked fields
-    }
-    
-    response = requests.get(url, headers=headers, params=params)
+    response = requests.get(url, headers=headers)
     
     if response.status_code == 200:
-        return response.json()['records']
+        records = response.json()['records']
+        
+        # Fetch field information
+        fields_url = f"https://api.airtable.com/v0/meta/bases/{base_id}/tables/{table_name}/fields"
+        fields_response = requests.get(fields_url, headers=headers)
+        
+        if fields_response.status_code == 200:
+            fields_info = {field['id']: field for field in fields_response.json()['fields']}
+            return records, fields_info
+        else:
+            st.error(f"Error fetching field information: {fields_response.status_code}")
+            return None, None
     else:
         st.error(f"Error fetching data: {response.status_code}")
-        return None
+        return None, None
 
-def process_content_table(records):
+def get_linked_field_value(field_id, record_id, fields_info):
+    if field_id in fields_info and fields_info[field_id]['type'] == 'multipleSelects':
+        options = fields_info[field_id]['options']['choices']
+        return next((option['name'] for option in options if option['id'] == record_id), record_id)
+    return record_id
+
+def process_content_table(records, fields_info):
     if not records:
         return "No data available"
 
@@ -34,8 +46,7 @@ def process_content_table(records):
     for record in records:
         fields = record['fields']
         kits = fields.get('Content Kits', ['Uncategorized'])
-        # Ensure kits is always a list
-        kits = kits if isinstance(kits, list) else [kits]
+        kits = [get_linked_field_value('Content Kits', kit, fields_info) for kit in kits] if isinstance(kits, list) else [kits]
         kit = ', '.join(kits)
         step = fields.get('Step', 'Uncategorized')
         
@@ -54,11 +65,11 @@ def process_content_table(records):
                 output.append(f"Element Title: {item.get('Content Title', 'N/A')}")
                 output.append(f"Element Description: {item.get('Description', 'N/A')}")
                 content_type = item.get('Content Type', 'N/A')
-                content_type = content_type if isinstance(content_type, str) else ', '.join(content_type)
-                output.append(f"Content Type: {content_type}")
+                content_type = [get_linked_field_value('Content Type', ct, fields_info) for ct in content_type] if isinstance(content_type, list) else [content_type]
+                output.append(f"Content Type: {', '.join(content_type)}")
                 item_type = item.get('Type', 'N/A')
-                item_type = item_type if isinstance(item_type, str) else ', '.join(item_type)
-                output.append(f"Type: {item_type}")
+                item_type = [get_linked_field_value('Type', t, fields_info) for t in item_type] if isinstance(item_type, list) else [item_type]
+                output.append(f"Type: {', '.join(item_type)}")
                 output.append("")
             
             output.append("")
@@ -71,7 +82,7 @@ def process_content_table(records):
 st.title("Airtable Content Table")
 
 if st.button("Fetch and Process Data"):
-    records = query_airtable_content_table()
-    if records:
-        processed_data = process_content_table(records)
+    records, fields_info = query_airtable_content_table()
+    if records and fields_info:
+        processed_data = process_content_table(records, fields_info)
         st.text_area("Processed Content Table", processed_data, height=300)
