@@ -63,9 +63,7 @@ def process_content_table(records):
 
 # Streamlit app
 st.title("Airtable Content Table")
-
-if st.button("Fetch and Process Data"):
-    records = query_airtable_content_table()
-    if records:
-        processed_data = process_content_table(records)
-        st.text_area("Processed Content Table", processed_data, height=300)
+if st.button("Fetch Raw Data"):
+    raw_data = query_airtable_content_table()
+    if raw_data:
+        st.json(raw_data)
