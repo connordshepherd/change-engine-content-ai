@@ -2,6 +2,7 @@ import streamlit as st
 import requests
 from collections import defaultdict
 import json
+import openai
 from helpers import process_content_table, create_filter_json, get_filter_options, get_unique_content_kits, query_airtable_table
 
 tools = [
@@ -70,16 +71,22 @@ base_id = "appkUZW01q89QDGB9"
 
 # Fetch data on page load
 names = get_content_kit_names(base_id)
+user_input = st.text_input("What blueprint do you want to make?")
 
-prompt_template = """Here is a list of Content Kits we've created. Each of them contains outlines for an HR initiative:\n""" + names
+if st.button("Run Prompt"):
 
-prompt = st.text_area(label="Prompt", value=prompt_template, height=200)
-
-if st.button("Submit"):
-    content_records = query_airtable_table(base_id, "content")
-    try:
-        filter_json = json.loads(json_input)
-        processed_data = process_content_table(content_records, content_kits_records, filter_json)
-        st.json(processed_data)
-    except json.JSONDecodeError:
-        st.error("Invalid JSON input. Please check your JSON format and try again.")
+    prompt_template = """Here is a list of Content Kits we've created. Each of them contains outlines for an HR initiative:\n\n""" + names + """\n\nPlease return the 5 of these which most closely match this initiative submitted by a user:\n\n""" + user_input
+    prompt = st.text_area(label="Prompt", value=prompt_template, height=200)
+    messages = []
+    messages.append({"role": "user", "content": prompt})
+    response = call_openai_with_tools(messages, tools)
+    st.json(response)
+    
+    if st.button("Submit"):
+        content_records = query_airtable_table(base_id, "content")
+        try:
+            filter_json = json.loads(json_input)
+            processed_data = process_content_table(content_records, content_kits_records, filter_json)
+            st.json(processed_data)
+        except json.JSONDecodeError:
+            st.error("Invalid JSON input. Please check your JSON format and try again.")
