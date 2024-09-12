@@ -770,44 +770,46 @@ def process_content_table(content_records, content_kits_records, filter_json):
         
         if not selected_kits or kit in selected_kits:
             step = fields.get('Step', 'Uncategorized')
-            content_type = fields.get('Content Type (from Content Type)', fields.get('Content Type', 'N/A'))
-            content_type = content_type if isinstance(content_type, str) else ', '.join(content_type)
-            item_type = fields.get('Type', 'N/A')
-            item_type = item_type if isinstance(item_type, str) else ', '.join(item_type)
-            
-            if (not filters.get('step') or step in filters['step']) and \
-               (not filters.get('content_type') or any(ct in filters['content_type'] for ct in content_type.split(', '))) and \
-               (not filters.get('type') or any(t in filters['type'] for t in item_type.split(', '))):
-                content_kits[kit][step].append(fields)
+            if step != 'Uncategorized':  # Only process categorized steps
+                content_type = fields.get('Content Type (from Content Type)', fields.get('Content Type', 'N/A'))
+                content_type = content_type if isinstance(content_type, str) else ', '.join(content_type)
+                item_type = fields.get('Type', 'N/A')
+                item_type = item_type if isinstance(item_type, str) else ', '.join(item_type)
+                
+                if (not filters.get('step') or step in filters['step']) and \
+                   (not filters.get('content_type') or any(ct in filters['content_type'] for ct in content_type.split(', '))) and \
+                   (not filters.get('type') or any(t in filters['type'] for t in item_type.split(', '))):
+                    content_kits[kit][step].append(fields)
     
     json_output = {}
     
     for kit, steps in content_kits.items():
-        json_output[kit] = []
-        
-        sorted_steps = sorted(steps.items(), key=lambda x: int(x[0].split(':')[0].split()[-1]) if x[0].startswith('Step') else float('inf'))
-        
-        for step, items in sorted_steps:
-            step_data = {
-                "name": step,
-                "description": items[0].get('Step Description', 'N/A'),
-                "elements": []
-            }
+        if steps:  # Only process kits with categorized steps
+            json_output[kit] = []
             
-            for item in items:
-                content_type = item.get('Content Type (from Content Type)', item.get('Content Type', 'N/A'))
-                content_type = content_type if isinstance(content_type, str) else ', '.join(content_type)
-                item_type = item.get('Type', 'N/A')
-                item_type = item_type if isinstance(item_type, str) else ', '.join(item_type)
-                
-                element = {
-                    "title": item.get('Content Title', 'N/A'),
-                    "description": item.get('Description', 'N/A'),
-                    "content_type": content_type,
-                    "type": item_type
+            sorted_steps = sorted(steps.items(), key=lambda x: int(x[0].split(':')[0].split()[-1]) if x[0].startswith('Step') else float('inf'))
+            
+            for step, items in sorted_steps:
+                step_data = {
+                    "name": step,
+                    "description": items[0].get('Step Description', 'N/A'),
+                    "elements": []
                 }
-                step_data["elements"].append(element)
-            
-            json_output[kit].append(step_data)
+                
+                for item in items:
+                    content_type = item.get('Content Type (from Content Type)', item.get('Content Type', 'N/A'))
+                    content_type = content_type if isinstance(content_type, str) else ', '.join(content_type)
+                    item_type = item.get('Type', 'N/A')
+                    item_type = item_type if isinstance(item_type, str) else ', '.join(item_type)
+                    
+                    element = {
+                        "title": item.get('Content Title', 'N/A'),
+                        "description": item.get('Description', 'N/A'),
+                        "content_type": content_type,
+                        "type": item_type
+                    }
+                    step_data["elements"].append(element)
+                
+                json_output[kit].append(step_data)
     
     return json_output
