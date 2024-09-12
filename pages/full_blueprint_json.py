@@ -101,7 +101,8 @@ def call_openai_with_tools(messages, tools):
     response_raw = openai.chat.completions.create(
         model="gpt-4o-2024-08-06",
         messages=messages,
-        tools=tools
+        tools=tools,
+        tool_choice="required"
     )
     st.write("Response Raw", response_raw)
     tool_call = response_raw.choices[0].message.tool_calls[0]
