@@ -3,6 +3,8 @@ import requests
 from collections import defaultdict
 import json
 
+from helpers import process_content_table, create_filter_json, get_filter_options, get_unique_content_kits, query_airtable_table
+
 # Streamlit app
 st.title("Airtable Content Table")
 
