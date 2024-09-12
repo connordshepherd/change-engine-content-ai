@@ -77,8 +77,8 @@ def process_content_table(content_records, content_kits_records, filter_json):
 
     content_kits = defaultdict(lambda: defaultdict(list))
     
-    selected_kits = filter_json['selected_kits']
-    filters = filter_json['filters']
+    selected_kits = filter_json.get('selected_kits', [])
+    filters = filter_json.get('filters', {})
     
     for record in content_records:
         fields = record['fields']
@@ -86,14 +86,16 @@ def process_content_table(content_records, content_kits_records, filter_json):
         kits = [content_kits_lookup.get(kit_id, kit_id) for kit_id in kit_ids]
         kit = ', '.join(kits)
         
-        if kit in selected_kits:
+        if not selected_kits or kit in selected_kits:
             step = fields.get('Step', 'Uncategorized')
             content_type = fields.get('Content Type (from Content Type)', fields.get('Content Type', 'N/A'))
+            content_type = content_type if isinstance(content_type, str) else ', '.join(content_type)
             item_type = fields.get('Type', 'N/A')
+            item_type = item_type if isinstance(item_type, str) else ', '.join(item_type)
             
-            if (step in filters['step'] or not filters['step']) and \
-               (content_type in filters['content_type'] or not filters['content_type']) and \
-               (item_type in filters['type'] or not filters['type']):
+            if (not filters.get('step') or step in filters['step']) and \
+               (not filters.get('content_type') or any(ct in filters['content_type'] for ct in content_type.split(', '))) and \
+               (not filters.get('type') or any(t in filters['type'] for t in item_type.split(', '))):
                 content_kits[kit][step].append(fields)
     
     json_output = {}
