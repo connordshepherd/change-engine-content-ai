@@ -55,15 +55,23 @@ def call_openai_with_tools(messages, tools):
     json_str = tool_call.function.arguments
     return json_str
 
+def get_content_kit_names(base_id):
+    content_kits_records = query_airtable_table(base_id, "Content Kits")
+    if content_kits_records:
+        kit_names = [record['fields'].get('Content Kit', 'Unknown') for record in content_kits_records]
+        return ", ".join(sorted(set(kit_names)))  # Use set to remove duplicates, then sort and join
+    else:
+        return "Failed to fetch Content Kit names"
+
 # Streamlit app
 st.title("Airtable Content Table")
 
 base_id = "appkUZW01q89QDGB9"
 
 # Fetch data on page load
-content_kits_records = query_airtable_table(base_id, "Content Kits")
+names = get_content_kit_names(base_id)
 
-prompt_template = """Here is a list of Content Kits we've created. Each of them contains outlines for an HR initiative:\n""" + str(content_kits_records)
+prompt_template = """Here is a list of Content Kits we've created. Each of them contains outlines for an HR initiative:\n""" + names
 
 prompt = st.text_area(label="Prompt", value=prompt_template, height=200)
 
