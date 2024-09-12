@@ -74,7 +74,7 @@ if st.button("Run Prompt"):
         tools=tools
     )
     st.write(response_raw)
-    st.session_state.openai_response = response
+    st.session_state.openai_response = response_raw
     
 if st.session_state.openai_response:
     content_records = query_airtable_table(base_id, "content")
