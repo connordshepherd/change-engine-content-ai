@@ -8,6 +8,7 @@ import csv
 import re
 import requests
 from collections import OrderedDict
+from helpers import process_content_table, create_filter_json, get_filter_options, get_unique_content_kits, query_airtable_table
 
 # Set the main JSON schema
 tools = [
@@ -56,12 +57,45 @@ tools = [
     }
 ]
 
+# Set the tool for matching to content kits
+content_kit_tools = [
+    {
+        "type": "function",
+        "function": {
+            "name": "create_search_object",
+            "description": "Create a search object to filter Airtable content for HR/People employee initiatives",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "reasoning": {
+                        "type": "string",
+                        "description": "A two-sentence explanation of why you're selecting the 5 Selected Kits you've chosen"
+                    },
+                    "selected_kits": {
+                        "type": "array",
+                        "items": {"type": "string"},
+                        "description": "Array of Content Kit names to include in the search"
+                    }
+                },
+                "required": ["selected_kits"]
+            }
+        }
+    }
+]
+
 def call_openai(messages):
     response_raw = openai.chat.completions.create(
         model="gpt-4o-2024-08-06",
         messages=messages
     )
     return response_raw.choices[0].message.content
+
+def get_content_kit_names(base_id, content_kits_records):
+    if content_kits_records:
+        kit_names = [record['fields'].get('Content Kit', 'Unknown') for record in content_kits_records]
+        return ", ".join(sorted(set(kit_names)))  # Use set to remove duplicates, then sort and join
+    else:
+        return "Failed to fetch Content Kit names"
 
 def call_openai_with_tools(messages, tools):
     response_raw = openai.chat.completions.create(
@@ -102,9 +136,8 @@ def process_prompts(pcc_plaintext):
 
     return response_3
 
-# Get the PCC
-from dummy import dummy_json
-pcc_plaintext = str(dummy_json)
+# Set Airtable base ID
+base_id = "appkUZW01q89QDGB9"
 
 # Streamlit UI
 st.title("Blueprint Builder")
@@ -133,12 +166,6 @@ Step 5: Monitoring, Feedback & Improvement\n
 Description: Implement a system to track the effectiveness of the referral program, including metrics and employee feedback. Regularly review the program's performance and make necessary adjustments to improve its efficiency and effectiveness.
 </EXAMPLE FORMAT>"""
 
-prompt_2_boilerplate_old = """Great! Now we're going to begin adding elements to each step, from our database of element options. \n
-For each step, pick exactly 4 of the options on the below menu of Elements. \n
-For 'type' on these, return 'pcc'.
-Very important - please only use each element ONCE in your plan - if you use an element in one step you can't use it in other steps.\n
-Here's the list of element options:\n\n"""
-
 prompt_2_boilerplate = """Great! Now we're going to begin adding elements to each step.\n
 Here are some previous blueprints you can use as examples. See how the elements nest within the steps? Every step should have at least 4 elements.\n
 Don't add Educational Elements yet - we'll worry about that later.\n
@@ -156,6 +183,18 @@ For 'content_type' on these, return 'Educational Element.' \n
 You will need to write your own Description."""
 
 if st.button("Process"):
+    # Fetch data from Airtable
+    st.write("Fetching Content Kit data from Airtable")
+    content_kits_records = query_airtable_table(base_id, "Content Kits")
+    names = get_content_kit_names(base_id, content_kits_records)
+    matching_prompt = """Here is a list of Content Kits we've created. Each of them contains outlines for an HR initiative:\n\n""" + names + """\n\nPlease return the 5 of these which most closely match this initiative submitted by a user:\n\n""" + user_prompt + """\n\nReturn no more than 5. Don't return any filters."""
+    matching_messages = []
+    matching_messages.append({"role": "user", "content": matching_prompt})
+    matching_response = call_openai_with_tools(matching_messages, content_kit_tools)
+    st.write("Found matching Content Kits from Airtable")
+    st.json(matching_response)
+    pcc_plaintext = str(matching_response)
+
     if 'pcc_plaintext' in locals():
         process_prompts(pcc_plaintext)
     else:
