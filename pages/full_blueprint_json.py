@@ -183,7 +183,7 @@ For 'content_type' on these, return 'Educational Element.' \n
 You will need to write your own Description."""
 
 if st.button("Process"):
-    # Fetch data from Airtable
+    # Fetch Content Kit data from Airtable
     st.write("Fetching Content Kit data from Airtable")
     content_kits_records = query_airtable_table(base_id, "Content Kits")
     names = get_content_kit_names(base_id, content_kits_records)
@@ -193,8 +193,14 @@ if st.button("Process"):
     matching_response = call_openai_with_tools(matching_messages, content_kit_tools)
     st.write("Found matching Content Kits from Airtable")
     st.json(matching_response)
-    pcc_plaintext = str(matching_response)
 
+    # Fetch the matches from Airtable
+    st.write("Pulling matching content kits from Airtable to use as an example")
+    content_records = query_airtable_table(base_id, "content")
+    processed_data = process_content_table(content_records, content_kits_records, matching_response)
+    pcc_plaintext = str(processed_data)
+    st.write(pcc_plaintext)
+    
     if 'pcc_plaintext' in locals():
         process_prompts(pcc_plaintext)
     else:
