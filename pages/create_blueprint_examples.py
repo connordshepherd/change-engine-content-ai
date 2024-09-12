@@ -5,6 +5,10 @@ import json
 import openai
 from helpers import process_content_table, create_filter_json, get_filter_options, get_unique_content_kits, query_airtable_table
 
+# Initialize session state
+if 'openai_response' not in st.session_state:
+    st.session_state.openai_response = None
+
 tools = [
     {
         "type": "function",
@@ -64,13 +68,13 @@ if st.button("Run Prompt"):
     messages = []
     messages.append({"role": "user", "content": prompt})
     response = call_openai_with_tools(messages, tools)
-    st.json(response)
+    st.session_state.openai_response = response
     
-    if st.button("Submit"):
-        content_records = query_airtable_table(base_id, "content")
-        try:
-            filter_json = json.loads(response)
-            processed_data = process_content_table(content_records, content_kits_records, filter_json)
-            st.json(processed_data)
-        except json.JSONDecodeError:
-            st.error("Invalid JSON input. Please check your JSON format and try again.")
+if st.session_state.openai_response:
+    content_records = query_airtable_table(base_id, "content")
+    try:
+        filter_json = json.loads(st.session_state.openai_response)
+        processed_data = process_content_table(content_records, content_kits_records, filter_json)
+        st.json(processed_data)
+    except json.JSONDecodeError:
+        st.error("Invalid JSON input. Please check your JSON format and try again.")
