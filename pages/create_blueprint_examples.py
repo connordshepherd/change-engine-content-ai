@@ -34,14 +34,18 @@ def process_content_table(content_records, content_kits_records):
         kit = ', '.join(kits)
         step = fields.get('Step', 'Uncategorized')
         
-        content_kits[kit][step].append(fields)
+        if step != 'Uncategorized':  # Filter out Uncategorized steps
+            content_kits[kit][step].append(fields)
     
     json_output = {}
     
     for kit, steps in content_kits.items():
         json_output[kit] = []
         
-        for step, items in steps.items():
+        # Sort steps based on their names (assuming they start with "Step X:")
+        sorted_steps = sorted(steps.items(), key=lambda x: int(x[0].split(':')[0].split()[-1]) if x[0].startswith('Step') else float('inf'))
+        
+        for step, items in sorted_steps:
             step_data = {
                 "name": step,
                 "description": items[0].get('Step Description', 'N/A'),
