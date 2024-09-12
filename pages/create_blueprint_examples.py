@@ -34,13 +34,51 @@ def query_airtable_table(base_id, table_name):
 def get_unique_content_kits(content_kits_records):
     return sorted(set(record['fields'].get('Content Kit', 'Unknown') for record in content_kits_records))
 
-def process_content_table(content_records, content_kits_records, selected_kits):
+def get_filter_options(content_records):
+    steps = set()
+    content_types = set()
+    types = set()
+    
+    for record in content_records:
+        fields = record['fields']
+        steps.add(fields.get('Step', 'Uncategorized'))
+        content_type = fields.get('Content Type (from Content Type)', fields.get('Content Type', 'N/A'))
+        if isinstance(content_type, list):
+            content_types.update(content_type)
+        else:
+            content_types.add(content_type)
+        item_type = fields.get('Type', 'N/A')
+        if isinstance(item_type, list):
+            types.update(item_type)
+        else:
+            types.add(item_type)
+    
+    return {
+        "steps": sorted(steps),
+        "content_types": sorted(content_types),
+        "types": sorted(types)
+    }
+
+def create_filter_json(selected_kits, selected_steps, selected_content_types, selected_types):
+    return {
+        "selected_kits": selected_kits,
+        "filters": {
+            "step": selected_steps,
+            "content_type": selected_content_types,
+            "type": selected_types
+        }
+    }
+
+def process_content_table(content_records, content_kits_records, filter_json):
     if not content_records or not content_kits_records:
         return {}
 
     content_kits_lookup = {record['id']: record['fields'].get('Content Kit', 'Unknown') for record in content_kits_records}
 
     content_kits = defaultdict(lambda: defaultdict(list))
+    
+    selected_kits = filter_json['selected_kits']
+    filters = filter_json['filters']
     
     for record in content_records:
         fields = record['fields']
@@ -50,8 +88,12 @@ def process_content_table(content_records, content_kits_records, selected_kits):
         
         if kit in selected_kits:
             step = fields.get('Step', 'Uncategorized')
+            content_type = fields.get('Content Type (from Content Type)', fields.get('Content Type', 'N/A'))
+            item_type = fields.get('Type', 'N/A')
             
-            if step != 'Uncategorized':
+            if (step in filters['step'] or not filters['step']) and \
+               (content_type in filters['content_type'] or not filters['content_type']) and \
+               (item_type in filters['type'] or not filters['type']):
                 content_kits[kit][step].append(fields)
     
     json_output = {}
@@ -97,17 +139,22 @@ content_kits_records = query_airtable_table(base_id, "Content Kits")
 
 if content_records and content_kits_records:
     unique_kits = get_unique_content_kits(content_kits_records)
-    st.write("Available Content Kits:")
-    st.write(", ".join(unique_kits))
+    filter_options = get_filter_options(content_records)
 
-    selected_kits_input = st.text_input("Enter comma-separated Content Kit names to filter:")
-    selected_kits = [kit.strip() for kit in selected_kits_input.split(',')] if selected_kits_input else []
+    st.write("Available Content Kits:")
+    selected_kits = st.multiselect("Select Content Kits", unique_kits)
+
+    st.write("Filter Options:")
+    selected_steps = st.multiselect("Select Steps", filter_options['steps'])
+    selected_content_types = st.multiselect("Select Content Types", filter_options['content_types'])
+    selected_types = st.multiselect("Select Types", filter_options['types'])
 
     if st.button("Submit"):
         if selected_kits:
-            processed_data = process_content_table(content_records, content_kits_records, selected_kits)
+            filter_json = create_filter_json(selected_kits, selected_steps, selected_content_types, selected_types)
+            processed_data = process_content_table(content_records, content_kits_records, filter_json)
             st.json(processed_data)
         else:
-            st.warning("Please enter at least one Content Kit name.")
+            st.warning("Please select at least one Content Kit.")
 else:
     st.error("Failed to fetch data from Airtable. Please try again later.")
