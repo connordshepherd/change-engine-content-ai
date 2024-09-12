@@ -5,6 +5,7 @@ import json
 import pandas as pd
 import openai
 from typing import List, Dict, Union, Any, Tuple
+from collections import defaultdict
 from io import BytesIO
 from PIL import Image
 
