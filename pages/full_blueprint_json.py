@@ -197,7 +197,8 @@ if st.button("Process"):
     # Fetch the matches from Airtable
     st.write("Pulling matching content kits from Airtable to use as an example")
     content_records = query_airtable_table(base_id, "content")
-    processed_data = process_content_table(content_records, content_kits_records, matching_response)
+    filter_json = json.loads(matching_response)
+    processed_data = process_content_table(content_records, content_kits_records, filter_json)
     pcc_plaintext = str(processed_data)
     st.write(pcc_plaintext)
     
