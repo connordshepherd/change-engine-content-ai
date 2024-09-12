@@ -200,10 +200,7 @@ if st.button("Process"):
     content_records = query_airtable_table(base_id, "content")
     filter_json = json.loads(matching_response)
     processed_data = process_content_table(content_records, content_kits_records, filter_json)
-    #pcc_plaintext = str(processed_data)
-    from dummy import dummy_json
-    pcc_plaintext = str(dummy_json)
-    st.write(pcc_plaintext)
+    pcc_plaintext = str(processed_data)
     
     if 'pcc_plaintext' in locals():
         process_prompts(pcc_plaintext)
