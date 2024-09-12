@@ -69,7 +69,7 @@ if st.button("Run Prompt"):
     if st.button("Submit"):
         content_records = query_airtable_table(base_id, "content")
         try:
-            filter_json = json.loads(json_input)
+            filter_json = json.loads(response)
             processed_data = process_content_table(content_records, content_kits_records, filter_json)
             st.json(processed_data)
         except json.JSONDecodeError:
