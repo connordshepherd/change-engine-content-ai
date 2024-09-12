@@ -104,7 +104,6 @@ def call_openai_with_tools(messages, tools):
         tools=tools,
         tool_choice="required"
     )
-    st.write("Response Raw", response_raw)
     tool_call = response_raw.choices[0].message.tool_calls[0]
     json_str = tool_call.function.arguments
     return json_str
