@@ -45,6 +45,15 @@ tools = [
     }
 ]
 
+def call_openai_with_tools(messages, tools):
+    response_raw = openai.chat.completions.create(
+        model="gpt-4o-2024-08-06",
+        messages=messages,
+        tools=tools
+    )
+    tool_call = response_raw.choices[0].message.tool_calls[0]
+    json_str = tool_call.function.arguments
+    return json_str
 
 # Streamlit app
 st.title("Airtable Content Table")
@@ -54,17 +63,9 @@ base_id = "appkUZW01q89QDGB9"
 # Fetch data on page load
 content_kits_records = query_airtable_table(base_id, "Content Kits")
 
-st.write("Enter your JSON filter object:")
-json_input = st.text_area("JSON Input", 
-                          '''{
-"selected_kits": ["Kit Name 1", "Kit Name 2"],
-"filters": {
-    "step": ["Step 1", "Step 2"],
-    "content_type": ["FAQ", "Handbook"],
-    "type": ["Document", "Design"]
-}
-}''', 
-                          height=200)
+prompt_template = """Here is a list of Content Kits we've created. Each of them contains outlines for an HR initiative:\n""" + str(content_kits_records)
+
+prompt = st.text_area(value=prompt, height=200)
 
 if st.button("Submit"):
     content_records = query_airtable_table(base_id, "content")
