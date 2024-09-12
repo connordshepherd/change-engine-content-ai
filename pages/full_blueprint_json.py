@@ -163,6 +163,10 @@ for record in records:
     pcc_plaintext += f"Has Image: {'Yes' if image_url else 'No'}\n"
     pcc_plaintext += f"Has Communication: {'Yes' if extracted_record['Subject Line'] else 'No'}\n\n"
 
+# Ignore the above, use the dummy json as the plaintext
+from dummy import dummy_json
+pcc_plaintext = str(dummy_json)
+
 # Streamlit UI
 st.title("Blueprint Builder")
 
@@ -200,11 +204,15 @@ Step 5: Monitoring, Feedback & Improvement\n
 Description: Implement a system to track the effectiveness of the referral program, including metrics and employee feedback. Regularly review the program's performance and make necessary adjustments to improve its efficiency and effectiveness.
 </EXAMPLE FORMAT>"""
 
-prompt_2_boilerplate = """Great! Now we're going to begin adding elements to each step, from our database of element options. \n
+prompt_2_boilerplate_old = """Great! Now we're going to begin adding elements to each step, from our database of element options. \n
 For each step, pick exactly 4 of the options on the below menu of Elements. \n
 For 'type' on these, return 'pcc'.
 Very important - please only use each element ONCE in your plan - if you use an element in one step you can't use it in other steps.\n
 Here's the list of element options:\n\n"""
+
+prompt_2_boilerplate = """Great! Now we're going to begin adding elements to each step.\n
+Here are some previous blueprints you can use as examples. See how the elements nest within the steps?\n
+Very important - please only use each element ONCE in your plan - if you use an element in one step you can't use it in other steps.\n"""
 
 prompt_3_boilerplate = """Great! Now, we need to add in "Educational Elements." These are places in the plan where the HR lead needs to gather information, circulate information, or define their goals.\n
 Here's the menu of Educational Elements: \n
