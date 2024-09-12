@@ -102,68 +102,7 @@ def process_prompts(pcc_plaintext):
 
     return response_3
 
-# Airtable API endpoint
-base_id = "appkUZW01q89QDGB9"
-table_name = "PCC"
-url = f"https://api.airtable.com/v0/{base_id}/{table_name}"
-
-# Get the API token from Streamlit secrets
-api_token = st.secrets["AIRTABLE_SECOND_TOKEN"]
-
-# Set up the headers for the API request
-headers = {
-    "Authorization": f"Bearer {api_token}",
-    "Content-Type": "application/json"
-}
-
-# Make the API request
-response = requests.get(url, headers=headers)
-
-# Parse the JSON response
-data = response.json()
-
-# Extract the records
-records = data['records']
-
-# Create a list to store the extracted data
-extracted_data = []
-
-# Create the pcc_plaintext
-pcc_plaintext = ""
-
-# Extract the desired fields from each record
-for record in records:
-    # Handle the "Preview Image Final" field
-    preview_image = record['fields'].get('Preview Image Final')
-    image_url = preview_image[0]['url'] if preview_image else None
-
-    # Handle the "Context" field
-    context = record['fields'].get('Context', '')
-    
-    # Extract the first two sentences
-    sentences = re.split(r'(?<=[.!?])\s+', context)
-    first_two_sentences = ' '.join(sentences[:2]) if len(sentences) >= 2 else context
-
-    extracted_record = {
-        'Airtable Record ID': record['id'],
-        'Moment Title': record['fields'].get('Moment Title', ''),
-        'What': record['fields'].get('What', ''),
-        'Context': context,
-        'Preview Image Final': image_url,
-        'Subject Line': record['fields'].get('Subject Line', ''),
-        'context_first_two_sentences': first_two_sentences
-    }
-    extracted_data.append(extracted_record)
-
-    # Add to pcc_plaintext
-    pcc_plaintext += f"Record ID: {record['id']}\n"
-    pcc_plaintext += f"Title: {extracted_record['Moment Title']}\n"
-    pcc_plaintext += f"Description_short: {extracted_record['What']}\n"
-    pcc_plaintext += f"More Context: {first_two_sentences}\n"
-    pcc_plaintext += f"Has Image: {'Yes' if image_url else 'No'}\n"
-    pcc_plaintext += f"Has Communication: {'Yes' if extracted_record['Subject Line'] else 'No'}\n\n"
-
-# Ignore the above, use the dummy json as the plaintext
+# Get the PCC
 from dummy import dummy_json
 pcc_plaintext = str(dummy_json)
 
@@ -174,13 +113,6 @@ user_prompt = st.text_area("What kind of blueprint do you want to make?", value=
 
 # Create a DataFrame from the extracted data
 df = pd.DataFrame(extracted_data)
-
-# Display the dataframe
-st.write("Data from Airtable")
-display_data = st.data_editor(df)
-
-# Create JSON object from DataFrame
-airtable_pcc = df.to_json(orient='records')
 
 prompt_1_intro_boilerplate = """Create program/initiative blueprints for an HR/People employee initiative. The theme of this initiative is: """
 
