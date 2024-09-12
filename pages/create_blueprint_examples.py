@@ -1,6 +1,7 @@
 import streamlit as st
 import requests
 from collections import defaultdict
+import json
 
 def query_airtable_table(base_id, table_name):
     url = f"https://api.airtable.com/v0/{base_id}/{table_name}"
@@ -20,9 +21,8 @@ def query_airtable_table(base_id, table_name):
 
 def process_content_table(content_records, content_kits_records):
     if not content_records or not content_kits_records:
-        return "No data available"
+        return {}
 
-    # Create a lookup dictionary for Content Kits
     content_kits_lookup = {record['id']: record['fields'].get('Content Kit', 'Unknown') for record in content_kits_records}
 
     content_kits = defaultdict(lambda: defaultdict(list))
@@ -36,31 +36,35 @@ def process_content_table(content_records, content_kits_records):
         
         content_kits[kit][step].append(fields)
     
-    output = []
+    json_output = {}
     
     for kit, steps in content_kits.items():
-        output.append(f"Content Kit: {kit}")
+        json_output[kit] = []
         
         for step, items in steps.items():
-            output.append(f"Step: {step}")
-            output.append(f"Step Description: {items[0].get('Step Description', 'N/A')}")
+            step_data = {
+                "name": step,
+                "description": items[0].get('Step Description', 'N/A'),
+                "elements": []
+            }
             
             for item in items:
-                output.append(f"Element Title: {item.get('Content Title', 'N/A')}")
-                output.append(f"Element Description: {item.get('Description', 'N/A')}")
                 content_type = item.get('Content Type (from Content Type)', item.get('Content Type', 'N/A'))
                 content_type = content_type if isinstance(content_type, str) else ', '.join(content_type)
-                output.append(f"Content Type: {content_type}")
                 item_type = item.get('Type', 'N/A')
                 item_type = item_type if isinstance(item_type, str) else ', '.join(item_type)
-                output.append(f"Type: {item_type}")
-                output.append("")
+                
+                element = {
+                    "title": item.get('Content Title', 'N/A'),
+                    "description": item.get('Description', 'N/A'),
+                    "content_type": content_type,
+                    "type": item_type
+                }
+                step_data["elements"].append(element)
             
-            output.append("")
-        
-        output.append("")
+            json_output[kit].append(step_data)
     
-    return "\n".join(output)
+    return json_output
 
 # Streamlit app
 st.title("Airtable Content Table")
@@ -72,4 +76,4 @@ if st.button("Fetch and Process Data"):
     
     if content_records and content_kits_records:
         processed_data = process_content_table(content_records, content_kits_records)
-        st.text_area("Processed Content Table", processed_data, height=300)
+        st.json(processed_data)
