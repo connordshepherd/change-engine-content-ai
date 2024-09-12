@@ -65,7 +65,7 @@ content_kits_records = query_airtable_table(base_id, "Content Kits")
 
 prompt_template = """Here is a list of Content Kits we've created. Each of them contains outlines for an HR initiative:\n""" + str(content_kits_records)
 
-prompt = st.text_area(value=prompt_template, height=200)
+prompt = st.text_area(label="Prompt", value=prompt_template, height=200)
 
 if st.button("Submit"):
     content_records = query_airtable_table(base_id, "content")
