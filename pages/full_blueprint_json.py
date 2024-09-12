@@ -47,7 +47,7 @@ tools = [
                                     }
                                 }
                             },
-                            "required": ["step_number", "step_description"]
+                            "required": ["step_number", "step_title", "step_description"]
                         }
                     }
                 },
