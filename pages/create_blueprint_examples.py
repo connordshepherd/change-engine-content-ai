@@ -14,30 +14,14 @@ tools = [
             "parameters": {
                 "type": "object",
                 "properties": {
+                    "reasoning": {
+                        "type": "string",
+                        "description": "A two-sentence explanation of why you're selecting the 5 Selected Kits you've chosen"
+                    },
                     "selected_kits": {
                         "type": "array",
                         "items": {"type": "string"},
                         "description": "Array of Content Kit names to include in the search"
-                    },
-                    "filters": {
-                        "type": "object",
-                        "properties": {
-                            "step": {
-                                "type": "array",
-                                "items": {"type": "string"},
-                                "description": "Array of step names to filter by"
-                            },
-                            "content_type": {
-                                "type": "array",
-                                "items": {"type": "string"},
-                                "description": "Array of content types to filter by"
-                            },
-                            "type": {
-                                "type": "array",
-                                "items": {"type": "string"},
-                                "description": "Array of element types to filter by"
-                            }
-                        }
                     }
                 },
                 "required": ["selected_kits"]
