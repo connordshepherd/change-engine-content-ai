@@ -42,7 +42,7 @@ tools = [
                                             "more_context": {"type": "string"},
                                             "image": {"type": "string"}
                                         },
-                                        "required": ["type"]
+                                        "required": ["content_type"]
                                     }
                                 }
                             },
@@ -141,6 +141,7 @@ Here's the list of element options:\n\n"""
 
 prompt_2_boilerplate = """Great! Now we're going to begin adding elements to each step.\n
 Here are some previous blueprints you can use as examples. See how the elements nest within the steps? Every step should have at least 4 elements.\n
+Don't add Educational Elements yet - we'll worry about that later.\n
 Very important - please only use each element ONCE in your plan - if you use an element in one step you can't use it in other steps.\n"""
 
 prompt_3_boilerplate = """Great! Now, we need to add in "Educational Elements." These are places in the plan where the HR lead needs to gather information, circulate information, or define their goals.\n
@@ -151,7 +152,7 @@ Here's the menu of Educational Elements: \n
 4. Top Tip
 5. Define Goal
 Please add two Educational Elements to each step. \n
-For 'type' on these, return 'educational.' \n
+For 'content_type' on these, return 'educational.' \n
 You will need to write your own Description."""
 
 if st.button("Process"):
