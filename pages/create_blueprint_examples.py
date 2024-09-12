@@ -67,7 +67,13 @@ if st.button("Run Prompt"):
     prompt = st.text_area(label="Prompt", value=prompt_template, height=200)
     messages = []
     messages.append({"role": "user", "content": prompt})
-    response = call_openai_with_tools(messages, tools)
+    #response = call_openai_with_tools(messages, tools)
+    response_raw = openai.chat.completions.create(
+        model="gpt-4o-2024-08-06",
+        messages=messages,
+        tools=tools
+    )
+    st.write(response_raw)
     st.session_state.openai_response = response
     
 if st.session_state.openai_response:
