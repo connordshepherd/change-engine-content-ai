@@ -75,7 +75,7 @@ user_input = st.text_input("What blueprint do you want to make?")
 
 if st.button("Run Prompt"):
 
-    prompt_template = """Here is a list of Content Kits we've created. Each of them contains outlines for an HR initiative:\n\n""" + names + """\n\nPlease return the 5 of these which most closely match this initiative submitted by a user:\n\n""" + user_input
+    prompt_template = """Here is a list of Content Kits we've created. Each of them contains outlines for an HR initiative:\n\n""" + names + """\n\nPlease return the 5 of these which most closely match this initiative submitted by a user:\n\n""" + user_input + """\n\nReturn no more than 5. Don't return any filters."""
     prompt = st.text_area(label="Prompt", value=prompt_template, height=200)
     messages = []
     messages.append({"role": "user", "content": prompt})
