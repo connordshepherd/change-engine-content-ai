@@ -32,9 +32,9 @@ tools = [
                                     "items": {
                                         "type": "object",
                                         "properties": {
-                                            "type": {
+                                            "content_type": {
                                                 "type": "string",
-                                                "enum": ["pcc", "educational"]
+                                                "enum": ["Manager One-Pager", "LinkedIn Cover", "FAQ", "Logo", "TV Display", "Certificate", "Zoom Background", "Communication", "Zoom Background", "Poster", "Communication", "Educational Element"]
                                             },
                                             "record_id": {"type": "string"},
                                             "title": {"type": "string"},
