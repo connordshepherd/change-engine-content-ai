@@ -11,13 +11,25 @@ def query_airtable_table(base_id, table_name):
         "Content-Type": "application/json"
     }
     
-    response = requests.get(url, headers=headers)
-    
-    if response.status_code == 200:
-        return response.json()['records']
-    else:
-        st.error(f"Error fetching data from {table_name}: {response.status_code}")
-        return None
+    all_records = []
+    params = {}
+
+    while True:
+        response = requests.get(url, headers=headers, params=params)
+        
+        if response.status_code == 200:
+            data = response.json()
+            all_records.extend(data['records'])
+            
+            if 'offset' in data:
+                params['offset'] = data['offset']
+            else:
+                break
+        else:
+            st.error(f"Error fetching data from {table_name}: {response.status_code}")
+            return None
+
+    return all_records
 
 def process_content_table(content_records, content_kits_records):
     if not content_records or not content_kits_records:
