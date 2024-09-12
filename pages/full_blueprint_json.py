@@ -211,7 +211,7 @@ Very important - please only use each element ONCE in your plan - if you use an 
 Here's the list of element options:\n\n"""
 
 prompt_2_boilerplate = """Great! Now we're going to begin adding elements to each step.\n
-Here are some previous blueprints you can use as examples. See how the elements nest within the steps?\n
+Here are some previous blueprints you can use as examples. See how the elements nest within the steps? Every step should have at least 4 elements.\n
 Very important - please only use each element ONCE in your plan - if you use an element in one step you can't use it in other steps.\n"""
 
 prompt_3_boilerplate = """Great! Now, we need to add in "Educational Elements." These are places in the plan where the HR lead needs to gather information, circulate information, or define their goals.\n
