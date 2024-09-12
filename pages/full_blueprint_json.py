@@ -185,7 +185,7 @@ You will need to write your own Description."""
 
 if st.button("Process"):
     # Fetch Content Kit data from Airtable
-    st.write("Fetching Content Kit data from Airtable")
+    st.write("Fetching Content Kit names from Airtable to use as examples")
     content_kits_records = query_airtable_table(base_id, "Content Kits")
     names = get_content_kit_names(base_id, content_kits_records)
     matching_prompt = """Here is a list of Content Kits we've created. Each of them contains outlines for an HR initiative:\n\n""" + names + """\n\nPlease return the 5 of these which most closely match this initiative submitted by a user:\n\n""" + user_prompt + """\n\nReturn no more than 5. Don't return any filters."""
@@ -196,7 +196,7 @@ if st.button("Process"):
     st.json(matching_response)
 
     # Fetch the matches from Airtable
-    st.write("Pulling matching content kits from Airtable to use as an example")
+    st.write("Pulling the full matching content kits from Airtable to use as examples")
     content_records = query_airtable_table(base_id, "content")
     filter_json = json.loads(matching_response)
     processed_data = process_content_table(content_records, content_kits_records, filter_json)
