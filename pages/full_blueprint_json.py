@@ -181,7 +181,8 @@ Here's the menu of Educational Elements: \n
 5. Define Goal
 Please add two Educational Elements to each step. \n
 For 'content_type' on these, return 'Educational Element.' \n
-You will need to write your own Description."""
+You will need to write your own Description. It should be longer than the others, 4-5 sentences long at least. \n
+Return the new Educational Elements first within each step, ahead of the other stuff you composed in prior steps."""
 
 if st.button("Process"):
     # Fetch Content Kit data from Airtable
