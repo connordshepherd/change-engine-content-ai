@@ -31,7 +31,10 @@ def query_airtable_table(base_id, table_name):
 
     return all_records
 
-def process_content_table(content_records, content_kits_records):
+def get_unique_content_kits(content_kits_records):
+    return sorted(set(record['fields'].get('Content Kit', 'Unknown') for record in content_kits_records))
+
+def process_content_table(content_records, content_kits_records, selected_kits):
     if not content_records or not content_kits_records:
         return {}
 
@@ -44,17 +47,18 @@ def process_content_table(content_records, content_kits_records):
         kit_ids = fields.get('Content Kits', ['Uncategorized'])
         kits = [content_kits_lookup.get(kit_id, kit_id) for kit_id in kit_ids]
         kit = ', '.join(kits)
-        step = fields.get('Step', 'Uncategorized')
         
-        if step != 'Uncategorized':  # Filter out Uncategorized steps
-            content_kits[kit][step].append(fields)
+        if kit in selected_kits:
+            step = fields.get('Step', 'Uncategorized')
+            
+            if step != 'Uncategorized':
+                content_kits[kit][step].append(fields)
     
     json_output = {}
     
     for kit, steps in content_kits.items():
         json_output[kit] = []
         
-        # Sort steps based on their names (assuming they start with "Step X:")
         sorted_steps = sorted(steps.items(), key=lambda x: int(x[0].split(':')[0].split()[-1]) if x[0].startswith('Step') else float('inf'))
         
         for step, items in sorted_steps:
@@ -85,11 +89,25 @@ def process_content_table(content_records, content_kits_records):
 # Streamlit app
 st.title("Airtable Content Table")
 
-if st.button("Fetch and Process Data"):
-    base_id = "appkUZW01q89QDGB9"
-    content_records = query_airtable_table(base_id, "content")
-    content_kits_records = query_airtable_table(base_id, "Content Kits")
-    
-    if content_records and content_kits_records:
-        processed_data = process_content_table(content_records, content_kits_records)
-        st.json(processed_data)
+base_id = "appkUZW01q89QDGB9"
+
+# Fetch data on page load
+content_records = query_airtable_table(base_id, "content")
+content_kits_records = query_airtable_table(base_id, "Content Kits")
+
+if content_records and content_kits_records:
+    unique_kits = get_unique_content_kits(content_kits_records)
+    st.write("Available Content Kits:")
+    st.write(", ".join(unique_kits))
+
+    selected_kits_input = st.text_input("Enter comma-separated Content Kit names to filter:")
+    selected_kits = [kit.strip() for kit in selected_kits_input.split(',')] if selected_kits_input else []
+
+    if st.button("Submit"):
+        if selected_kits:
+            processed_data = process_content_table(content_records, content_kits_records, selected_kits)
+            st.json(processed_data)
+        else:
+            st.warning("Please enter at least one Content Kit name.")
+else:
+    st.error("Failed to fetch data from Airtable. Please try again later.")
