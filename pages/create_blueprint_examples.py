@@ -138,23 +138,24 @@ content_records = query_airtable_table(base_id, "content")
 content_kits_records = query_airtable_table(base_id, "Content Kits")
 
 if content_records and content_kits_records:
-    unique_kits = get_unique_content_kits(content_kits_records)
-    filter_options = get_filter_options(content_records)
-
-    st.write("Available Content Kits:")
-    selected_kits = st.multiselect("Select Content Kits", unique_kits)
-
-    st.write("Filter Options:")
-    selected_steps = st.multiselect("Select Steps", filter_options['steps'])
-    selected_content_types = st.multiselect("Select Content Types", filter_options['content_types'])
-    selected_types = st.multiselect("Select Types", filter_options['types'])
+    st.write("Enter your JSON filter object:")
+    json_input = st.text_area("JSON Input", 
+                              '''{
+    "selected_kits": ["Kit Name 1", "Kit Name 2"],
+    "filters": {
+        "step": ["Step 1", "Step 2"],
+        "content_type": ["FAQ", "Handbook"],
+        "type": ["Document", "Design"]
+    }
+}''', 
+                              height=200)
 
     if st.button("Submit"):
-        if selected_kits:
-            filter_json = create_filter_json(selected_kits, selected_steps, selected_content_types, selected_types)
+        try:
+            filter_json = json.loads(json_input)
             processed_data = process_content_table(content_records, content_kits_records, filter_json)
             st.json(processed_data)
-        else:
-            st.warning("Please select at least one Content Kit.")
+        except json.JSONDecodeError:
+            st.error("Invalid JSON input. Please check your JSON format and try again.")
 else:
     st.error("Failed to fetch data from Airtable. Please try again later.")
