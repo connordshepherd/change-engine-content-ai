@@ -111,9 +111,6 @@ st.title("Blueprint Builder")
 
 user_prompt = st.text_area("What kind of blueprint do you want to make?", value="New Hire Onboarding", height=100)
 
-# Create a DataFrame from the extracted data
-df = pd.DataFrame(extracted_data)
-
 prompt_1_intro_boilerplate = """Create program/initiative blueprints for an HR/People employee initiative. The theme of this initiative is: """
 
 prompt_1_outro_boilerplate = """\n\nAs a first pass, we need to create 5 Steps in TOTAL to launch the program provided.\n
