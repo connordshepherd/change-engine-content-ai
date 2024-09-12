@@ -202,10 +202,8 @@ if st.button("Process"):
     processed_data = process_content_table(content_records, content_kits_records, filter_json)
     #pcc_plaintext = str(processed_data)
     from dummy import dummy_json
-    pcc_plaintext = dummy_json
+    pcc_plaintext = str(dummy_json)
     st.write(pcc_plaintext)
-
-
     
     if 'pcc_plaintext' in locals():
         process_prompts(pcc_plaintext)
