@@ -172,8 +172,8 @@ Here are some previous blueprints you can use as examples. See how the elements 
 Don't add Educational Elements yet - we'll worry about that later.\n
 Very important - please only use each element ONCE in your plan - if you use an element in one step you can't use it in other steps.\n"""
 
-prompt_3_boilerplate = """Great! Now, we need to add in "Educational Elements." These are places in the plan where the HR lead needs to gather information, circulate information, or define their goals.\n
-Here's the menu of Educational Elements: \n
+prompt_3_boilerplate = """Great! Now, we need to add in “Educational Elements.” These are places in the plan where the HR lead needs to gather information, circulate information, or define their goals.\n
+Here’s the menu of Educational Elements: \n
 1. Identify Stakeholders
 2. Analyze Data
 3. Quick Win
@@ -181,7 +181,7 @@ Here's the menu of Educational Elements: \n
 5. Define Goal
 Please add two Educational Elements to each step. \n
 For 'content_type' on these, return 'Educational Element.' \n
-You will need to write your own Description. It should be longer than the others, 4-5 sentences long at least. \n
+You will need to write your own Description. It should be longer than the others, 4 sentences long at least. Keep the description tone friendly like an upbeat advisor that’s giving you specific advice on the topic. Try not to generalize too much and provide specific tips that could be really useful.  \n
 Return the new Educational Elements first within each step, ahead of the other stuff you composed in prior steps."""
 
 if st.button("Process"):
