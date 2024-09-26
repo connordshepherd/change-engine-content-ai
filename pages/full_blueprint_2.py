@@ -164,7 +164,7 @@ Recognize the collective efforts and accomplishments of employees, while ensurin
 You're creating the plan, so the first step shouldn't be anything like "Create a Plan" or "Define the steps." That's what you're doing!"""
 
 prompt_2_boilerplate = """Great! Now we're going to begin adding elements to each step.\n
-Here are some previous blueprints you can use as examples. See how the elements nest within the steps? Every step should have at least 4 elements.\n
+Here are some previous blueprints you can use as examples. See how the elements nest within the steps? Every step should have at least 4 elements. 2 of them should be Communications.\n
 Don't add Educational Elements yet - we'll worry about that later.\n
 Very important - please only use each element ONCE in your plan - if you use an element in one step you can't use it in other steps.\n"""
 
