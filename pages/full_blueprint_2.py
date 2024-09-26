@@ -119,7 +119,7 @@ def process_prompts(pcc_plaintext):
     messages.append({"role": "assistant", "content": response_1})
     st.json(response_1)
 
-    st.write("Running prompt 2 - Fill in steps")
+    st.write("Running prompt 2 - Fill in communications")
     # Process prompt 2
     full_prompt_2 = prompt_2_boilerplate + pcc_plaintext + "As a reminder, the JSON object with the step numbers and descriptions is:" + '\n\n' + str(response_1)
     messages.append({"role": "user", "content": full_prompt_2})
@@ -127,9 +127,17 @@ def process_prompts(pcc_plaintext):
     messages.append({"role": "assistant", "content": response_2})
     st.json(response_2)
 
+    st.write("Running prompt 2a - Fill in other elements")
+    # Process prompt 2a
+    full_prompt_2a = prompt_2a_boilerplate + pcc_plaintext + "As a reminder, the JSON object with the step numbers and descriptions is:" + '\n\n' + str(response_2)
+    messages.append({"role": "user", "content": full_prompt_2a})
+    response_2a = call_openai_with_tools(messages, tools)
+    messages.append({"role": "assistant", "content": response_2})
+    st.json(response_2a)
+
     st.write("Running prompt 3 - Adding Educational Elements")
     # Process prompt 3
-    full_prompt_3 = prompt_3_boilerplate + '\n\n' + "As a reminder, the JSON object with steps and elements we're adding to is:" + '\n\n' + str(response_2)
+    full_prompt_3 = prompt_3_boilerplate + '\n\n' + "As a reminder, the JSON object with steps and elements we're adding to is:" + '\n\n' + str(response_2a)
     messages.append({"role": "user", "content": full_prompt_3})
     response_3 = call_openai_with_tools(messages, tools)
     messages.append({"role": "assistant", "content": response_3})
@@ -147,7 +155,7 @@ user_prompt = st.text_area("What kind of blueprint do you want to make?", value=
 
 prompt_1_intro_boilerplate = """Create program/initiative blueprints for an HR/People employee initiative. The theme of this initiative is: """
 
-prompt_1_outro_boilerplate = """\n\nAs a first pass, we need to create 3-5 Steps in TOTAL to launch the program provided.\n
+prompt_1_outro_boilerplate = """\n\nAs a first pass, we need to create three to five Steps in TOTAL to launch the program provided.\n
 Create the title of the step and write one sentence describing what it means. Output with this format:\n\n
 
 <EXAMPLE FORMAT>
@@ -164,10 +172,15 @@ Recognize the collective efforts and accomplishments of employees, while ensurin
 You're creating the plan, so the first step shouldn't be anything like "Create a Plan" or "Define the steps." That's what you're doing!"""
 
 prompt_2_boilerplate = """Great! Now we're going to begin adding elements to each step.\n
-Here are some previous blueprints you can use as examples. See how the elements nest within the steps? Every step should have at least 4 elements.\n
+Here are some previous blueprints you can use as examples. See how the elements nest within the steps?\n
 Don't add Educational Elements yet - we'll worry about that later.\n
-2 elements of each step should always be Communications.\n
-Very important - except for Communication, please only use each element type ONCE in your plan - if you use an element in one step you can't use it in other steps. For example if you use Zoom Background in one step, you can't use any more Zoom Backgrounds in subsequent steps.\n"""
+2 elements of each step should always be Communications. So first, please add 2 Communications per step.\n\n"""
+
+prompt_2a_boilerplate = """Great! Now we're going to add more elements to each step.\n
+Here are the previous blueprints you can use as examples again. See how the elements nest within the steps?\n
+Please don't add Educational Elements yet - we'll worry about that later.\n
+Now, please add other elements to the blueprint - Zoom Backgrounds, Posters, FAQS, and so on. Use the previous blueprints as a reference. Important - please use these ONCE in your plan - if you use an element in one step you can't use it in other steps. For example if you use Zoom Background in one step, you can't use any more Zoom Backgrounds in subsequent steps.\n"""
+
 
 prompt_3_boilerplate = """Great! Now, we need to add in “Educational Elements.” These are places in the plan where the HR lead needs to gather information, circulate information, or define their goals.\n
 Here’s the menu of Educational Elements: \n
