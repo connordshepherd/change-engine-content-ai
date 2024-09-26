@@ -127,7 +127,7 @@ def process_prompts(pcc_plaintext):
     messages.append({"role": "assistant", "content": response_2})
     st.json(response_2)
 
-    st.write("Running prompt 2a - Fill in other elements")
+    st.write("Running prompt 2 a - Fill in other elements")
     # Process prompt 2a
     full_prompt_2a = prompt_2a_boilerplate + pcc_plaintext + "As a reminder, the JSON object with the step numbers and descriptions is:" + '\n\n' + str(response_2)
     messages.append({"role": "user", "content": full_prompt_2a})
