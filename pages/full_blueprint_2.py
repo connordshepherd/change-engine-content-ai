@@ -132,7 +132,7 @@ def process_prompts(pcc_plaintext):
     full_prompt_2a = prompt_2a_boilerplate + pcc_plaintext + "As a reminder, the JSON object with the step numbers and descriptions is:" + '\n\n' + str(response_2)
     messages.append({"role": "user", "content": full_prompt_2a})
     response_2a = call_openai_with_tools(messages, tools)
-    messages.append({"role": "assistant", "content": response_2})
+    messages.append({"role": "assistant", "content": response_2a})
     st.json(response_2a)
 
     st.write("Running prompt 3 - Adding Educational Elements")
@@ -179,7 +179,7 @@ Don't add Educational Elements yet - we'll worry about that later.\n
 prompt_2a_boilerplate = """Great! Now we're going to add more elements to each step.\n
 Here are the previous blueprints you can use as examples again. See how the elements nest within the steps?\n
 Please don't add Educational Elements yet - we'll worry about that later.\n
-Now, please add other elements to the blueprint - Zoom Backgrounds, Posters, FAQS, and so on. Use the previous blueprints as a reference. Important - please use these ONCE in your plan - if you use an element in one step you can't use it in other steps. For example if you use Zoom Background in one step, you can't use any more Zoom Backgrounds in subsequent steps.\n"""
+Now, please add two other elements to the blueprint - Zoom Backgrounds, Posters, FAQS, and so on. Use the previous blueprints as a reference. Important - please use these ONCE in your plan - if you use an element in one step you can't use it in other steps. For example if you use Zoom Background in one step, you can't use any more Zoom Backgrounds in subsequent steps.\n"""
 
 
 prompt_3_boilerplate = """Great! Now, we need to add in “Educational Elements.” These are places in the plan where the HR lead needs to gather information, circulate information, or define their goals.\n
