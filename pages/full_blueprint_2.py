@@ -111,7 +111,7 @@ def call_openai_with_tools(messages, tools):
 def process_prompts(pcc_plaintext):
     messages = []
 
-    st.write("Running prompt 1 - Steps")
+    st.write("Running prompt 1 - Steps hey")
     # Process prompt 1
     full_prompt_1 = prompt_1_intro_boilerplate + user_prompt + prompt_1_outro_boilerplate
     messages.append({"role": "user", "content": full_prompt_1})
