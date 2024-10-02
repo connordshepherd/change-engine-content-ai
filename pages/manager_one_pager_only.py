@@ -16,47 +16,32 @@ from typing import List, Dict, Union, Any, Tuple
 import webbrowser
 from streamlit.components.v1 import html
 
-prompt_default_value = """You are Employee Experience Manager at a company of about 100 to 5,000 employees. This company is a hybrid work environment. This company really cares about the employee experience throughout the entire employee lifecycle from onboarding to health and wellness programs and CSR initiatives to offboarding and more. The tone should be friendly, supportive, and encouraging and not too serious. Always refer to the HR Team as the People Team instead. Use this structure for the response: group response output by the category of output (where applicable) e.g. Title variation 1, Title variation 2 etc. Then subtitle variation 1, subtitle variation 2 et.c then illustration variation 1, illustration variation 2, illustration variation 3 etc. Never include headers like "Title Variation 10". Ignore any subsequent guidance on output structure in this prompt. Always group by title, subtitle etc. 
-
-You need to create a bunch of summaries and key highlights in a FAQ. This FAQ must answer all of the questions and answers in one page maximum. The policies in the Employee Handbook will cover them in more detail, so these FAQ's don't need to have too much detail. We want these FAQ's to be informative but also engaging and friendly/supportive/helpful in tone. Use the Layouts below to use as a framework for the FAQs. The description of the Layouts outline the character count ranges and other info to produce an FAQ for the topic chosen. Produce an FAQ providing all of the content for the outline. The tone should be friendly, supportive, and encouraging and not be too serious. Always use the outlined character count ranges, # of questions or topics and answers, and everything else outlined in the Layout Descriptions. Never deviate from the Layout Description.
+prompt_default_value = """You need to create a manager one pager to educate managers. This one-pager must give managers tips and tricks in one page maximum. The manager coaching guide will cover them in more detail, so these manager one-pagers don't need to have too much detail. We want these one-pagers to be informative but also engaging and friendly/supportive/helpful in tone. Use the Layouts to use as a framework for the manager one pager . The description of the Layouts outline the character count ranges and other info to produce a one pager for the topic chosen. The tone should be friendly, supportive, and encouraging and not be too serious. Always use the outlined character count ranges, # of questions or topics and answers, and everything else outlined in the Layout Descriptions. Never deviate from the Layout Description.
 ----
-The topic is: new contractor onboarding faq. Come up with 2 variations. Never output in code.
+The topic is: Program Evaluation Report towards company goal of increasing employee referral rates from 15% to 25% in 3 months. Come up with 2 variations. Never output in code.
 ----
 
 For each variation include:
 
-**Details for Layout 2**
-Title: A title of 28-33 characters
-Subtitle: A subtitle of 20-30 characters
-Number of Questions and Answers: 5 questions and answers
-Suggest Icon/Illustration/Photo: Icon or illustration
-Question: A question of 60-75 characters
-Answer: An answer of 130-144 characters
-image-type: Icon
-Description: A description of 120-145 characters
-
-
-
-
-
-
-----
-
-Use this structure for the response:
-Variation n:
-Title
-Subtitle
-Number of Questions and Answers
-Suggest Icon/Illustration/Photo
-Question
-Answer
-image-type
-Description"""
+**Details for Layout 8**
+subheader: a subheader between 25- 38 characters
+subheader-1: a subheader #1 of between 60-74
+subheader-3: a subheader #3 of between 60-74 characters
+section-4: a section #4 of between 400-504 characters
+section-2: a section #2 of between 300-504 characters
+subheader-2: a subheader #2 of between 60-74 characters
+section-3: a section #3 of between 400-504 characters
+header: a header of 2 lines, every line is a maximum of 27 characters each (27/27)
+subheader-4: subheader #4 of between 60-74 characters
+section-1: a section #1 of 4 lines, every line is maximum 126 characters (126/126/126/126) Write a bulletpoint or numbered list
+section-5: a section #5 of between 600-672 characters
+subheader-5: a subheader #5 of between 60-74 characters
+description: a description between 500-608 characters"""
 
 
 
 # Streamlit UI
-st.title("FAQ JSON")
+st.title("Manager One-Pager JSON")
 prompt = st.text_area("Prompt", value=prompt_default_value, height=400)
 
 if st.button("Submit"):
@@ -101,26 +86,31 @@ if st.button("Submit"):
                                     "items": {
                                         "type": "object",
                                         "properties": {
-                                            "title": {"type": "string"},
-                                            "subtitle": {"type": "string"},
-                                            "questions_answers": {
+                                            "reasoning": {
+                                                "type": "string",
+                                                "description": "To get started, write 3 sentences describing the manager one-pager you're about to compose. Give some thought to how many sections you'll need and what you want to put in each one."
+                                            },
+                                            "header": {"type": "string"},
+                                            "subheader": {"type": "string"},
+                                            "description": {"type": "string"},
+                                            "sections": {
                                                 "type": "array",
                                                 "items": {
                                                     "type": "object",
                                                     "properties": {
-                                                        "question": {"type": "string"},
-                                                        "answer": {"type": "string"},
+                                                        "section_subheader": {"type": "string"},
+                                                        "section_content": {"type": "string"},
                                                         "image_type": {
                                                             "type": "string",
                                                             "enum": ["icon", "illustration", "photo"]
                                                         },
                                                         "image_description": {"type": "string"}
                                                     },
-                                                    "required": ["question", "answer", "image_type", "image_description"]
+                                                    "required": ["section_subheader", "section_content", "image_type", "image_description"]
                                                 }
                                             }
                                         },
-                                        "required": ["title", "subtitle", "questions_answers"]
+                                        "required": ["header", "subheader", "sections"]
                                     }
                                 }
                             },
