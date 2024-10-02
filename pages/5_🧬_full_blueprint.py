@@ -176,10 +176,12 @@ Recognize the collective efforts and accomplishments of employees, while ensurin
 </EXAMPLE FORMAT>\n
 
 When you're thinking about how many steps to assign, think about it this way:
-- SIMPLER initiatives, or initiatives not tied to company KPIs, need less steps. For example, celebrating a birthday or work anniversary. Also, if you're taking advantage of an existing program - like, if you've been asked to increase the participation rate of a mentorship program - you should think of only 3 or 4 steps.
-- COMPLEX initiatives, or initatives tied directly to a company KPI, will probably require 5 steps. Examples would be, "Set up a whole company offsite," "create a new mentorship program," or "set up a new employee referral program."
+- SIMPLER initiatives, or initiatives not tied to company KPIs, need less steps. For example, celebrating a birthday or work anniversary. Also, if you're taking advantage of an existing program - like, if you've been asked to increase the participation rate of a mentorship program - you should think of only 3 or 4 steps.\n
+- COMPLEX initiatives, or initatives tied directly to a company KPI, will probably require 5 steps. Examples would be, "Set up a whole company offsite," "create a new mentorship program," or "set up a new employee referral program."\n\n
 
-If the theme of the initiative has a time or duration attached, like 'do xyz in 10 weeks,' assign rough time blocks to each step. You can use the step description for this.
+If the theme of the initiative has a time or duration attached, like 'do xyz in 10 weeks,' assign rough time blocks to each step. You can use the step description for this.\n\n
+
+Don't fill out any step Elements yet - just the reasoning, step_number, step_title, step_description. We will do the rest later.\n\n
 
 You're creating the plan, so the first step shouldn't be anything like "Create a Plan" or "Define the steps." That's what you're doing!"""
 
