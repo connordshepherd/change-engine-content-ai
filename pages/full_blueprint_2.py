@@ -183,7 +183,8 @@ You're creating the plan, so the first step shouldn't be anything like "Create a
 prompt_2_boilerplate = """Great! Now we're going to begin adding elements to each step.\n
 Here are some previous blueprints you can use as examples. See how the elements nest within the steps?\n
 Don't add Educational Elements yet - we'll worry about that later.\n
-2 elements of each step should always be Communications. So first, please add 2 Communications per step.\n\n"""
+2 elements of each step should always be Communications. So first, please add 2 Communications per step.\n
+If you're planning on adding Success Stories or Personal Stories as communications, think through where they will come from - if this program doesn't already exist, they will need to be sourced from somewhere else!\n\n"""
 
 prompt_2a_boilerplate = """Great! Now we're going to add more elements to each step.\n
 Here are the previous blueprints you can use as examples again. See how the elements nest within the steps?\n
