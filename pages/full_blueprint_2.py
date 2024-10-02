@@ -30,7 +30,10 @@ tools = [
                             "properties": {
                                 "step_number": {"type": "integer"},
                                 "step_title": {"type": "string"},
-                                "step_description": {"type": "string"},
+                                "step_description": {
+                                    "type": "string",
+                                    "description": "In 1 or 2 sentences, describe the nature and goal of the step, with a rough timeline if applicable."
+                                },
                                 "elements": {
                                     "type": "array",
                                     "items": {
