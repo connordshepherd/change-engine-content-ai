@@ -10,7 +10,6 @@ import requests
 from collections import OrderedDict
 from helpers import process_content_table, create_filter_json, get_filter_options, get_unique_content_kits, query_airtable_table
 
-# Set the main JSON schema
 tools = [
     {
         "type": "function",
@@ -20,6 +19,10 @@ tools = [
             "parameters": {
                 "type": "object",
                 "properties": {
+                    "reasoning": {
+                        "type": "string",
+                        "description": "Write 3 sentences about how many steps you're choosing and what they will be."
+                    },
                     "steps": {
                         "type": "array",
                         "items": {
@@ -51,7 +54,7 @@ tools = [
                         }
                     }
                 },
-                "required": ["steps"]
+                "required": ["reasoning", "steps"]
             }
         }
     }
